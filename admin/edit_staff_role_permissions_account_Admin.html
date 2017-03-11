@@ -1,0 +1,1266 @@
+
+
+<!DOCTYPE html>
+<html>
+
+    
+
+
+
+
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Uwezo Admin</title>
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <!-- Bootstrap 3.3.5 -->
+        <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="../dist/css/AdminLTE.css">
+        <link rel="stylesheet" href="../dist/css/skins/skin-blue.min.css">
+
+        <link rel="stylesheet" href="../plugins/datatables/dataTables.bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/1.4.2/css/scroller.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+        
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/style.css">
+        <script src="../plugins/jQuery/jQuery-2.1.4.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="../tab_assets/jquery.pwstabs.css">
+        <script src="../tab_assets/jquery.pwstabs.min.js"></script>
+        <script>
+            jQuery(document).ready(function($){
+               $('.loan_tabs').pwstabs({
+                   effect: 'none',
+                   defaultTab: 1,
+                   containerWidth: '100%', 
+                   responsive: false,
+                   theme: 'pws_theme_grey'
+               })   
+            });
+        </script>       
+        <link rel="stylesheet" type="text/css" href="../css/jquery.datepick.css"> 
+        <script type="text/javascript" src="../include/js/jquery.plugin.js"></script> 
+        <script type="text/javascript" src="../include/js/jquery.datepick.js"></script>
+        <script type="text/javascript" src="../include/js/numbers.decimals.validation.js"></script>    
+    </head>
+
+
+
+
+
+    <body class="hold-transition skin-blue sidebar-mini" onload="doOnLoad();">    
+        <div class="wrapper">
+            <!-- Main Header -->
+
+
+
+            
+            <header class="main-header">
+
+            <!-- Logo -->
+            <a href="../home/welcome.html" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <!-- logo for regular state and mobile devices -->
+                 <span class="logo-lg"><b>Uwezo</b> Admin</span>
+            </a>
+
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                
+                <div class="navbar-header">
+                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                        Left Menu
+                    </a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                        <i class="fa fa-bars">Top Menu</i>
+                    </button>
+                </div>
+                <!-- Navbar Right Menu -->
+                <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
+    
+                    <!-- Top Menu -->
+                    <ul class="nav navbar-nav">
+                            <li>     
+                                <a href="../admin/index.html"><i class="fa fa-ban"></i> <span>Admin</span></a>
+                            </li>  
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-link"></i> <span>Settings</span> <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">  
+                                    <li>          
+                                        <a href="../billing/billing.html"><i class="fa fa-circle-o"></i> Billing</a>
+                                   </li>  
+                                    <li>          
+                                        <a href="../home/change_password.html"><i class="fa fa-circle-o"></i> Change Password</a>
+                                   </li>  
+                                    <li>          
+                                        <a href="../index.html"><i class="fa fa-circle-o"></i> Logout</a>
+                                   </li>  
+                                </ul>
+                            </li>  
+                            <li>
+                                <a href="support_login.html" target="_blank"><i class="fa fa-support"></i> <span>Help</span></a>
+                            </li>  
+                        </ul>                 
+                </div>
+                
+            </nav>
+            </header>
+
+
+
+
+
+            <!-- Left side column. contains the logo and sidebar -->
+            <aside class="main-sidebar">
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar">
+        
+                    <!-- Sidebar user panel (optional) -->
+                    <div class="user-panel">
+                        <div class="pull-left image">
+                            <img src="../uploads/staff_images/thumbnails/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        </div>
+                        <div class="pull-left info">
+                            <h5>Japhet Ty Aiko</h5>
+                            <!-- Trial -->
+                            <span class="text-red text-bold">Trial ending in 14 days</span>
+                        </div>
+                    </div>
+                    <!-- Sidebar Menu -->
+                    <ul class="sidebar-menu">
+                            <li>     
+                                <a href="../admin/change_branch.html"><i class="fa fa-eye"></i> <span>View Another Branch</span></a>
+                            </li>
+                            <li style="border-top: 1px solid #000;"><a href="../home/home_branch.html"><i class="fa fa-circle-o text-aqua"></i> <span>Branch #1</span></a></li>
+                            <li>     
+                                <a href="../home/home_branch.html"><i class="fa fa-home"></i> <span>Home Branch</span></a>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-user"></i> <span>Borrowers</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../borrowers/view_borrowers_branch.html"><i class="fa fa-circle-o"></i> View Borrowers</a>
+                                   </li>
+                                    <li>
+                                        <a href="../borrowers/add_borrower.html"><i class="fa fa-circle-o"></i> Add Borrower</a>
+                                   </li>
+                                    <li>
+                                        <a href="../borrowers/groups/view_borrowers_groups_branch.html"><i class="fa fa-circle-o"></i> View Borrower Groups</a>
+                                   </li>
+                                    <li>
+                                        <a href="../borrowers/groups/add_borrowers_group.html"><i class="fa fa-circle-o"></i> Add Borrowers Group</a>
+                                   </li>
+                                    <li>
+                                        <a href="../borrowers/send_sms_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send SMS to All Borrowers</a>
+                                   </li>
+                                    <li>
+                                        <a href="../borrowers/send_email_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send Email to All Borrowers</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-balance-scale"></i> <span>Loans</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../loans/view_loans_branch.html"><i class="fa fa-circle-o"></i> View All Loans</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/missed_repayments.html"><i class="fa fa-circle-o"></i> Missed Repayments</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/due_loans.html"><i class="fa fa-circle-o"></i> Due Loans</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/view_loans_past_maturity_date_branch.html"><i class="fa fa-circle-o"></i> Past Maturity Date</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/view_loans_late_1month_branch.html"><i class="fa fa-circle-o"></i> 1 Month Late Loans</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/view_loans_late_3months_branch.html"><i class="fa fa-circle-o"></i> 3 Months Late Loans</a>
+                                   </li>
+                                    <li>
+                                        <a href="../loans/loan_calculator.html"><i class="fa fa-circle-o"></i> Loan Calculator</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-dollar"></i> <span>Repayments</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../repayments/view_repayments_branch.html"><i class="fa fa-circle-o"></i> View Repayments</a>
+                                   </li>
+                                    <li>
+                                        <a href="../repayments/add_bulk_repayments.html"><i class="fa fa-circle-o"></i> Add Bulk Repayments</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li>     
+                                <a href="../collateral/collateral_register.html"><i class="fa fa-list"></i> <span>Collateral Register</span></a>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-file-text-o"></i> <span>Collection Sheets</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../collection_sheets/view_daily_collection.html"><i class="fa fa-circle-o"></i> Daily Collection Sheet</a>
+                                   </li>
+                                    <li>
+                                        <a href="../collection_sheets/view_missed_repayments_sheet.html"><i class="fa fa-circle-o"></i> Missed Repayment Sheet</a>
+                                   </li>
+                                    <li>
+                                        <a href="../collection_sheets/view_past_maturity_date.html"><i class="fa fa-circle-o"></i> Past Maturity Date Loans</a>
+                                   </li>
+                                    <li>
+                                        <a href="../collection_sheets/send_sms.html"><i class="fa fa-circle-o"></i> Send SMS</a>
+                                   </li>
+                                    <li>
+                                        <a href="../collection_sheets/send_email.html"><i class="fa fa-circle-o"></i> Send Email</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-bank"></i> <span>Savings</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../savings/view_savings_branch.html"><i class="fa fa-circle-o"></i> View Savings Accounts</a>
+                                   </li>
+                                    <li>
+                                        <a href="../savings/view_savings_transactions_branch.html"><i class="fa fa-circle-o"></i> View Savings Transactions</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-paypal"></i> <span>Payroll</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../payroll/view_payroll_branch.html"><i class="fa fa-circle-o"></i> View Payroll</a>
+                                   </li>
+                                    <li>
+                                        <a href="../payroll/select_staff.html"><i class="fa fa-circle-o"></i> Add Payroll</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-share"></i> <span>Expenses</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../expenses/view_expenses_branch.html"><i class="fa fa-circle-o"></i> View Expenses</a>
+                                   </li>
+                                    <li>
+                                        <a href="../expenses/add_expense.html"><i class="fa fa-circle-o"></i> Add Expense</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-plus"></i> <span>Other Income</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../other_income/view_other_income_branch.html"><i class="fa fa-circle-o"></i> View Other Income</a>
+                                   </li>
+                                    <li>
+                                        <a href="../other_income/add_other_income.html"><i class="fa fa-circle-o"></i> Add Other Income</a>
+                                   </li>
+                                </ul>
+                            </li>
+                            <li class="treeview">     
+                                <a href="#"><i class="fa fa-industry"></i> <span>Reports</span> <i class="fa fa-angle-left pull-right"></i></a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="../reports/view_collections_report_branch.html"><i class="fa fa-circle-o"></i> Collections Report</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/collector_report.html"><i class="fa fa-circle-o"></i> Collector Report (Staff)</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/view_cash_flow_branch.html"><i class="fa fa-circle-o"></i> Cash flow</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/view_cash_flow_projection_branch.html"><i class="fa fa-circle-o"></i> Cash Flow Projection</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/view_profit_loss_branch.html"><i class="fa fa-circle-o"></i> Profit / Loss</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/mfrs_ratios.html"><i class="fa fa-circle-o"></i> MFRS Ratios</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/portfolio_at_risk.html"><i class="fa fa-circle-o"></i> Portfolio At Risk (PAR)</a>
+                                   </li>
+                                    <li>
+                                        <a href="../reports/all_entries.html"><i class="fa fa-circle-o"></i> All Entries</a>
+                                   </li>
+                                </ul>
+                            </li>
+                        </ul> 
+                </section>
+            </aside>
+
+
+
+
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <section class="content-header"><h1>Edit Staff Roles Permissions</h1>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+    <div class="box box-info">
+        <form action="" class="form-horizontal" method="post" enctype="multipart/form-data" id="form">
+            
+            <input type="hidden" name="edit_staff_role_permissions" value="1">
+            <input type="hidden" name="staff_role_id" value="2778">
+            <input type="hidden" name="back_url" value="view_staff_roles_account.html">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><b>Staff Role Permissions: Admin</b></h3>
+                </div>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="8" checked> <span style="font-size:19px; font-weight:bold">View Another Branch</span>
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="1" checked> <span style="font-size:19px; font-weight:bold">Admin</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="144" checked> SMS Settings
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="207" checked> SMS Templates
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="208" checked> Add SMS Template
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="209" checked> Edit SMS Template
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="210" checked> Delete SMS Template
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="211" checked> Sender Id
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="213" checked> SMS Credits
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="212" checked> Auto Send SMS
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="176" checked> Payroll Templates
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="195" checked> Borrower Fields
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="196" checked> Add Borrower Field
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="197" checked> Edit Borrower Field
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="198" checked> Delete Borrower Field
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="214" checked> Admin Settings
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="88" checked> Account Settings
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="215" checked> Format Borrower Reports
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="233" checked> Email Settings
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="234" checked> Email Accounts
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="235" checked> Add Email Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="236" checked> Edit Email Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="237" checked> Delete Email Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="238" checked> Verify Email Account
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="239" checked> Email Templates
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="240" checked> Add Email Template
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="241" checked> Edit Email Template
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="242" checked> Delete Email Template
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="243" checked> Auto Send Emails
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="191" checked> Other Income Types
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="194" checked> Delete Other Income Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="193" checked> Edit Other Income Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="192" checked> Add Other Income Type
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="116" checked> Branches
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="117" checked> Add Branch
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="118" checked> Edit Branch
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="119" checked> Delete Branch
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="156" checked> Manage Branch Capital
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="135" checked> Expense Types
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="136" checked> Add Expense Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="137" checked> Edit Expense Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="138" checked> Delete Expense Type
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="38" checked> Staff
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="3" checked> Add Staff
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="115" checked> Edit Staff
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="129" checked> Reset Password
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="94" checked> Delete Staff
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="113" checked> Staff Roles
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="126" checked> Add Staff Role
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="114" checked> Edit Staff Roles Permissions
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="127" checked> Edit Staff Role
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="128" checked> Delete Staff Role
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="168" checked> Collateral Types
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="169" checked> Add Collateral Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="170" checked> Edit Collateral Type
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="171" checked> Delete  Collateral Type
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="92" checked> Savings Products
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="122" checked> Add Savings Product
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="125" checked> Edit Savings Product
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="120" checked> Delete Savings Product
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="139" checked> Loan Products
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="140" checked> Add Loan Product
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="141" checked> Edit Loan Product
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="142" checked> Delete Loan Product
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="90" checked> Loan Penalty Settings
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="91" checked> Edit Loan Penalty Settings
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="184" checked> Bulk Upload
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="85" checked> Loan Fees
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="121" checked> Add Loan Fee
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="124" checked> Edit Loan Fee
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="123" checked> Delete Loan Fee
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="131" checked> Loan Repayment Methods
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="132" checked> Add Loan Repayment Method
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="133" checked> Edit Loan Repayment Method
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="134" checked> Delete Loan Repayment Method
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="202" checked> Collectors
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="203" checked> Add Collector
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="204" checked> Edit Collector
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="205" checked> Delete Collector
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="216" checked> Loan Disbursed By
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="217" checked> Add Loan Disbursed By
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="218" checked> Edit Loan Disbursed By
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="219" checked> Delete Loan Disbursed By
+                                
+                        </li>
+                </ul></li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="63" checked> <span style="font-size:19px; font-weight:bold">Home Branch</span>
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="5" checked> <span style="font-size:19px; font-weight:bold">Borrowers</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="157" checked> Send SMS to Borrower
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="244" checked> Send Email to Borrower
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="16" checked> View Borrowers
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="104" checked> Edit Borrower
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="97" checked> Delete Borrower
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="17" checked> Add Borrower
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="179" checked> View Borrower Groups
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="180" checked> View Group Details
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="181" checked> Edit Borrowers Group
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="182" checked> Delete Borrowers Group
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="228" checked> Add Group Comments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="229" checked> Edit Group Comments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="230" checked> Delete Group Comments
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="183" checked> Add Borrowers Group
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="206" checked> Send SMS to All Borrowers
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="245" checked> Send Email to All Borrowers
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="9" checked> <span style="font-size:19px; font-weight:bold">Loans</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="40" checked> View Loans Borrower
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="39" checked> Add Loan
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="223" checked> Processing
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="221" checked> Open
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="225" checked> Restructure
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="222" checked> Defaulted
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="226" checked> Fraud
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="224" checked> Denied
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="227" checked> Fully Paid
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="55" checked> View Loan Details
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="105" checked> Edit Loan
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="98" checked> Delete Loan
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="56" checked> Add Repayment
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="106" checked> Edit Repayment
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="99" checked> Delete Repayment
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="83" checked> Add Comments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="108" checked> Edit Comments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="102" checked> Delete Comments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="96" checked> View Loan Statement
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="64" checked> View Loan Repayments Schedule
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="86" checked> Edit Collection Sheet
+                                
+                        </li>
+                </ul></li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="18" checked> View All Loans
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="199" checked> Missed Repayments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="246" checked> Due Loans
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="65" checked> Past Maturity Date
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="78" checked> 1 Month Late Loans
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="79" checked> 3 Months Late Loans
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="201" checked> Loan Calculator
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="21" checked> <span style="font-size:19px; font-weight:bold">Repayments</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="22" checked> View Repayments
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="163" checked> Add Bulk Repayments
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="172" checked> <span style="font-size:19px; font-weight:bold">Collateral Register</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="173" checked> Add Collateral
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="174" checked> Edit Collateral
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="175" checked> Delete Collateral
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="66" checked> <span style="font-size:19px; font-weight:bold">Collection Sheets</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="53" checked> Daily Collection Sheet
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="220" checked> Missed Repayment Sheet
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="67" checked> Past Maturity Date Loans
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="69" checked> Send SMS
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="247" checked> Send Email
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="74" checked> <span style="font-size:19px; font-weight:bold">Savings</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="81" checked> View Savings Accounts
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="93" checked> Add Savings Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="75" checked> View Savings Borrower
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="109" checked> Edit Savings Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="154" checked> Delete Savings Account
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="76" checked> Add Transaction
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="110" checked> Edit Transaction
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="111" checked> Delete Transaction
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="77" checked> View Savings Account Statement
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="82" checked> View Savings Transactions
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="28" checked> <span style="font-size:19px; font-weight:bold">Payroll</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="177" checked> View Payroll
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="29" checked> Add Payroll
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="107" checked> Edit Payroll
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="101" checked> Delete Payroll
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="25" checked> <span style="font-size:19px; font-weight:bold">Expenses</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="27" checked> View Expenses
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="112" checked> Edit Expense
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="130" checked> Delete Expense
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="26" checked> Add Expense
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="186" checked> <span style="font-size:19px; font-weight:bold">Other Income</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="187" checked> View Other Income
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="188" checked> Edit Other Income
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="189" checked> Delete Other Income
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="190" checked> Add Other Income
+                                
+                        </li>
+                </ul></li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="31" checked> <span style="font-size:19px; font-weight:bold">Reports</span>
+                <ul>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="167" checked> Collections Report
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="248" checked> Collector Report (Staff)
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="68" checked> Cash flow
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="185" checked> Cash Flow Projection
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="32" checked> Profit / Loss
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="200" checked> MFRS Ratios
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="155" checked> Portfolio At Risk (PAR)
+                                
+                        </li>
+                        <li>
+                        <input type="checkbox" name="staff_role_permissions_menu[]"  
+                            value="178" checked> All Entries
+                                
+                        </li>
+                </ul></li>
+                </ul>
+                <script>
+                   // jQuery Code starts from here
+                 
+                   $(function () {
+                    $("input[type='checkbox']").change(function () {
+                        $(this).siblings('ul')
+                            .find("input[type='checkbox']")
+                            .prop('checked', this.checked);
+                       
+                    });
+                  });
+                 
+                </script>
+            <div class="box-footer">
+    <button type="button" class="btn btn-default"  onClick="parent.location='view_staff_roles_account.html'">Back</button>
+                <button type="submit" class="btn btn-info pull-right" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait">Submit</button>
+                    
+        <script type="text/javascript">
+        $('#form').submit(function() {
+            $(this).find('button[type=submit]').prop('disabled', true);
+            $('.btn').prop('disabled', true);
+            $(this).find('button[type=submit]').button('loading');
+            return true;
+        });
+    </script>
+            </div><!-- /.box-footer -->
+        </form>
+    </div><!-- /.box -->
+
+                    </section>
+                </div><!-- /.content-wrapper -->
+            </div><!-- ./wrapper -->
+
+            <!-- REQUIRED JS SCRIPTS -->
+        
+            <!-- Bootstrap 3.3.5 -->
+            <script src="../bootstrap/js/bootstrap.min.js"></script>
+            <!-- AdminLTE App -->
+            <script src="../dist/js/app.min.js"></script>
+            
+    </body>
+</html>
