@@ -5,8 +5,8 @@
 class DbAcess {
 
     private $conn;
-    //$sql = $this->con->prepare("SELECT {$_cols} FROM `{$table}`{$_cls} {$order} {$limit}");
 
+    //$sql = $this->con->prepare("SELECT {$_cols} FROM `{$table}`{$_cls} {$order} {$limit}");
     //put your code here
     public function __construct() {
         // include './connect.php';
@@ -46,7 +46,7 @@ class DbAcess {
         //  echo '///'.$q."/////";
         //$sql = $this->con->prepare("SELECT {$_cols} FROM `{$table}`{$_cls} {$order} {$limit}");
         $query = mysqli_query($this->conn, $q);
-       
+
         return $query;
     }
 
@@ -65,7 +65,7 @@ class DbAcess {
         //echo $q."////";
         $query = mysqli_query($this->conn, $q);
         if ($query) {
-            return mysqli_insert_id($this->conn);          
+            return mysqli_insert_id($this->conn);
         }
         return mysqli_error($this->conn);
     }
@@ -101,11 +101,16 @@ class DbAcess {
                         $wherestr.=" $key ='$value' and";
                     } else {
                         $explodable = explode('.', $value);
+
                         //print_r($explodable);
                         if (count($explodable) > 1) {
                             $wherestr.=" $key =$value and";
                         } else {
-                            $wherestr.=" $key ='$value' and";
+                            if ($value[0] == "!") {
+                                 $wherestr.=" $key !='$value' and";
+                            } else {
+                                $wherestr.=" $key ='$value' and";
+                            }
                         }
                     }
                 }
@@ -141,7 +146,7 @@ class DbAcess {
         return FALSE;
     }
 
-     public function selectQuery($sql) {    
+    public function selectQuery($sql) {
         $query = mysqli_query($this->conn, $sql);
         // echo $q;
         $result = array();
@@ -160,7 +165,13 @@ class DbAcess {
 
         return FALSE;
     }
-    
-    
+
+    private function isValidEmail($string) {
+        if (filter_var($string, FILTER_VALIDATE_EMAIL)) {
+            //echo "This ($email_a) email address is considered valid.";
+            return TRUE;
+        }
+        return FALSE;
+    }
 
 }

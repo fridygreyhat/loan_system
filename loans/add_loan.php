@@ -1,41 +1,102 @@
 <?php
 $borrowerID = (int) $_GET['borrower'];
 $borrower = [];
+include '../helpers/DbAcess.php';
+include '../helpers/AppUtil.php';
+$db = new DbAcess(); //$cursor = new Cursor;
 if (is_numeric($borrowerID)) {
-    include '../helpers/DbAcess.php';
-    include '../helpers/AppUtil.php';
-    $db = new DbAcess(); //$cursor = new Cursor;
     $table = 'borrower';
     $borrower = $db->select($table, [], ['id' => $borrowerID]);
 }
 $allloanPdcts = $db->select("loan_product_fulldetails");
 $loanCharges = $db->select("loan_charges");
 
-if(isset($_POST['loan_product_id'])){
-    
-    $loan_product_id=$_POST['loan_product_id'];
-    $borrower_ID=$_POST['borrower_id'];
-    $loan_application_id=$_POST['loan_application_id'];
-    $loan_disbursed_by_mtd=$_POST["loan_disbursed_by_id"];
-    $loan_principal_amount=$_POST['loan_principal_amount'];
-    $loan_released_date=$_POST['loan_released_date'];
-    $loan_interest_method=$_POST['loan_interest_method'];
-    $lloan_interest=$_POST['loan_interest'];
-    $loan_interest_pd=$_POST['loan_interest_period'];
-    $loan_duration=$_POST['loan_duration'];
-    $loan_duration_pd=$_POST['loan_duration_period'];
-    $repayment_cycle=$_POST['loan_payment_scheme_id'];
-    $loan_num_of_repayments=$_POST['loan_num_of_repayments'];
-    
-    $loan_fee=$_POST['loan_fee'];//Array
+if (isset($_POST['loan_product_id'])) {
+
+    $loan_product_id = $_POST['loan_product_id'];
+    $borrower_ID = $_POST['borrower_id'];
+    $loan_application_id = $_POST['loan_application_id'];
+    $loan_disbursed_by_mtd = $_POST["loan_disbursed_by_id"];
+    $loan_principal_amount = $_POST['loan_principal_amount'];
+    $loan_released_date = $_POST['loan_released_date'];
+    $loan_interest_method = $_POST['loan_interest_method'];
+    $loan_interest = $_POST['loan_interest'];
+    $loan_interest_pd = $_POST['loan_interest_period'];
+    $loan_duration = $_POST['loan_duration'];
+    $loan_duration_pd = $_POST['loan_duration_period'];
+    $repayment_cycle = $_POST['loan_payment_scheme_id'];
+    $loan_num_of_repayments = $_POST['loan_num_of_repayments'];
+
+    $loan_fee = $_POST['loan_fee']; //Array of Ids of each Charge
     //loan_files
-    $loan_description=$_POST['loan_description'];
-    $loan_status=$_POST['loan_status_id'];
-    
-    
-    
-    
-    
+    $loan_description = $_POST['loan_description'];
+    $loan_status = $_POST['loan_status_id'];
+
+    ///
+    $data = [
+        "loan_product_id" => $loan_product_id,
+        "borrower_id" => $borrower_ID,
+        "loan_no" => $loan_application_id,
+        "disbursement_mtd" => $loan_disbursed_by_mtd,
+        "principal_amt" => $loan_principal_amount,
+        "release_date" => $loan_released_date,
+        "interest_mtd" => $loan_interest_method,
+        "loan_interest" => $loan_interest,
+        "loan_interest_pd" => $loan_interest_pd,
+        "loan_duration" => $loan_duration,
+        "loan_duration_pd" => $loan_duration_pd,
+        "repayment_cycle" => $repayment_cycle,
+        "no_repayment_cycle" => $loan_num_of_repayments,
+        "description" => $loan_description,
+        "creation_user" => AppUtil::userId(),
+        "status" => $loan_status
+    ];
+    $insertId = $db->insert('loans', $data);
+   // echo '$insertId == ' . $insertId;
+    //save Loan Charges.
+    foreach ($loan_fee as $fee) {
+        $feeDetails = $db->select("loan_charges", [], ["id" => $fee]);
+        //save Charge Agaist Loan
+        $data2 = [
+            "loan_id" => $insertId,
+            "loan_charge_id" => $fee,
+            "amount" => $feeDetails["charge_amount"],
+            "creation_user" => AppUtil::userId()
+        ];
+        $saveAppliedCharge = $db->insert("loan_applied_charges", $data2);
+        //echo ' $saveAppliedCharge = ' . $saveAppliedCharge;
+    }
+    //save Files
+    //loan_files
+    $loan_files = $_FILES["loan_files"];
+
+    if (!empty($loan_files)) {
+        // print_r($allOtherFiles);
+        $namesArray = $loan_files['name'];
+        $tempNameArray = $loan_files['tmp_name'];
+        $typeArray = $loan_files['type'];
+        $ii = 0;
+        foreach ($tempNameArray as $value) {
+            $saveFileH = AppUtil::saveFile($tempNameArray[$ii], $namesArray[$ii]);
+            $tableHer = 'loan_files';
+
+            $datahere = [
+                'loan_id' => $insertId,
+                'name' => $namesArray[$ii],
+                'creation_user' => 0,
+                'extension' => $typeArray[$ii],
+                'path' => $saveFileH,
+                "creation_user" => AppUtil::userId()
+            ];
+            $insertIdHere = $db->insert($tableHer, $datahere);
+           // echo $insertIdHere . '`******1</br>**';
+
+            $ii++;
+        }
+    }
+    //Redirect to Borrower for details
+    //view_loans_borrower.php?borrower=13
+    header("location:view_loans_borrower.php?borrower=".$borrower_ID);
 }
 ?>
 <!DOCTYPE html>
@@ -158,7 +219,7 @@ if(isset($_POST['loan_product_id'])){
                                     <label for="inputDisbursedById"  class="col-sm-3 control-label">Disbursed By</label>
                                     <div class="col-sm-3">
                                         <select class="form-control" name="loan_disbursed_by_id" id="inputDisbursedById" required>
-                                           
+
                                         </select>
                                     </div>  
                                     <div class="col-sm-4">
@@ -339,11 +400,12 @@ if(isset($_POST['loan_product_id'])){
                                     <div class="form-group">
                                         <label for="inputLoanFee_<?= $charge['id'] ?>" class="col-sm-3 control-label"><?= $charge['name'] ?></label>                      
                                         <div class="col-sm-3">
-                                            <input type="text" disabled="disabled" name="loan_fee[]" class="form-control" id="inputLoanFee_<?= $charge['id'] ?>" placeholder="Percentage" value="<?= $charge['charge_amount'] ?>"  onkeypress="return  isInterestKey(this, event)">
+                                            <input type="text" disabled="disabled" name="loan_fee_charge[]" class="form-control" id="inputLoanFee_<?= $charge['id'] ?>" placeholder="Percentage" value="<?= $charge['charge_amount'] ?>"  onkeypress="return  isInterestKey(this, event)">
 
                                         </div>
                                         <div class="col-sm-2">
-                                            <label>(Deductable)
+                                            <input type="checkbox" id="checkCharges" name="loan_fee[]"  value="<?= $charge['id'] ?>"/> Is Applicable?
+                                            <label>
                                             </label>
                                         </div>
                                     </div>

@@ -1,12 +1,13 @@
 <?php
-$borrowerID =(int) $_GET['borrower'];
-$borrower=[];
+$borrowerID = (int) $_GET['borrower'];
+$borrower = [];
+include '../helpers/DbAcess.php';
+include '../helpers/AppUtil.php';
+$db = new DbAcess();
 if (is_numeric($borrowerID)) {
-    include '../helpers/DbAcess.php';
-    $db = new DbAcess();
+
     $table = 'borrower';
-    $borrower = $db->select($table,[],['id'=>$borrowerID]);
-         
+    $borrower = $db->select($table, [], ['id' => $borrowerID]);
 }
 ?>
 <!DOCTYPE html>
@@ -67,7 +68,7 @@ if (is_numeric($borrowerID)) {
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
-                <section class="content-header"><h1><?= isset($borrower['fname'])?$borrower['title'].' '.$borrower['fname'].' '.$borrower['lname']:""?>- View All Loans</h1>
+                <section class="content-header"><h1><?= isset($borrower['fname']) ? $borrower['title'] . ' ' . $borrower['fname'] . ' ' . $borrower['lname'] : "" ?>- View All Loans</h1>
                 </section>
 
                 <!-- Main content -->
@@ -76,27 +77,27 @@ if (is_numeric($borrowerID)) {
                         <div class="box-header with-border">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <div class="user-block"> <!-- ../load_image.php?id=<?=$borrower['id'].'&item=borrower'?> -->
-                                        <img class="img-circle" src="data:<?=$borrower['field1']?>;base64,<?=base64_encode($borrower['photo'])?>" alt="user image">
+                                    <div class="user-block"> <!-- ../load_image.php?id=<?= $borrower['id'] . '&item=borrower' ?> -->
+                                        <img class="img-circle" src="data:<?= $borrower['field1'] ?>;base64,<?= base64_encode($borrower['photo']) ?>" alt="user image">
                                         <span class="username">
-                                           <?=$borrower['title'].' '.$borrower['fname'].' '.$borrower['lname']?>
+                                            <?= $borrower['title'] . ' ' . $borrower['fname'] . ' ' . $borrower['lname'] ?>
                                         </span>
                                         <span class="description" style="font-size:13px; color:#000000">
                                             <a href="../borrowers/groups/view_group_details.php">MAZAS</a><br>4556666<br>
                                             <a href="../borrowers/add_borrower_edit.php">Edit</a><br>
-                                            <?=$borrower['business_name']?><br><?=$borrower['gender'].', '?>
+                                            <?= $borrower['business_name'] ?><br><?= $borrower['gender'] . ', ' ?>
                                             <?php
                                             echo date_diff(date_create($borrower['dob']), date_create('today'))->y;
                                             ?>
                                         </span>
-                                    </div><!-- /.user-block --><div class="btn-group-horizontal"><a type="button" class="btn bg-olive margin" href="add_loan.php?borrower=<?=$borrower['id']?>">Add Loan</a></div>         
+                                    </div><!-- /.user-block --><div class="btn-group-horizontal"><a type="button" class="btn bg-olive margin" href="add_loan.php?borrower=<?= $borrower['id'] ?>">Add Loan</a></div>         
                                 </div><!-- /.col -->
                                 <div class="col-sm-4">
                                     <ul class="list-unstyled">
-                                        <li><b>Address:</b> <?=$borrower['address']?></li>
-                                        <li><b>City:</b> <?=$borrower['city']?></li>
-                                        <li><b>Province:</b> <?=$borrower['province_state']?></li>
-                                        <li><b>Zipcode:</b> <?=$borrower['zipcode']?></li>
+                                        <li><b>Address:</b> <?= $borrower['address'] ?></li>
+                                        <li><b>City:</b> <?= $borrower['city'] ?></li>
+                                        <li><b>Province:</b> <?= $borrower['province_state'] ?></li>
+                                        <li><b>Zipcode:</b> <?= $borrower['zipcode'] ?></li>
 
                                         <a data-toggle="collapse" data-parent="#accordion" href="#viewFiles">
                                             View Borrower Files
@@ -111,11 +112,11 @@ if (is_numeric($borrowerID)) {
                                 </div>
                                 <div class="col-sm-4">
                                     <ul class="list-unstyled">
-                                        <li><b>Landline:</b> <?=$borrower['landline']?></li>
-                                        <li><b>Email:</b> <a onClick="javascript:window.open('mailto:<?=$borrower['email']?>', 'mail');
-                                                event.preventDefault()" href="mailto::<?=$borrower['email']?>">:<?=$borrower['email']?></a>
-                                                <div class="btn-group-horizontal"><a type="button" class="btn-xs bg-red" href="https://x.loandisk.com/borrowers/send_email_to_borrower.php?borrower_id=10419">Send Email</a></div></li>
-                                        <li><b>Mobile:</b> :<?=$borrower['mobile_no']?><div class="btn-group-horizontal"><a type="button" class="btn-xs bg-red" href="https://x.loandisk.com/borrowers/send_sms_to_borrower.php?borrower_id=10419">Send SMS</a></div></li>
+                                        <li><b>Landline:</b> <?= $borrower['landline'] ?></li>
+                                        <li><b>Email:</b> <a onClick="javascript:window.open('mailto:<?= $borrower['email'] ?>', 'mail');
+                                                event.preventDefault()" href="mailto::<?= $borrower['email'] ?>">:<?= $borrower['email'] ?></a>
+                                            <div class="btn-group-horizontal"><a type="button" class="btn-xs bg-red" href="https://x.loandisk.com/borrowers/send_email_to_borrower.php?borrower_id=10419">Send Email</a></div></li>
+                                        <li><b>Mobile:</b> :<?= $borrower['mobile_no'] ?><div class="btn-group-horizontal"><a type="button" class="btn-xs bg-red" href="https://x.loandisk.com/borrowers/send_sms_to_borrower.php?borrower_id=10419">Send SMS</a></div></li>
 
                                     </ul>
                                 </div>
@@ -125,65 +126,91 @@ if (is_numeric($borrowerID)) {
                     <!-- Main content -->
                     <div class="box box-warning">
                         <div class="box-body table-responsive no-padding">
-                            <table class="table table-bordered table-condensed  table-hover">
-                                <tr style="background-color: #FFF8F2">
+                            <table class="table table-bordered table-condensed  table-hover" id="table_allLoans">
+                                <thead>
+                                    <tr style="background-color: #FFF8F2">
 
-                                    <th>Loan #</th>
-                                    <th><b>Released</b></th>
-                                    <th><b>Maturity</b></th>
-                                    <th><b>Repayment</b></th>
-                                    <th><b>Principal &#85;&#83;&#104;</b></th>
+                                        <th>Loan #</th>
+                                        <th><b>Released</b></th>
+                                        <th><b>Maturity</b></th>
+                                        <th><b>Repayment</b></th>
+                                        <th><b>Principal &#85;&#83;&#104;</b></th>
 
-                                    <th>Fees</th>
-                                    <th>Penalty</th>
-                                    <th><b>Due</b></th>
-                                    <th><b>Paid</b></th>
-                                    <th><b>Balance</b></th>
+                                        <th>Fees</th>
+                                        <th>Penalty</th>
+                                        <th><b>Due</b></th>
+                                        <th><b>Paid</b></th>
+                                        <th><b>Balance</b></th>
 
 
-                                    <th><b>Status</b></th>
+                                        <th><b>Status</b></th>
 
-                                    <th></th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        1000002
-                                    </td>
-                                    <td>
-                                        04/01/2017
-                                    </td>
-                                    <td>
-                                        06/01/2017
-                                    </td>
-                                    <td>
-                                        Daily
-                                    </td> 
-                                    <td>
-                                        777.00<br>@1% Per Day
-                                    </td>
-                                    <td>
-                                        1.00
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    //get Loans for the Borrower.
+                                    $where = [
+                                        "borrower_id" => $borrowerID,
+                                        "status" => "!closed"
+                                    ];
+                                    $loans = $db->select("loans", [], $where);
+                                    foreach ($loans as $loan) {
+                                        $loanFees=$db->select("loan_applied_charges", [],["loan_id"=>$loan['id']]);
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                <?= $loan['loan_no'] ?>
+                                            </td>
+                                            <td>
+                                                <?= $loan['release_date'] ?>
+                                            </td>
+                                            <td>
+                                               <?= $loan['release_date'] ?>
+                                            </td>
+                                            <td>
+                                                <?= $loan['repayment_cycle'] ?>
+                                            </td> 
+                                            <td>
+                                                777.00<br>@1% Per Day
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $sumFess=0;
+                                                foreach ($loanFees as $fee) {
+                                                    $sumFess+=$fee['amount'];
+                                                }
+                                                echo $sumFess;
+                                                ?>                                              
+                                            </td>
+                                            <td>
+                                                0
+                                            </td>                                 
+                                            <td><s>785.77</s><br>6,233.00
                                     </td>
                                     <td>
                                         0
-                                    </td>                                 
-                                    <td><s>785.77</s><br>6,233.00
-                                </td>
-                                <td>
-                                    0
-                                </td>
-                                <td>
-                                    <b>6,233.00</b>
-                                </td>
-                                <td>
-                                    <span class="label label-info">
-                                        Processing
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="view_loan_details.php" type="button" class="btn-xs bg-olive margin">View/Modify</a>
-                                </td>
-                                </tr>
+                                    </td>
+                                    <td>
+                                        <b>6,233.00</b>
+                                    </td>
+                                    <td>
+                                        <span class="label label-info">
+                                             <?= $loan['status'] ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="view_loan_details.php?loan_id= <?= $loan['id'] ?>" type="button" class="btn-xs bg-olive margin">View/Modify</a>
+                                    </td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+
+
+                                </tbody>
+
                             </table>
 
                         </div> 
