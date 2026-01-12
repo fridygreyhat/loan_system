@@ -4,6 +4,7 @@ $page_title = 'View Loans';
 $current_page = 'loans';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $loans = [];
 try {
@@ -23,16 +24,16 @@ include $base_path . 'includes/header.php';
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h1>Loans</h1>
+        <h1><?php echo __('loans'); ?></h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active">Loans</li>
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('loans'); ?></li>
             </ol>
         </nav>
     </div>
     <a href="add_loan.php" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Add Loan
+        <i class="fas fa-plus me-2"></i><?php echo __('add_loan'); ?>
     </a>
 </div>
 
@@ -44,7 +45,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo count($loans); ?></h3>
-                <p>Total Loans</p>
+                <p><?php echo __('total_loans'); ?></p>
             </div>
         </div>
     </div>
@@ -52,9 +53,9 @@ include $base_path . 'includes/header.php';
 
 <div class="card">
     <div class="card-header">
-        <h5><i class="fas fa-list me-2"></i>All Loans</h5>
+        <h5><i class="fas fa-list me-2"></i><?php echo __('all_loans'); ?></h5>
         <div class="d-flex gap-2">
-            <input type="text" class="form-control form-control-sm" placeholder="Search..." style="width: 200px;">
+            <input type="text" class="form-control form-control-sm" placeholder="<?php echo __('search'); ?>..." style="width: 200px;">
             <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-filter"></i></button>
             <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></button>
         </div>
@@ -64,14 +65,14 @@ include $base_path . 'includes/header.php';
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Loan #</th>
-                        <th>Borrower</th>
-                        <th>Product</th>
-                        <th>Principal</th>
-                        <th>Interest</th>
-                        <th>Status</th>
-                        <th>Release Date</th>
-                        <th>Actions</th>
+                        <th><?php echo __('loan_number'); ?></th>
+                        <th><?php echo __('borrower'); ?></th>
+                        <th><?php echo __('product'); ?></th>
+                        <th><?php echo __('principal'); ?></th>
+                        <th><?php echo __('interest'); ?></th>
+                        <th><?php echo __('status'); ?></th>
+                        <th><?php echo __('release_date'); ?></th>
+                        <th><?php echo __('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,7 +80,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">
                             <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                            No loans found. <a href="add_loan.php">Create one now</a>.
+                            <?php echo __('no_loans_found'); ?>. <a href="add_loan.php"><?php echo __('create_one_now'); ?></a>.
                         </td>
                     </tr>
                     <?php else: ?>
@@ -94,19 +95,20 @@ include $base_path . 'includes/header.php';
                             <?php 
                             $status = $loan['status'] ?? 'pending';
                             $badge_class = 'secondary';
+                            $status_text = __($status);
                             if ($status === 'approved') $badge_class = 'success';
                             elseif ($status === 'pending') $badge_class = 'warning';
                             elseif ($status === 'denied') $badge_class = 'danger';
                             ?>
-                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo ucfirst($status); ?></span>
+                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo $status_text; ?></span>
                         </td>
                         <td><?php echo $loan['release_date'] ? date('M d, Y', strtotime($loan['release_date'])) : '-'; ?></td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="view_loan_details.php?id=<?php echo $loan['id']; ?>" class="btn btn-outline-primary" title="View">
+                                <a href="view_loan_details.php?id=<?php echo $loan['id']; ?>" class="btn btn-outline-primary" title="<?php echo __('view'); ?>">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="edit_loan.php?id=<?php echo $loan['id']; ?>" class="btn btn-outline-secondary" title="Edit">
+                                <a href="edit_loan.php?id=<?php echo $loan['id']; ?>" class="btn btn-outline-secondary" title="<?php echo __('edit'); ?>">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>

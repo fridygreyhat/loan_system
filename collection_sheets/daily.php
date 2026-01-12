@@ -4,6 +4,7 @@ $page_title = 'Daily Collection Sheet';
 $current_page = 'collection_sheets';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $collections = [];
 $today = date('Y-m-d');
@@ -26,18 +27,18 @@ include $base_path . 'includes/header.php';
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h1>Daily Collection Sheet</h1>
+        <h1><?php echo __('daily_collection'); ?></h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active">Daily Collection</li>
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('daily_collection'); ?></li>
             </ol>
         </nav>
     </div>
     <div class="d-flex gap-2">
         <input type="date" class="form-control" value="<?php echo $today; ?>" id="collectionDate">
-        <button class="btn btn-outline-secondary"><i class="fas fa-print me-2"></i>Print</button>
-        <button class="btn btn-outline-secondary"><i class="fas fa-download me-2"></i>Export</button>
+        <button class="btn btn-outline-secondary"><i class="fas fa-print me-2"></i><?php echo __('print'); ?></button>
+        <button class="btn btn-outline-secondary"><i class="fas fa-download me-2"></i><?php echo __('export'); ?></button>
     </div>
 </div>
 
@@ -49,7 +50,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo count($collections); ?></h3>
-                <p>Due Today</p>
+                <p><?php echo __('due_loans'); ?></p>
             </div>
         </div>
     </div>
@@ -60,7 +61,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3>TZS <?php echo number_format(array_sum(array_column($collections, 'amount')), 2); ?></h3>
-                <p>Expected Amount</p>
+                <p><?php echo __('amount_expected'); ?></p>
             </div>
         </div>
     </div>
@@ -68,19 +69,19 @@ include $base_path . 'includes/header.php';
 
 <div class="card">
     <div class="card-header">
-        <h5><i class="fas fa-list me-2"></i>Collections for <?php echo date('F d, Y', strtotime($today)); ?></h5>
+        <h5><i class="fas fa-list me-2"></i><?php echo __('collections'); ?> - <?php echo date('F d, Y', strtotime($today)); ?></h5>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Borrower</th>
-                        <th>Phone</th>
-                        <th>Loan #</th>
-                        <th>Amount Due</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th><?php echo __('borrower'); ?></th>
+                        <th><?php echo __('phone'); ?></th>
+                        <th><?php echo __('loan_number'); ?></th>
+                        <th><?php echo __('amount'); ?></th>
+                        <th><?php echo __('status'); ?></th>
+                        <th><?php echo __('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,7 +89,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td colspan="6" class="text-center py-4 text-muted">
                             <i class="fas fa-check-circle fa-3x mb-3 d-block text-success"></i>
-                            No collections due for today.
+                            <?php echo __('no_repayments_found'); ?>.
                         </td>
                     </tr>
                     <?php else: ?>
@@ -103,14 +104,14 @@ include $base_path . 'includes/header.php';
                             $status = $item['status'] ?? 'pending';
                             $badge_class = $status === 'paid' ? 'success' : ($status === 'pending' ? 'warning' : 'danger');
                             ?>
-                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo ucfirst($status); ?></span>
+                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo __($status); ?></span>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="<?php echo $base_path; ?>repayments/add_repayment.php?loan_id=<?php echo $item['loan_id']; ?>" class="btn btn-outline-success" title="Record Payment">
+                                <a href="<?php echo $base_path; ?>repayments/add_repayment.php?loan_id=<?php echo $item['loan_id']; ?>" class="btn btn-outline-success" title="<?php echo __('record_payment'); ?>">
                                     <i class="fas fa-plus"></i>
                                 </a>
-                                <a href="<?php echo $base_path; ?>loans/view_loan_details.php?id=<?php echo $item['loan_id']; ?>" class="btn btn-outline-primary" title="View Loan">
+                                <a href="<?php echo $base_path; ?>loans/view_loan_details.php?id=<?php echo $item['loan_id']; ?>" class="btn btn-outline-primary" title="<?php echo __('view'); ?>">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </div>

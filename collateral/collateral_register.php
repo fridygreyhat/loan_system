@@ -4,6 +4,7 @@ $page_title = 'Collateral Register';
 $current_page = 'collateral';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $collaterals = [];
 try {
@@ -23,16 +24,16 @@ include $base_path . 'includes/header.php';
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h1>Collateral Register</h1>
+        <h1><?php echo __('collateral_register'); ?></h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active">Collateral Register</li>
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('collateral_register'); ?></li>
             </ol>
         </nav>
     </div>
     <a href="add_collateral.php" class="btn btn-primary">
-        <i class="fas fa-plus me-2"></i>Add Collateral
+        <i class="fas fa-plus me-2"></i><?php echo __('add'); ?> <?php echo __('collateral'); ?>
     </a>
 </div>
 
@@ -44,7 +45,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo count($collaterals); ?></h3>
-                <p>Total Collateral Items</p>
+                <p><?php echo __('collateral'); ?></p>
             </div>
         </div>
     </div>
@@ -52,9 +53,9 @@ include $base_path . 'includes/header.php';
 
 <div class="card">
     <div class="card-header">
-        <h5><i class="fas fa-list me-2"></i>All Collateral</h5>
+        <h5><i class="fas fa-list me-2"></i><?php echo __('collateral'); ?></h5>
         <div class="d-flex gap-2">
-            <input type="text" class="form-control form-control-sm" placeholder="Search..." style="width: 200px;">
+            <input type="text" class="form-control form-control-sm" placeholder="<?php echo __('search'); ?>..." style="width: 200px;">
             <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-download"></i></button>
         </div>
     </div>
@@ -63,13 +64,13 @@ include $base_path . 'includes/header.php';
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Item</th>
-                        <th>Type</th>
-                        <th>Borrower</th>
-                        <th>Loan #</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th><?php echo __('name'); ?></th>
+                        <th><?php echo __('collateral_type'); ?></th>
+                        <th><?php echo __('borrower'); ?></th>
+                        <th><?php echo __('loan_number'); ?></th>
+                        <th><?php echo __('collateral_value'); ?></th>
+                        <th><?php echo __('status'); ?></th>
+                        <th><?php echo __('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,7 +78,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td colspan="7" class="text-center py-4 text-muted">
                             <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                            No collateral items found. <a href="add_collateral.php">Add one now</a>.
+                            <?php echo __('no_collateral_found'); ?>. <a href="add_collateral.php"><?php echo __('add_one_now'); ?></a>.
                         </td>
                     </tr>
                     <?php else: ?>
@@ -93,14 +94,14 @@ include $base_path . 'includes/header.php';
                             $status = $item['status'] ?? 'active';
                             $badge_class = $status === 'active' ? 'success' : 'secondary';
                             ?>
-                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo ucfirst($status); ?></span>
+                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo __($status); ?></span>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="view_collateral.php?id=<?php echo $item['id']; ?>" class="btn btn-outline-primary" title="View">
+                                <a href="view_collateral.php?id=<?php echo $item['id']; ?>" class="btn btn-outline-primary" title="<?php echo __('view'); ?>">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="edit_collateral.php?id=<?php echo $item['id']; ?>" class="btn btn-outline-secondary" title="Edit">
+                                <a href="edit_collateral.php?id=<?php echo $item['id']; ?>" class="btn btn-outline-secondary" title="<?php echo __('edit'); ?>">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>

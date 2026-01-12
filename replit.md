@@ -109,9 +109,37 @@ php -S 0.0.0.0:5000
 - Added DOCX agreement template system
 - Migrated database from MySQL to PostgreSQL
 - Created comprehensive PostgreSQL schema with all new tables
+- **Full Kiswahili (Swahili) Translation System** - Complete bilingual support
+
+## Bilingual Support (English/Kiswahili)
+The system supports full bilingual interface:
+- **Translation file:** `helpers/lang.php` - Contains all translations
+- **Language selector:** Globe icon in header and login page
+- **Supported languages:** English (en), Kiswahili (sw)
+- **How to switch:** Click globe icon > Select language
+
+### Translated Pages:
+- Login page (login.php)
+- Dashboard (home/dashboard.php)
+- Borrowers (borrowers/view_borrowers.php)
+- Loans (loans/view_loans.php)
+- Repayments (repayments/view_repayments.php)
+- Savings (savings/view_accounts.php)
+- Investors (investors/view_investors.php)
+- Reports (reports/collections.php)
+- Staff (staff/view_staff.php)
+- Collateral (collateral/collateral_register.php)
+- Collection Sheets (collection_sheets/daily.php)
+- Settings (admin/loan_products.php)
+- All navigation menus
+
+### Adding New Translations:
+1. Add translation key to `$translations` array in `helpers/lang.php`
+2. Use `<?php echo __('key_name'); ?>` in PHP files
 
 ## User Preferences
 - Modern, clean UI matching loandisk.com design
 - Blue color scheme with professional styling
 - Responsive sidebar navigation
 - Card-based layout with shadow effects
+- Bilingual support (English/Kiswahili) for Tanzanian market

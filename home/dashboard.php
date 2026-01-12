@@ -6,6 +6,7 @@ $current_user = 'Admin User';
 $user_role = 'Administrator';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $total_borrowers = 0;
 $total_loans = 0;
@@ -41,10 +42,10 @@ include $base_path . 'includes/header.php';
 ?>
 
 <div class="page-header">
-    <h1>Dashboard</h1>
+    <h1><?php echo __('dashboard'); ?></h1>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item active">Overview</li>
+            <li class="breadcrumb-item active"><?php echo __('overview'); ?></li>
         </ol>
     </nav>
 </div>
@@ -57,7 +58,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo number_format($total_borrowers); ?></h3>
-                <p>Total Borrowers</p>
+                <p><?php echo __('total_borrowers'); ?></p>
             </div>
             <span class="stat-change up"><i class="fas fa-arrow-up"></i> 12%</span>
         </div>
@@ -69,7 +70,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo number_format($total_loans); ?></h3>
-                <p>Active Loans</p>
+                <p><?php echo __('active_loans'); ?></p>
             </div>
             <span class="stat-change up"><i class="fas fa-arrow-up"></i> 8%</span>
         </div>
@@ -81,7 +82,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo number_format($pending_loans); ?></h3>
-                <p>Pending Loans</p>
+                <p><?php echo __('pending_loans'); ?></p>
             </div>
         </div>
     </div>
@@ -92,7 +93,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3><?php echo number_format($overdue_loans); ?></h3>
-                <p>Overdue Loans</p>
+                <p><?php echo __('overdue_loans'); ?></p>
             </div>
         </div>
     </div>
@@ -106,7 +107,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3>TZS 0</h3>
-                <p>Total Savings</p>
+                <p><?php echo __('total_savings'); ?></p>
             </div>
         </div>
     </div>
@@ -117,7 +118,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3>TZS 0</h3>
-                <p>Total Investments</p>
+                <p><?php echo __('total_investments'); ?></p>
             </div>
         </div>
     </div>
@@ -128,7 +129,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3>TZS <?php echo number_format($total_disbursed); ?></h3>
-                <p>Total Disbursed</p>
+                <p><?php echo __('total_disbursed'); ?></p>
             </div>
         </div>
     </div>
@@ -139,7 +140,7 @@ include $base_path . 'includes/header.php';
             </div>
             <div class="stat-info">
                 <h3>TZS <?php echo number_format($total_collected); ?></h3>
-                <p>Total Collected</p>
+                <p><?php echo __('total_collected'); ?></p>
             </div>
         </div>
     </div>
@@ -149,15 +150,15 @@ include $base_path . 'includes/header.php';
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
-                <h5><i class="fas fa-chart-area me-2"></i>Loan Performance</h5>
+                <h5><i class="fas fa-chart-area me-2"></i><?php echo __('loan_performance'); ?></h5>
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                        This Year
+                        <?php echo __('this_year'); ?>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">This Month</a></li>
-                        <li><a class="dropdown-item" href="#">This Quarter</a></li>
-                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                        <li><a class="dropdown-item" href="#"><?php echo __('this_month'); ?></a></li>
+                        <li><a class="dropdown-item" href="#"><?php echo __('this_quarter'); ?></a></li>
+                        <li><a class="dropdown-item" href="#"><?php echo __('this_year'); ?></a></li>
                     </ul>
                 </div>
             </div>
@@ -171,7 +172,7 @@ include $base_path . 'includes/header.php';
     <div class="col-lg-4">
         <div class="card">
             <div class="card-header">
-                <h5><i class="fas fa-chart-pie me-2"></i>Loan Status</h5>
+                <h5><i class="fas fa-chart-pie me-2"></i><?php echo __('loan_status'); ?></h5>
             </div>
             <div class="card-body">
                 <div class="chart-container">
@@ -186,8 +187,8 @@ include $base_path . 'includes/header.php';
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
-                <h5><i class="fas fa-clock me-2"></i>Recent Activity</h5>
-                <a href="#" class="btn btn-sm btn-primary">View All</a>
+                <h5><i class="fas fa-clock me-2"></i><?php echo __('recent_activity'); ?></h5>
+                <a href="#" class="btn btn-sm btn-primary"><?php echo __('view_all'); ?></a>
             </div>
             <div class="card-body">
                 <div class="activity-item">
@@ -195,40 +196,40 @@ include $base_path . 'includes/header.php';
                         <i class="fas fa-check"></i>
                     </div>
                     <div class="activity-content">
-                        <h6>Loan Approved</h6>
+                        <h6><?php echo __('loan_approved'); ?></h6>
                         <p>Loan #1234 for John Doe was approved</p>
                     </div>
-                    <span class="activity-time">2 hours ago</span>
+                    <span class="activity-time">2 <?php echo __('hours_ago'); ?></span>
                 </div>
                 <div class="activity-item">
                     <div class="activity-icon" style="background: rgba(44, 123, 229, 0.1); color: #2c7be5;">
                         <i class="fas fa-money-bill"></i>
                     </div>
                     <div class="activity-content">
-                        <h6>Payment Received</h6>
+                        <h6><?php echo __('payment_received'); ?></h6>
                         <p>TZS 500 payment received from Jane Smith</p>
                     </div>
-                    <span class="activity-time">4 hours ago</span>
+                    <span class="activity-time">4 <?php echo __('hours_ago'); ?></span>
                 </div>
                 <div class="activity-item">
                     <div class="activity-icon" style="background: rgba(246, 195, 67, 0.1); color: #f6c343;">
                         <i class="fas fa-user-plus"></i>
                     </div>
                     <div class="activity-content">
-                        <h6>New Borrower</h6>
+                        <h6><?php echo __('new_borrower'); ?></h6>
                         <p>New borrower registration: Mike Johnson</p>
                     </div>
-                    <span class="activity-time">6 hours ago</span>
+                    <span class="activity-time">6 <?php echo __('hours_ago'); ?></span>
                 </div>
                 <div class="activity-item">
                     <div class="activity-icon" style="background: rgba(230, 55, 87, 0.1); color: #e63757;">
                         <i class="fas fa-exclamation"></i>
                     </div>
                     <div class="activity-content">
-                        <h6>Missed Payment</h6>
+                        <h6><?php echo __('missed_payment'); ?></h6>
                         <p>Loan #1189 has a missed payment</p>
                     </div>
-                    <span class="activity-time">Yesterday</span>
+                    <span class="activity-time"><?php echo __('yesterday'); ?></span>
                 </div>
             </div>
         </div>
@@ -236,24 +237,24 @@ include $base_path . 'includes/header.php';
     <div class="col-lg-4">
         <div class="card">
             <div class="card-header">
-                <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                <h5><i class="fas fa-bolt me-2"></i><?php echo __('quick_actions'); ?></h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a href="<?php echo $base_path; ?>borrowers/add_borrower.php" class="btn btn-outline-primary">
-                        <i class="fas fa-user-plus me-2"></i>Add Borrower
+                        <i class="fas fa-user-plus me-2"></i><?php echo __('add_borrower'); ?>
                     </a>
                     <a href="<?php echo $base_path; ?>loans/add_loan.php" class="btn btn-outline-primary">
-                        <i class="fas fa-plus-circle me-2"></i>Create Loan
+                        <i class="fas fa-plus-circle me-2"></i><?php echo __('create_loan'); ?>
                     </a>
                     <a href="<?php echo $base_path; ?>repayments/add_repayment.php" class="btn btn-outline-success">
-                        <i class="fas fa-money-check me-2"></i>Record Payment
+                        <i class="fas fa-money-check me-2"></i><?php echo __('record_payment'); ?>
                     </a>
                     <a href="<?php echo $base_path; ?>reports/collections.php" class="btn btn-outline-secondary">
-                        <i class="fas fa-file-alt me-2"></i>Generate Report
+                        <i class="fas fa-file-alt me-2"></i><?php echo __('generate_report'); ?>
                     </a>
                     <a href="<?php echo $base_path; ?>collection_sheets/send_reminders.php" class="btn btn-outline-warning">
-                        <i class="fas fa-bell me-2"></i>Send Reminders
+                        <i class="fas fa-bell me-2"></i><?php echo __('send_reminders'); ?>
                     </a>
                 </div>
             </div>
@@ -266,16 +267,16 @@ const loanPerformanceCtx = document.getElementById('loanPerformanceChart').getCo
 new Chart(loanPerformanceCtx, {
     type: 'line',
     data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: ['<?php echo __('jan'); ?>', '<?php echo __('feb'); ?>', '<?php echo __('mar'); ?>', '<?php echo __('apr'); ?>', '<?php echo __('may'); ?>', '<?php echo __('jun'); ?>', '<?php echo __('jul'); ?>', '<?php echo __('aug'); ?>', '<?php echo __('sep'); ?>', '<?php echo __('oct'); ?>', '<?php echo __('nov'); ?>', '<?php echo __('dec'); ?>'],
         datasets: [{
-            label: 'Disbursements',
+            label: '<?php echo __('disbursements'); ?>',
             data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 35000, 32000, 40000, 38000, 45000],
             borderColor: '#2c7be5',
             backgroundColor: 'rgba(44, 123, 229, 0.1)',
             fill: true,
             tension: 0.4
         }, {
-            label: 'Collections',
+            label: '<?php echo __('collections'); ?>',
             data: [8000, 12000, 10000, 18000, 15000, 22000, 20000, 25000, 23000, 30000, 28000, 35000],
             borderColor: '#00d97e',
             backgroundColor: 'rgba(0, 217, 126, 0.1)',
@@ -296,7 +297,7 @@ new Chart(loanPerformanceCtx, {
                 beginAtZero: true,
                 ticks: {
                     callback: function(value) {
-                        return '$' + value.toLocaleString();
+                        return 'TZS ' + value.toLocaleString();
                     }
                 }
             }
@@ -308,7 +309,7 @@ const loanStatusCtx = document.getElementById('loanStatusChart').getContext('2d'
 new Chart(loanStatusCtx, {
     type: 'doughnut',
     data: {
-        labels: ['Active', 'Completed', 'Pending', 'Overdue'],
+        labels: ['<?php echo __('active'); ?>', '<?php echo __('completed'); ?>', '<?php echo __('pending'); ?>', '<?php echo __('overdue'); ?>'],
         datasets: [{
             data: [45, 30, 15, 10],
             backgroundColor: ['#2c7be5', '#00d97e', '#f6c343', '#e63757'],

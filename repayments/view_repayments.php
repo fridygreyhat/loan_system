@@ -4,6 +4,7 @@ $page_title = 'View Repayments';
 $current_page = 'repayments';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $repayments = [];
 try {
@@ -24,21 +25,21 @@ include $base_path . 'includes/header.php';
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
-        <h1>Repayments</h1>
+        <h1><?php echo __('repayments'); ?></h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php">Dashboard</a></li>
-                <li class="breadcrumb-item active">Repayments</li>
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('repayments'); ?></li>
             </ol>
         </nav>
     </div>
-    <a href="add_repayment.php" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Record Repayment</a>
+    <a href="add_repayment.php" class="btn btn-primary"><i class="fas fa-plus me-2"></i><?php echo __('record_payment'); ?></a>
 </div>
 
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5><i class="fas fa-money-bill-wave me-2"></i>All Repayments</h5>
-        <input type="text" class="form-control w-25" placeholder="Search repayments..." id="searchInput">
+        <h5><i class="fas fa-money-bill-wave me-2"></i><?php echo __('view_repayments'); ?></h5>
+        <input type="text" class="form-control w-25" placeholder="<?php echo __('search'); ?>..." id="searchInput">
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -46,12 +47,12 @@ include $base_path . 'includes/header.php';
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Date</th>
-                        <th>Borrower</th>
-                        <th>Loan #</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                        <th>Actions</th>
+                        <th><?php echo __('date'); ?></th>
+                        <th><?php echo __('borrower'); ?></th>
+                        <th><?php echo __('loan_number'); ?></th>
+                        <th><?php echo __('amount'); ?></th>
+                        <th><?php echo __('payment_method'); ?></th>
+                        <th><?php echo __('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,7 +60,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td colspan="7" class="text-center py-4 text-muted">
                             <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                            No repayments recorded yet.
+                            <?php echo __('no_repayments_found'); ?>.
                         </td>
                     </tr>
                     <?php else: ?>
@@ -70,10 +71,10 @@ include $base_path . 'includes/header.php';
                         <td><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></td>
                         <td><a href="<?php echo $base_path; ?>loans/view_loan.php?id=<?php echo $item['loan_id']; ?>">#<?php echo $item['loan_id']; ?></a></td>
                         <td class="text-success"><strong>TZS <?php echo number_format($item['amount'] ?? 0, 2); ?></strong></td>
-                        <td><?php echo htmlspecialchars($item['payment_method'] ?? 'Cash'); ?></td>
+                        <td><?php echo htmlspecialchars($item['payment_method'] ?? __('cash')); ?></td>
                         <td>
-                            <a href="view_repayment.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                            <a href="edit_repayment.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
+                            <a href="view_repayment.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-primary" title="<?php echo __('view'); ?>"><i class="fas fa-eye"></i></a>
+                            <a href="edit_repayment.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-secondary" title="<?php echo __('edit'); ?>"><i class="fas fa-edit"></i></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
