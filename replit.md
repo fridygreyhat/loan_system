@@ -1,60 +1,117 @@
-# LoanDisk - Loan Management System
+# LoanDisk - Modern Loan Management System
 
 ## Overview
-LoanDisk is a web-based loan management system built with PHP and PostgreSQL. It provides comprehensive features for managing loans, borrowers, staff, repayments, and various administrative functions.
+LoanDisk is a comprehensive web-based loan management system built with PHP and PostgreSQL. It provides modern features for managing loans, borrowers, staff, repayments, savings accounts, investor accounts, and various administrative functions matching the latest LoanDisk platform.
 
 ## Project Structure
-- `/admin` - Administrative pages (settings, staff management, loan products)
-- `/borrowers` - Borrower management pages
-- `/loans` - Loan management pages
-- `/repayments` - Repayment tracking pages
-- `/staff` - Staff management
-- `/savings` - Savings products management
-- `/expenses` - Expense tracking
-- `/payroll` - Payroll management
-- `/collateral` - Collateral register
-- `/collection_sheets` - Collection sheets
-- `/reports` - Reporting pages
-- `/home` - Dashboard/welcome pages
-- `/helpers` - PHP helper classes (database connection, utilities)
-- `/plugins` - Frontend plugins (jQuery, Bootstrap, DataTables, CKEditor, etc.)
-- `/bootstrap` - Bootstrap CSS/JS framework
-- `/dist` - AdminLTE theme files
-- `/SQLDB` - Database schema files
+```
+/
+├── admin/           - Admin settings, loan products, SMS/Email settings, templates
+├── auth/            - Authentication handling
+├── borrowers/       - Borrower management pages
+├── collateral/      - Collateral register
+├── collection_sheets/ - Collection sheet management
+├── commons/         - Shared operations
+├── css/             - Stylesheets (loandisk-modern.css)
+├── expenses/        - Expense tracking
+├── helpers/         - PHP helper classes (DB connection, utilities)
+├── home/            - Dashboard and welcome pages
+├── includes/        - Shared templates (header.php, footer.php)
+├── investors/       - Investor account management (NEW)
+├── loans/           - Loan management pages
+├── other_income/    - Other income tracking
+├── payroll/         - Payroll management
+├── plugins/         - Frontend plugins (jQuery, Bootstrap, DataTables, CKEditor)
+├── repayments/      - Repayment tracking
+├── reports/         - Reporting pages
+├── savings/         - Savings account management (ENHANCED)
+├── SQLDB/           - Database schema files
+├── staff/           - Staff management and roles
+└── uploads/         - User uploaded files
+```
 
 ## Technology Stack
 - **Backend:** PHP 8.2
 - **Database:** PostgreSQL (via PDO)
-- **Frontend:** HTML, CSS, JavaScript
-- **UI Framework:** AdminLTE, Bootstrap 3.3.5
-- **Plugins:** DataTables, CKEditor, jQuery, iCheck
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+- **UI Framework:** Bootstrap 5.3, Custom Modern CSS
+- **Charts:** Chart.js 4.x
+- **Icons:** Font Awesome 6.x
+- **Fonts:** Inter (Google Fonts)
+
+## Key Features (Matching Modern LoanDisk)
+
+### 1. Modern Dashboard with Charts
+- Visual analytics showing loan releases and collections
+- Real-time statistics (borrowers, loans, savings, investments)
+- Quick action buttons for common tasks
+- Activity feed showing recent events
+
+### 2. Savings Accounts
+- Create savings accounts for borrowers
+- Deposit and withdrawal transactions
+- Automatic interest calculation
+- Downloadable statements
+
+### 3. Investor Accounts
+- Manage investor profiles
+- Track investments and returns
+- Interest calculation and payments
+- Investment history tracking
+
+### 4. Enhanced Staff Roles & Permissions
+- Granular role-based access control
+- Pre-defined roles: Administrator, Branch Manager, Operations Manager, Cashier, Teller, Collector, Loan Officer
+- Module-level permissions (borrowers, loans, savings, reports, etc.)
+- Custom role creation
+
+### 5. Automated SMS/Email
+- Multiple SMS provider support (Twilio, Africa's Talking, Nexmo, Termii)
+- Customizable SMS templates with placeholders
+- Auto-send for payment reminders, confirmations, overdue notices
+- Email notification system
+
+### 6. Auto-fill Loan Agreements
+- Upload DOCX templates
+- Placeholder system for dynamic content
+- Generate filled agreements on demand
+- Download as DOCX or PDF
 
 ## Database
-The application uses PostgreSQL with PDO connection. Database configuration is handled via the `DATABASE_URL` environment variable.
-
-Tables include:
-- `borrower` - Borrower information
-- `loans` - Loan records
-- `loan_product` - Loan product definitions
-- `loan_charges` - Loan fee definitions
-- `loan_repayments` - Repayment configuration
-- `staff` - Staff accounts
-- `staff_roles` - Staff role definitions
-- `staff_access` - Role permissions
-- `disbursement_methods` - Payment methods
+PostgreSQL database with comprehensive schema including:
+- Core tables: borrower, loans, loan_product, staff, etc.
+- New tables: savings_accounts, savings_transactions, investors, investor_accounts
+- Support tables: sms_templates, email_templates, agreement_templates
+- Role system: staff_role_types, permissions, role_permissions
 
 ## Running the Application
-The PHP development server runs on port 5000:
-```
+```bash
 php -S 0.0.0.0:5000
 ```
 
 ## Entry Points
-- `/index.html` - Login page
-- `/home/welcome.html` - Dashboard (after login)
+- `/login.php` - Modern login page
+- `/home/dashboard.php` - Main dashboard with charts
 - `/admin/index.php` - Admin panel
+- `/savings/view_accounts.php` - Savings management
+- `/investors/view_investors.php` - Investor management
+- `/staff/roles.php` - Role & permission management
+- `/admin/sms_settings.php` - SMS configuration
+- `/admin/templates.php` - Agreement templates
 
-## Recent Changes
-- January 2026: Migrated from MySQL to PostgreSQL
-- Updated database connection files to use PDO with PostgreSQL driver
-- Created PostgreSQL-compatible schema in `SQLDB/loandisk_postgresql.sql`
+## Recent Changes (January 2026)
+- Complete UI modernization with Bootstrap 5 and custom CSS
+- Added Chart.js dashboard with loan performance analytics
+- Implemented savings account management
+- Added investor account functionality
+- Enhanced staff roles with granular permissions
+- Integrated SMS/Email notification system with templates
+- Added DOCX agreement template system
+- Migrated database from MySQL to PostgreSQL
+- Created comprehensive PostgreSQL schema with all new tables
+
+## User Preferences
+- Modern, clean UI matching loandisk.com design
+- Blue color scheme with professional styling
+- Responsive sidebar navigation
+- Card-based layout with shadow effects
