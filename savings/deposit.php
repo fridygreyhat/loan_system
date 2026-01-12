@@ -71,7 +71,7 @@ include $base_path . 'includes/header.php';
             <div class="card-body">
                 <p><strong>Account Number:</strong> <?php echo htmlspecialchars($account['account_number']); ?></p>
                 <p><strong>Account Holder:</strong> <?php echo htmlspecialchars($account['fname'] . ' ' . $account['lname']); ?></p>
-                <p><strong>Current Balance:</strong> <span class="text-success fs-4">$<?php echo number_format($account['balance'], 2); ?></span></p>
+                <p><strong>Current Balance:</strong> <span class="text-success fs-4">TZS <?php echo number_format($account['balance'], 2); ?></span></p>
             </div>
         </div>
         

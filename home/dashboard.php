@@ -127,7 +127,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-arrow-down"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_disbursed); ?></h3>
+                <h3>TZS <?php echo number_format($total_disbursed); ?></h3>
                 <p>Total Disbursed</p>
             </div>
         </div>
@@ -138,7 +138,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-arrow-up"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_collected); ?></h3>
+                <h3>TZS <?php echo number_format($total_collected); ?></h3>
                 <p>Total Collected</p>
             </div>
         </div>

@@ -81,7 +81,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-arrow-down"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_inflow, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_inflow, 2); ?></h3>
                 <p>Total Inflow</p>
             </div>
         </div>
@@ -92,7 +92,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-arrow-up"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_outflow, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_outflow, 2); ?></h3>
                 <p>Total Outflow</p>
             </div>
         </div>
@@ -103,7 +103,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-balance-scale"></i>
             </div>
             <div class="stat-info">
-                <h3 class="<?php echo $net_cash_flow >= 0 ? 'text-success' : 'text-danger'; ?>">$<?php echo number_format($net_cash_flow, 2); ?></h3>
+                <h3 class="<?php echo $net_cash_flow >= 0 ? 'text-success' : 'text-danger'; ?>">TZS <?php echo number_format($net_cash_flow, 2); ?></h3>
                 <p>Net Cash Flow</p>
             </div>
         </div>
@@ -120,11 +120,11 @@ include $base_path . 'includes/header.php';
                 <table class="table mb-0">
                     <tr>
                         <td>Loan Repayments</td>
-                        <td class="text-end text-success"><strong>$<?php echo number_format($total_inflow, 2); ?></strong></td>
+                        <td class="text-end text-success"><strong>TZS <?php echo number_format($total_inflow, 2); ?></strong></td>
                     </tr>
                     <tr class="table-success">
                         <td><strong>Total Inflow</strong></td>
-                        <td class="text-end"><strong>$<?php echo number_format($total_inflow, 2); ?></strong></td>
+                        <td class="text-end"><strong>TZS <?php echo number_format($total_inflow, 2); ?></strong></td>
                     </tr>
                 </table>
             </div>
@@ -139,11 +139,11 @@ include $base_path . 'includes/header.php';
                 <table class="table mb-0">
                     <tr>
                         <td>Expenses</td>
-                        <td class="text-end text-danger"><strong>$<?php echo number_format($total_outflow, 2); ?></strong></td>
+                        <td class="text-end text-danger"><strong>TZS <?php echo number_format($total_outflow, 2); ?></strong></td>
                     </tr>
                     <tr class="table-danger">
                         <td><strong>Total Outflow</strong></td>
-                        <td class="text-end"><strong>$<?php echo number_format($total_outflow, 2); ?></strong></td>
+                        <td class="text-end"><strong>TZS <?php echo number_format($total_outflow, 2); ?></strong></td>
                     </tr>
                 </table>
             </div>

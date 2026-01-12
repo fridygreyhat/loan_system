@@ -88,7 +88,7 @@ include $base_path . 'includes/header.php';
                         <td><strong>#<?php echo $loan['id']; ?></strong></td>
                         <td><?php echo htmlspecialchars(($loan['fname'] ?? '') . ' ' . ($loan['lname'] ?? '')); ?></td>
                         <td><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></td>
-                        <td>$<?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
+                        <td>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
                         <td><?php echo $loan['loan_interest'] ?? 0; ?>%</td>
                         <td>
                             <?php 

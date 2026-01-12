@@ -37,7 +37,7 @@ include $base_path . 'includes/header.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" placeholder="+1 234 567 890">
+                        <input type="tel" class="form-control" placeholder="+255 xxx xxx xxx">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Address</label>
@@ -58,9 +58,9 @@ include $base_path . 'includes/header.php';
                     <div class="mb-3">
                         <label class="form-label">Currency</label>
                         <select class="form-select">
+                            <option value="TZS" selected>TZS - Tanzanian Shilling</option>
                             <option value="USD">USD - US Dollar</option>
                             <option value="EUR">EUR - Euro</option>
-                            <option value="GBP">GBP - British Pound</option>
                             <option value="KES">KES - Kenyan Shilling</option>
                         </select>
                     </div>
@@ -75,10 +75,10 @@ include $base_path . 'includes/header.php';
                     <div class="mb-3">
                         <label class="form-label">Timezone</label>
                         <select class="form-select">
-                            <option>UTC</option>
-                            <option>America/New_York</option>
-                            <option>Europe/London</option>
+                            <option selected>Africa/Dar_es_Salaam</option>
                             <option>Africa/Nairobi</option>
+                            <option>UTC</option>
+                            <option>Europe/London</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Settings</button>

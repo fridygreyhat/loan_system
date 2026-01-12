@@ -64,7 +64,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-wallet"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($account['balance'], 2); ?></h3>
+                <h3>TZS <?php echo number_format($account['balance'], 2); ?></h3>
                 <p>Current Balance</p>
             </div>
         </div>
@@ -75,7 +75,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-percentage"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($account['interest_earned'], 2); ?></h3>
+                <h3>TZS <?php echo number_format($account['interest_earned'], 2); ?></h3>
                 <p>Interest Earned</p>
             </div>
         </div>
@@ -153,9 +153,9 @@ include $base_path . 'includes/header.php';
                                 </td>
                                 <td><?php echo htmlspecialchars($tx['description'] ?? '-'); ?></td>
                                 <td class="<?php echo $tx['type'] === 'deposit' ? 'text-success' : 'text-danger'; ?>">
-                                    <?php echo $tx['type'] === 'deposit' ? '+' : '-'; ?>$<?php echo number_format($tx['amount'], 2); ?>
+                                    <?php echo $tx['type'] === 'deposit' ? '+' : '-'; ?>TZS <?php echo number_format($tx['amount'], 2); ?>
                                 </td>
-                                <td>$<?php echo number_format($tx['balance_after'], 2); ?></td>
+                                <td>TZS <?php echo number_format($tx['balance_after'], 2); ?></td>
                             </tr>
                             <?php endforeach; ?>
                             <?php endif; ?>

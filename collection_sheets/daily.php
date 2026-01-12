@@ -59,7 +59,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-dollar-sign"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format(array_sum(array_column($collections, 'amount')), 2); ?></h3>
+                <h3>TZS <?php echo number_format(array_sum(array_column($collections, 'amount')), 2); ?></h3>
                 <p>Expected Amount</p>
             </div>
         </div>
@@ -97,7 +97,7 @@ include $base_path . 'includes/header.php';
                         <td><strong><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></strong></td>
                         <td><?php echo htmlspecialchars($item['mobile'] ?? '-'); ?></td>
                         <td>#<?php echo $item['loan_id']; ?></td>
-                        <td>$<?php echo number_format($item['amount'] ?? 0, 2); ?></td>
+                        <td>TZS <?php echo number_format($item['amount'] ?? 0, 2); ?></td>
                         <td>
                             <?php 
                             $status = $item['status'] ?? 'pending';

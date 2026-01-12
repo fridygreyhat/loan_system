@@ -50,7 +50,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-chart-bar"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_investments, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_investments, 2); ?></h3>
                 <p>Total Investments</p>
             </div>
         </div>
@@ -72,7 +72,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-hand-holding-usd"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format(array_sum(array_column($investors, 'total_interest')), 2); ?></h3>
+                <h3>TZS <?php echo number_format(array_sum(array_column($investors, 'total_interest')), 2); ?></h3>
                 <p>Interest Payable</p>
             </div>
         </div>
@@ -117,8 +117,8 @@ include $base_path . 'includes/header.php';
                         </td>
                         <td><?php echo htmlspecialchars($investor['email'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($investor['phone'] ?? '-'); ?></td>
-                        <td><strong>$<?php echo number_format($investor['total_invested'], 2); ?></strong></td>
-                        <td class="text-success">$<?php echo number_format($investor['total_interest'], 2); ?></td>
+                        <td><strong>TZS <?php echo number_format($investor['total_invested'], 2); ?></strong></td>
+                        <td class="text-success">TZS <?php echo number_format($investor['total_interest'], 2); ?></td>
                         <td>
                             <span class="badge badge-<?php echo $investor['status'] === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo ucfirst($investor['status']); ?>

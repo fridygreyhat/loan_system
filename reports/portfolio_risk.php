@@ -80,7 +80,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-wallet"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_portfolio, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_portfolio, 2); ?></h3>
                 <p>Total Portfolio</p>
             </div>
         </div>
@@ -137,25 +137,25 @@ include $base_path . 'includes/header.php';
             <tbody>
                 <tr>
                     <td><strong>Current (On-time)</strong></td>
-                    <td>$<?php echo number_format($total_portfolio - $par_30, 2); ?></td>
+                    <td>TZS <?php echo number_format($total_portfolio - $par_30, 2); ?></td>
                     <td><?php echo number_format(100 - $par_30_pct, 1); ?>%</td>
                     <td><span class="badge bg-success">Low</span></td>
                 </tr>
                 <tr>
                     <td><strong>PAR > 30 Days</strong></td>
-                    <td>$<?php echo number_format($par_30, 2); ?></td>
+                    <td>TZS <?php echo number_format($par_30, 2); ?></td>
                     <td><?php echo number_format($par_30_pct, 1); ?>%</td>
                     <td><span class="badge bg-warning">Medium</span></td>
                 </tr>
                 <tr>
                     <td><strong>PAR > 60 Days</strong></td>
-                    <td>$<?php echo number_format($par_60, 2); ?></td>
+                    <td>TZS <?php echo number_format($par_60, 2); ?></td>
                     <td><?php echo number_format($par_60_pct, 1); ?>%</td>
                     <td><span class="badge bg-orange text-white" style="background-color: #fd7e14;">High</span></td>
                 </tr>
                 <tr>
                     <td><strong>PAR > 90 Days</strong></td>
-                    <td>$<?php echo number_format($par_90, 2); ?></td>
+                    <td>TZS <?php echo number_format($par_90, 2); ?></td>
                     <td><?php echo number_format($par_90_pct, 1); ?>%</td>
                     <td><span class="badge bg-danger">Critical</span></td>
                 </tr>

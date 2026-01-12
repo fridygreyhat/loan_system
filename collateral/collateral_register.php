@@ -87,7 +87,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo htmlspecialchars($item['type'] ?? $item['collateral_type'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></td>
                         <td><?php echo $item['loan_id'] ? '#' . $item['loan_id'] : '-'; ?></td>
-                        <td>$<?php echo number_format($item['value'] ?? $item['collateral_value'] ?? 0, 2); ?></td>
+                        <td>TZS <?php echo number_format($item['value'] ?? $item['collateral_value'] ?? 0, 2); ?></td>
                         <td>
                             <?php 
                             $status = $item['status'] ?? 'active';

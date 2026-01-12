@@ -69,7 +69,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo date('M d, Y', strtotime($item['paid_date'])); ?></td>
                         <td><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></td>
                         <td><a href="<?php echo $base_path; ?>loans/view_loan.php?id=<?php echo $item['loan_id']; ?>">#<?php echo $item['loan_id']; ?></a></td>
-                        <td class="text-success"><strong>$<?php echo number_format($item['amount'] ?? 0, 2); ?></strong></td>
+                        <td class="text-success"><strong>TZS <?php echo number_format($item['amount'] ?? 0, 2); ?></strong></td>
                         <td><?php echo htmlspecialchars($item['payment_method'] ?? 'Cash'); ?></td>
                         <td>
                             <a href="view_repayment.php?id=<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>

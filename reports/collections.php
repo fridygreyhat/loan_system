@@ -70,7 +70,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-dollar-sign"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_collected, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_collected, 2); ?></h3>
                 <p>Total Collected</p>
             </div>
         </div>
@@ -118,7 +118,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo date('M d, Y', strtotime($item['paid_date'])); ?></td>
                         <td><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></td>
                         <td>#<?php echo $item['loan_id']; ?></td>
-                        <td class="text-success"><strong>$<?php echo number_format($item['amount'] ?? 0, 2); ?></strong></td>
+                        <td class="text-success"><strong>TZS <?php echo number_format($item['amount'] ?? 0, 2); ?></strong></td>
                         <td><?php echo htmlspecialchars($item['payment_method'] ?? 'Cash'); ?></td>
                     </tr>
                     <?php endforeach; ?>

@@ -73,7 +73,7 @@ include $base_path . 'includes/header.php';
             <div class="card-body">
                 <p><strong>Account Number:</strong> <?php echo htmlspecialchars($account['account_number']); ?></p>
                 <p><strong>Account Holder:</strong> <?php echo htmlspecialchars($account['fname'] . ' ' . $account['lname']); ?></p>
-                <p><strong>Available Balance:</strong> <span class="text-success fs-4">$<?php echo number_format($account['balance'], 2); ?></span></p>
+                <p><strong>Available Balance:</strong> <span class="text-success fs-4">TZS <?php echo number_format($account['balance'], 2); ?></span></p>
             </div>
         </div>
         
@@ -89,7 +89,7 @@ include $base_path . 'includes/header.php';
                             <span class="input-group-text">$</span>
                             <input type="number" name="amount" class="form-control form-control-lg" step="0.01" min="0.01" max="<?php echo $account['balance']; ?>" required autofocus>
                         </div>
-                        <small class="text-muted">Maximum: $<?php echo number_format($account['balance'], 2); ?></small>
+                        <small class="text-muted">Maximum: TZS <?php echo number_format($account['balance'], 2); ?></small>
                     </div>
                     
                     <div class="mb-3">

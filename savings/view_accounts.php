@@ -43,7 +43,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-piggy-bank"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format(array_sum(array_column($accounts, 'balance')), 2); ?></h3>
+                <h3>TZS <?php echo number_format(array_sum(array_column($accounts, 'balance')), 2); ?></h3>
                 <p>Total Savings</p>
             </div>
         </div>
@@ -65,7 +65,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-percentage"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format(array_sum(array_column($accounts, 'interest_earned')), 2); ?></h3>
+                <h3>TZS <?php echo number_format(array_sum(array_column($accounts, 'interest_earned')), 2); ?></h3>
                 <p>Interest Earned</p>
             </div>
         </div>
@@ -110,9 +110,9 @@ include $base_path . 'includes/header.php';
                         <td><strong><?php echo htmlspecialchars($account['account_number']); ?></strong></td>
                         <td><?php echo htmlspecialchars($account['fname'] . ' ' . $account['lname']); ?></td>
                         <td><?php echo htmlspecialchars($account['product_name'] ?? 'Standard'); ?></td>
-                        <td><strong>$<?php echo number_format($account['balance'], 2); ?></strong></td>
+                        <td><strong>TZS <?php echo number_format($account['balance'], 2); ?></strong></td>
                         <td><?php echo $account['interest_rate'] ?? 0; ?>%</td>
-                        <td class="text-success">$<?php echo number_format($account['interest_earned'], 2); ?></td>
+                        <td class="text-success">TZS <?php echo number_format($account['interest_earned'], 2); ?></td>
                         <td>
                             <span class="badge badge-<?php echo $account['status'] === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo ucfirst($account['status']); ?>

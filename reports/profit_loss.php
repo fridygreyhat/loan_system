@@ -91,7 +91,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-coins"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_income, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_income, 2); ?></h3>
                 <p>Total Income</p>
             </div>
         </div>
@@ -102,7 +102,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-file-invoice-dollar"></i>
             </div>
             <div class="stat-info">
-                <h3>$<?php echo number_format($total_expenses, 2); ?></h3>
+                <h3>TZS <?php echo number_format($total_expenses, 2); ?></h3>
                 <p>Total Expenses</p>
             </div>
         </div>
@@ -113,7 +113,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-chart-line"></i>
             </div>
             <div class="stat-info">
-                <h3 class="<?php echo $net_profit >= 0 ? 'text-success' : 'text-danger'; ?>">$<?php echo number_format($net_profit, 2); ?></h3>
+                <h3 class="<?php echo $net_profit >= 0 ? 'text-success' : 'text-danger'; ?>">TZS <?php echo number_format($net_profit, 2); ?></h3>
                 <p>Net <?php echo $net_profit >= 0 ? 'Profit' : 'Loss'; ?></p>
             </div>
         </div>
@@ -130,15 +130,15 @@ include $base_path . 'includes/header.php';
                 <table class="table mb-0">
                     <tr>
                         <td>Interest & Loan Repayments</td>
-                        <td class="text-end text-success">$<?php echo number_format($interest_income, 2); ?></td>
+                        <td class="text-end text-success">TZS <?php echo number_format($interest_income, 2); ?></td>
                     </tr>
                     <tr>
                         <td>Other Income</td>
-                        <td class="text-end text-success">$<?php echo number_format($other_income, 2); ?></td>
+                        <td class="text-end text-success">TZS <?php echo number_format($other_income, 2); ?></td>
                     </tr>
                     <tr class="table-success">
                         <td><strong>Total Income</strong></td>
-                        <td class="text-end"><strong>$<?php echo number_format($total_income, 2); ?></strong></td>
+                        <td class="text-end"><strong>TZS <?php echo number_format($total_income, 2); ?></strong></td>
                     </tr>
                 </table>
             </div>
@@ -153,11 +153,11 @@ include $base_path . 'includes/header.php';
                 <table class="table mb-0">
                     <tr>
                         <td>Operating Expenses</td>
-                        <td class="text-end text-danger">$<?php echo number_format($total_expenses, 2); ?></td>
+                        <td class="text-end text-danger">TZS <?php echo number_format($total_expenses, 2); ?></td>
                     </tr>
                     <tr class="table-danger">
                         <td><strong>Total Expenses</strong></td>
-                        <td class="text-end"><strong>$<?php echo number_format($total_expenses, 2); ?></strong></td>
+                        <td class="text-end"><strong>TZS <?php echo number_format($total_expenses, 2); ?></strong></td>
                     </tr>
                 </table>
             </div>
@@ -173,15 +173,15 @@ include $base_path . 'includes/header.php';
         <table class="table table-lg mb-0">
             <tr>
                 <td class="fs-5">Total Income</td>
-                <td class="text-end fs-5 text-success">$<?php echo number_format($total_income, 2); ?></td>
+                <td class="text-end fs-5 text-success">TZS <?php echo number_format($total_income, 2); ?></td>
             </tr>
             <tr>
                 <td class="fs-5">Total Expenses</td>
-                <td class="text-end fs-5 text-danger">($<?php echo number_format($total_expenses, 2); ?>)</td>
+                <td class="text-end fs-5 text-danger">(TZS <?php echo number_format($total_expenses, 2); ?>)</td>
             </tr>
             <tr class="<?php echo $net_profit >= 0 ? 'table-primary' : 'table-warning'; ?>">
                 <td class="fs-4"><strong>Net <?php echo $net_profit >= 0 ? 'Profit' : 'Loss'; ?></strong></td>
-                <td class="text-end fs-4 <?php echo $net_profit >= 0 ? 'text-success' : 'text-danger'; ?>"><strong>$<?php echo number_format(abs($net_profit), 2); ?></strong></td>
+                <td class="text-end fs-4 <?php echo $net_profit >= 0 ? 'text-success' : 'text-danger'; ?>"><strong>TZS <?php echo number_format(abs($net_profit), 2); ?></strong></td>
             </tr>
         </table>
     </div>

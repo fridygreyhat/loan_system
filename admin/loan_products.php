@@ -63,8 +63,8 @@ include $base_path . 'includes/header.php';
                         <td><strong><?php echo htmlspecialchars($product['name']); ?></strong></td>
                         <td><?php echo $product['interest_rate'] ?? 0; ?>%</td>
                         <td><?php echo htmlspecialchars($product['interest_method'] ?? 'Flat'); ?></td>
-                        <td>$<?php echo number_format($product['min_amount'] ?? 0, 2); ?></td>
-                        <td>$<?php echo number_format($product['max_amount'] ?? 0, 2); ?></td>
+                        <td>TZS <?php echo number_format($product['min_amount'] ?? 0, 2); ?></td>
+                        <td>TZS <?php echo number_format($product['max_amount'] ?? 0, 2); ?></td>
                         <td>
                             <span class="badge bg-<?php echo ($product['status'] ?? 'active') === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo ucfirst($product['status'] ?? 'active'); ?>
