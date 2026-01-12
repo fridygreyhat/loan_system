@@ -110,7 +110,7 @@ include $base_path . 'includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Investment Amount</label>
                             <div class="input-group">
-                                <span class="input-group-text">$</span>
+                                <span class="input-group-text">TZS </span>
                                 <input type="number" name="initial_investment" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>

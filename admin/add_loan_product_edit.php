@@ -503,7 +503,7 @@ if (isset($_GET['id'])) {
                                         </div>
                                         <hr>
                                         <p class="text-red"><b>Loan Due and Loan Schedule Amounts:</b></p>
-                                        <p>If Loan Due amount and/or Schedule amounts are in decimals for example $100.33333, the system will convert them based on below option.<p>
+                                        <p>If Loan Due amount and/or Schedule amounts are in decimals for example TZS 100.33333, the system will convert them based on below option.<p>
                                         <div class="form-group">
                                             <label for="inputLoanDecimalPlaces" class="col-sm-3 control-label">Decimal Places</label>                      
                                             <div class="col-sm-5">
@@ -553,7 +553,7 @@ if (isset($_GET['id'])) {
                                             }
                                         </script>
                                         <p class="text-red"><b>Repayment Order:</b></p>
-                                        <p>The order in which repayments are allocated. For example let's say you receive payment of $100 and order is <b>Fees</b>,  <b>Principal</b>, <b>Interest</b>, <b>Penalty</b>. Based on the loan schedule, the system will allocate the amount to <b>Fees</b> first and remaining amount to <b>Principal</b> and then <b>Interest</b> and then <b>Penalty</b>.<p>
+                                        <p>The order in which repayments are allocated. For example let's say you receive payment of TZS 100 and order is <b>Fees</b>,  <b>Principal</b>, <b>Interest</b>, <b>Penalty</b>. Based on the loan schedule, the system will allocate the amount to <b>Fees</b> first and remaining amount to <b>Principal</b> and then <b>Interest</b> and then <b>Penalty</b>.<p>
                                         <div class="form-group">
                                             <label for="inputLoanRepaymentOrder" class="col-sm-3 control-label">Repayment Order</label>       
                                             <div class="col-xs-6">

@@ -84,7 +84,7 @@ include $base_path . 'includes/header.php';
                     <div class="mb-3">
                         <label class="form-label">Amount <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">TZS </span>
                             <input type="number" name="amount" class="form-control form-control-lg" step="0.01" min="0.01" required autofocus>
                         </div>
                     </div>

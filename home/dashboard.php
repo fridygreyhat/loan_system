@@ -105,7 +105,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-piggy-bank"></i>
             </div>
             <div class="stat-info">
-                <h3>$0</h3>
+                <h3>TZS 0</h3>
                 <p>Total Savings</p>
             </div>
         </div>
@@ -116,7 +116,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-chart-bar"></i>
             </div>
             <div class="stat-info">
-                <h3>$0</h3>
+                <h3>TZS 0</h3>
                 <p>Total Investments</p>
             </div>
         </div>
@@ -206,7 +206,7 @@ include $base_path . 'includes/header.php';
                     </div>
                     <div class="activity-content">
                         <h6>Payment Received</h6>
-                        <p>$500 payment received from Jane Smith</p>
+                        <p>TZS 500 payment received from Jane Smith</p>
                     </div>
                     <span class="activity-time">4 hours ago</span>
                 </div>
