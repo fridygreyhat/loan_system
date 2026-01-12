@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LoanDisk</title>
+    <title>Login - Loan_system</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body class="login-page">
     <div class="login-card">
         <div class="logo">
-            <h2><i class="fas fa-coins me-2"></i>LoanDisk</h2>
+            <h2><i class="fas fa-coins me-2"></i>Loan_system</h2>
             <p>Loan Management System</p>
         </div>
         
