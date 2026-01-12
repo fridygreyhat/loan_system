@@ -1,177 +1,149 @@
 <?php
 
-//include_once 'db/db.php';
-
 class DbAcess {
 
     private $conn;
 
-    //$sql = $this->con->prepare("SELECT {$_cols} FROM `{$table}`{$_cls} {$order} {$limit}");
-    //put your code here
     public function __construct() {
-        // include './connect.php';
-        $servername = "localhost";
-        $username = "root";
-        $password = "readme";
+        $db_url = getenv('DATABASE_URL');
 
-        // Create connection
-        $this->conn = new mysqli($servername, $username, $password);
-
-        // Check connection
-        if ($this->conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        if ($db_url) {
+            $parsed = parse_url($db_url);
+            $hostname = $parsed['host'];
+            $username = $parsed['user'];
+            $password = $parsed['pass'];
+            $database = ltrim($parsed['path'], '/');
+            $port = isset($parsed['port']) ? $parsed['port'] : 5432;
+        } else {
+            $hostname = "localhost";
+            $username = "postgres";
+            $password = "";
+            $database = "loandisk";
+            $port = 5432;
         }
-        mysqli_select_db($this->conn, "loandisk");
-        // echo "Connected successfully";
+
+        try {
+            $dsn = "pgsql:host=$hostname;port=$port;dbname=$database";
+            $this->conn = new PDO($dsn, $username, $password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Connection failed: " . $e->getMessage());
+        }
     }
 
-    /**
-      @param string $table name of the table
-      @param Array $set array(key=value,key=>vale)
-     */
     public function update($table, $set = array(), $where = array()) {
-        //UPDATE `booda`.`users` SET `lname` = 'jumix' WHERE `users`.`id` = 4;
         $q = "UPDATE $table SET ";
+        $params = array();
+        $i = 0;
+        
         if ($set) {
             foreach ($set as $key => $value) {
-                $q.= $key . " ='$value',";
+                $q .= "$key = :set_$i,";
+                $params[":set_$i"] = $value;
+                $i++;
             }
-
-            $q = substr($q, 0, -1) . " where ";
+            $q = substr($q, 0, -1) . " WHERE ";
         }
+        
+        $j = 0;
         foreach ($where as $key1 => $value1) {
-            $q.="$key1 = '$value1' and";
+            $q .= "$key1 = :where_$j AND ";
+            $params[":where_$j"] = $value1;
+            $j++;
         }
-        $q = substr($q, 0, -3);
-        //  echo '///'.$q."/////";
-        //$sql = $this->con->prepare("SELECT {$_cols} FROM `{$table}`{$_cls} {$order} {$limit}");
-        $query = mysqli_query($this->conn, $q);
+        $q = substr($q, 0, -4);
 
-        return $query;
+        try {
+            $stmt = $this->conn->prepare($q);
+            return $stmt->execute($params);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 
     public function insert($table, $data = array()) {
-        $q = "insert into $table ";
-        $values = "(";
-        $cols = "(";
-        foreach ($data as $key => $value) {
-            $cols.="$key,";
-            $values.="'" . mysqli_real_escape_string($this->conn, $value) . "',";
-        }
+        $cols = implode(',', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+        $q = "INSERT INTO $table ($cols) VALUES ($placeholders) RETURNING id";
 
-        $cols = substr($cols, 0, -1) . ")";
-        $values = substr($values, 0, -1) . ")";
-        $q.=$cols . " values $values";
-        //echo $q."////";
-        $query = mysqli_query($this->conn, $q);
-        if ($query) {
-            return mysqli_insert_id($this->conn);
+        try {
+            $stmt = $this->conn->prepare($q);
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['id'];
+        } catch (PDOException $e) {
+            return $e->getMessage();
         }
-        return mysqli_error($this->conn);
     }
 
     public function select($table, $cols = array(), $where = FALSE) {
-        $q = "Select ";
+        $q = "SELECT ";
         if (empty($cols)) {
-            $q = "select *";
+            $q .= "*";
         } else {
-            $strCols = "";
-            foreach ($cols as $col) {
-                $strCols.=$col . ",";
-            }
-
-            $strColsfinal = substr($strCols, 0, -1);
-            $q = "Select " . $strColsfinal;
+            $q .= implode(',', $cols);
         }
-        $q.=" from $table";
+        $q .= " FROM $table";
+
+        $params = array();
+        $orderby = "";
 
         if ($where) {
-            // $keys=  array_keys($where);
             $wherestr = "";
-            $orderbyValue = "";
-            $orderby = FALSE;
+            $i = 0;
             foreach ($where as $key => $value) {
                 if ($key == "order by") {
-                    //echo "True key=$key and ".($key=="order by");
-                    $orderbyValue = $value;
-                    $orderby = TRUE;
+                    $orderby = " ORDER BY $value";
                 } else {
-                    $checkEmail = $this->isValidEmail($value);
-                    if ($checkEmail) {
-                        $wherestr.=" $key ='$value' and";
-                    } else {
-                        $explodable = explode('.', $value);
-
-                        //print_r($explodable);
-                        if (count($explodable) > 1) {
-                            $wherestr.=" $key =$value and";
-                        } else {
-                            if ($value[0] == "!") {
-                                 $wherestr.=" $key !='$value' and";
-                            } else {
-                                $wherestr.=" $key ='$value' and";
-                            }
-                        }
-                    }
+                    $wherestr .= " $key = :where_$i AND";
+                    $params[":where_$i"] = $value;
+                    $i++;
                 }
             }
-
             $wherestr = substr($wherestr, 0, -3);
             if ($wherestr && strlen($wherestr) > 3) {
-                $q.=" where " . $wherestr;
+                $q .= " WHERE " . $wherestr;
             }
-
-            if ($orderby) {
-
-                $q.=" order by $orderbyValue";
-            }
+            $q .= $orderby;
         }
 
-        $query = mysqli_query($this->conn, $q);
-        // echo $q;
-        $result = array();
-        if ($query) {
-            while ($row = mysqli_fetch_array($query, MYSQL_ASSOC)) {
-                $result[] = $row;
-            }
+        try {
+            $stmt = $this->conn->prepare($q);
+            $stmt->execute($params);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             if (count($result) == 1) {
                 return $result[0];
             } else {
                 return $result;
             }
-        } else {
-            echo 'Erorr ' . mysqli_error($this->conn);
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+            return FALSE;
         }
-
-        return FALSE;
     }
 
     public function selectQuery($sql) {
-        $query = mysqli_query($this->conn, $sql);
-        // echo $q;
-        $result = array();
-        if ($query) {
-            while ($row = mysqli_fetch_array($query, MYSQL_ASSOC)) {
-                $result[] = $row;
-            }
+        try {
+            $stmt = $this->conn->query($sql);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             if (count($result) == 1) {
                 return $result[0];
             } else {
                 return $result;
             }
-        } else {
-            echo 'Erorr ' . mysqli_error($this->conn);
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+            return FALSE;
         }
-
-        return FALSE;
     }
 
     private function isValidEmail($string) {
-        if (filter_var($string, FILTER_VALIDATE_EMAIL)) {
-            //echo "This ($email_a) email address is considered valid.";
-            return TRUE;
-        }
-        return FALSE;
+        return filter_var($string, FILTER_VALIDATE_EMAIL) !== false;
     }
 
 }

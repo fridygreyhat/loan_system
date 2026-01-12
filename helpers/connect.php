@@ -1,11 +1,25 @@
 <?php
-$hostname="localhost"; //local server name default localhost
-$username="root";  //mysql username default is root.
-$password="readme";       //blank if no password is set for mysql.
-$database="loandisk";  //database name which you created
-$con=mysqli_connect($hostname,$username,$password);
-if(! $con)
-{
-die('Connection Failed'.mysql_error());
+$db_url = getenv('DATABASE_URL');
+
+if ($db_url) {
+    $parsed = parse_url($db_url);
+    $hostname = $parsed['host'];
+    $username = $parsed['user'];
+    $password = $parsed['pass'];
+    $database = ltrim($parsed['path'], '/');
+    $port = isset($parsed['port']) ? $parsed['port'] : 5432;
+} else {
+    $hostname = "localhost";
+    $username = "postgres";
+    $password = "";
+    $database = "loandisk";
+    $port = 5432;
 }
-mysqli_select_db($con,$database);
+
+try {
+    $dsn = "pgsql:host=$hostname;port=$port;dbname=$database";
+    $con = new PDO($dsn, $username, $password);
+    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('Connection Failed: ' . $e->getMessage());
+}
