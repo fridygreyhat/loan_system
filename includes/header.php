@@ -134,10 +134,27 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                     <li class="has-submenu">
                         <a href="#"><i class="fas fa-chart-pie"></i> <?php echo __('reports'); ?></a>
                         <ul class="submenu">
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/borrowers.php"><?php echo __('borrowers_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/loans.php"><?php echo __('loan_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/arrears_aging.php"><?php echo __('loan_arrears_aging_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/collections.php"><?php echo __('collections_report'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>reports/cash_flow.php"><?php echo __('cash_flow'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>reports/profit_loss.php"><?php echo __('profit_loss'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>reports/portfolio_risk.php"><?php echo __('portfolio_at_risk'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/collector.php"><?php echo __('collector_report_staff'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/deferred_income.php"><?php echo __('deferred_income'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/deferred_income_monthly.php"><?php echo __('deferred_income_monthly'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/pro_rata_collections.php"><?php echo __('pro_rata_collections_monthly'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/disbursement.php"><?php echo __('disbursement_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/fees.php"><?php echo __('fees_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/loan_officer.php"><?php echo __('loan_officer_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/loan_products.php"><?php echo __('loan_products_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/mfrs_ratios.php"><?php echo __('mfrs_ratios'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/daily.php"><?php echo __('daily_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/monthly.php"><?php echo __('monthly_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/outstanding.php"><?php echo __('outstanding_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/portfolio_risk.php"><?php echo __('portfolio_at_risk_par'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/at_a_glance.php"><?php echo __('at_a_glance_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/fully_paid_loans.php"><?php echo __('fully_paid_loans_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/defaulted_loans.php"><?php echo __('defaulted_loans_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/all_entries.php"><?php echo __('all_entries'); ?></a></li>
                         </ul>
                     </li>
                     
