@@ -17,7 +17,8 @@ LoanDisk is a comprehensive web-based loan management system built with PHP and 
 ├── helpers/         - PHP helper classes (DB connection, utilities)
 ├── home/            - Dashboard and welcome pages
 ├── includes/        - Shared templates (header.php, footer.php)
-├── investors/       - Investor account management (NEW)
+├── accounting/      - Accounting module (Cash Flow, P&L, Balance Sheet, etc.)
+├── investors/       - Investor account management
 ├── loans/           - Loan management pages
 ├── other_income/    - Other income tracking
 ├── payroll/         - Payroll management
@@ -77,6 +78,15 @@ LoanDisk is a comprehensive web-based loan management system built with PHP and 
 - Generate filled agreements on demand
 - Download as DOCX or PDF
 
+### 7. Complete Accounting Module
+- **Cash Flow Report** - Accumulated and monthly views with inflows/outflows
+- **Profit & Loss Statement** - Revenue vs expenses breakdown
+- **Balance Sheet** - Assets, liabilities, and equity overview
+- **Trial Balance** - Account balances with debit/credit columns
+- **General Ledger** - Transaction journal entries
+- **Chart of Accounts** - Account code management with types (Asset, Liability, Equity, Revenue, Expense)
+- **Manual Journal** - Create and post journal entries
+
 ## Database
 PostgreSQL database with comprehensive schema including:
 - Core tables: borrower, loans, loan_product, staff, etc.
@@ -98,6 +108,13 @@ php -S 0.0.0.0:5000
 - `/staff/roles.php` - Role & permission management
 - `/admin/sms_settings.php` - SMS configuration
 - `/admin/templates.php` - Agreement templates
+- `/accounting/cash_flow.php` - Cash Flow Report
+- `/accounting/profit_loss.php` - Profit & Loss Statement
+- `/accounting/balance_sheet.php` - Balance Sheet
+- `/accounting/trial_balance.php` - Trial Balance
+- `/accounting/general_ledger.php` - General Ledger
+- `/accounting/chart_of_accounts.php` - Chart of Accounts
+- `/accounting/manual_journal.php` - Manual Journal
 
 ## Recent Changes (January 2026)
 - Complete UI modernization with Bootstrap 5 and custom CSS
@@ -131,6 +148,7 @@ The system supports full bilingual interface:
 - Collateral (collateral/collateral_register.php)
 - Collection Sheets (collection_sheets/daily.php)
 - Settings (admin/loan_products.php)
+- **Accounting Module** - All 7 pages fully translated
 - All navigation menus
 
 ### Adding New Translations:
