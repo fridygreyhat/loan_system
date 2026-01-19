@@ -1,0 +1,407 @@
+import React, { useState } from 'react';
+import { ChevronDown, ChevronRight, FileText, DollarSign, TrendingUp, BarChart3, Scale, GitBranch, ArrowLeftRight, RefreshCw, List, BookOpen } from 'lucide-react';
+
+const AccountingModule = () => {
+  const [selectedMenu, setSelectedMenu] = useState('profit-loss');
+  const [isMenuExpanded, setIsMenuExpanded] = useState(true);
+
+  const menuItems = [
+    { id: 'cash-flow-accumulated', label: 'Cash Flow Accumulated', icon: DollarSign },
+    { id: 'cash-flow-monthly', label: 'Cash Flow Monthly', icon: TrendingUp },
+    { id: 'profit-loss', label: 'Profit / Loss', icon: BarChart3 },
+    { id: 'balance-sheet', label: 'Balance Sheet', icon: Scale },
+    { id: 'trial-balance', label: 'Trial Balance', icon: FileText },
+    { id: 'general-ledger', label: 'General Ledger Summary', icon: BookOpen },
+    { id: 'branch-equity', label: 'Branch Equity', icon: GitBranch },
+    { id: 'inter-bank-transfers', label: 'Inter Bank Transfers', icon: ArrowLeftRight },
+    { id: 'reconcile-entries', label: 'Reconcile Entries', icon: RefreshCw },
+    { id: 'chart-accounts', label: 'Chart of Accounts', icon: List },
+    { id: 'manual-journal', label: 'Manual Journal', icon: FileText }
+  ];
+
+  const renderContent = () => {
+    switch(selectedMenu) {
+      case 'cash-flow-accumulated':
+        return <CashFlowAccumulated />;
+      case 'cash-flow-monthly':
+        return <CashFlowMonthly />;
+      case 'profit-loss':
+        return <ProfitLoss />;
+      case 'balance-sheet':
+        return <BalanceSheet />;
+      case 'trial-balance':
+        return <TrialBalance />;
+      case 'general-ledger':
+        return <GeneralLedger />;
+      case 'branch-equity':
+        return <BranchEquity />;
+      case 'inter-bank-transfers':
+        return <InterBankTransfers />;
+      case 'reconcile-entries':
+        return <ReconcileEntries />;
+      case 'chart-accounts':
+        return <ChartOfAccounts />;
+      case 'manual-journal':
+        return <ManualJournal />;
+      default:
+        return <ProfitLoss />;
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className={`bg-gray-800 text-white transition-all duration-300 ${isMenuExpanded ? 'w-64' : 'w-16'}`}>
+        <div className="p-4 bg-gray-900 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText size={20} />
+            {isMenuExpanded && <span className="font-semibold">Accounting</span>}
+          </div>
+          <button onClick={() => setIsMenuExpanded(!isMenuExpanded)}>
+            {isMenuExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+          </button>
+        </div>
+        
+        <nav className="mt-4">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setSelectedMenu(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors ${
+                  selectedMenu === item.id ? 'bg-gray-700 border-l-4 border-blue-500' : ''
+                }`}
+              >
+                <Icon size={18} />
+                {isMenuExpanded && <span className="text-sm">{item.label}</span>}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        {renderContent()}
+      </div>
+    </div>
+  );
+};
+
+const CashFlowAccumulated = () => {
+  const [dateFrom, setDateFrom] = useState('2025-01-01');
+  const [dateTo, setDateTo] = useState('2025-01-19');
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Cash Flow Accumulated</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Date From</label>
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Date To</label>
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Generate Report</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            <tr><td className="px-6 py-4 font-semibold" colSpan={2}>Cash Inflows</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Loan Repayments</td><td className="px-6 py-4 text-right">$125,450.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Interest Income</td><td className="px-6 py-4 text-right">$45,230.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Fee Income</td><td className="px-6 py-4 text-right">$8,750.00</td></tr>
+            <tr className="bg-gray-50"><td className="px-6 py-4 font-semibold pl-12">Total Inflows</td><td className="px-6 py-4 text-right font-semibold">$179,430.00</td></tr>
+            
+            <tr><td className="px-6 py-4 font-semibold pt-6" colSpan={2}>Cash Outflows</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Loan Disbursements</td><td className="px-6 py-4 text-right">$95,000.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Operating Expenses</td><td className="px-6 py-4 text-right">$32,500.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Salaries & Wages</td><td className="px-6 py-4 text-right">$28,750.00</td></tr>
+            <tr className="bg-gray-50"><td className="px-6 py-4 font-semibold pl-12">Total Outflows</td><td className="px-6 py-4 text-right font-semibold">$156,250.00</td></tr>
+            
+            <tr className="bg-blue-50"><td className="px-6 py-4 font-bold">Net Cash Flow</td><td className="px-6 py-4 text-right font-bold text-green-600">$23,180.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const CashFlowMonthly = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Cash Flow Monthly</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Select Month</label>
+            <input type="month" defaultValue="2025-01" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Generate Report</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="font-semibold mb-4">January 2025 Cash Flow Summary</h3>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-green-50 p-4 rounded">
+            <div className="text-sm text-gray-600">Total Inflows</div>
+            <div className="text-2xl font-bold text-green-600">$179,430</div>
+          </div>
+          <div className="bg-red-50 p-4 rounded">
+            <div className="text-sm text-gray-600">Total Outflows</div>
+            <div className="text-2xl font-bold text-red-600">$156,250</div>
+          </div>
+          <div className="bg-blue-50 p-4 rounded">
+            <div className="text-sm text-gray-600">Net Cash Flow</div>
+            <div className="text-2xl font-bold text-blue-600">$23,180</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProfitLoss = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Profit & Loss Statement</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Period From</label>
+            <input type="date" defaultValue="2025-01-01" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Period To</label>
+            <input type="date" defaultValue="2025-01-19" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Generate Report</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            <tr><td className="px-6 py-4 font-semibold bg-green-50" colSpan={2}>REVENUE</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Interest Income</td><td className="px-6 py-4 text-right">$45,230.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Fee Income</td><td className="px-6 py-4 text-right">$8,750.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Other Income</td><td className="px-6 py-4 text-right">$2,340.00</td></tr>
+            <tr className="bg-gray-50"><td className="px-6 py-4 font-semibold pl-12">Total Revenue</td><td className="px-6 py-4 text-right font-semibold">$56,320.00</td></tr>
+            
+            <tr><td className="px-6 py-4 font-semibold bg-red-50 pt-6" colSpan={2}>EXPENSES</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Salaries & Wages</td><td className="px-6 py-4 text-right">$28,750.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Rent</td><td className="px-6 py-4 text-right">$5,000.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Utilities</td><td className="px-6 py-4 text-right">$1,250.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Depreciation</td><td className="px-6 py-4 text-right">$2,500.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Bad Debt Provision</td><td className="px-6 py-4 text-right">$3,200.00</td></tr>
+            <tr><td className="px-6 py-4 pl-12">Other Expenses</td><td className="px-6 py-4 text-right">$4,800.00</td></tr>
+            <tr className="bg-gray-50"><td className="px-6 py-4 font-semibold pl-12">Total Expenses</td><td className="px-6 py-4 text-right font-semibold">$45,500.00</td></tr>
+            
+            <tr className="bg-blue-50"><td className="px-6 py-4 font-bold text-lg">NET PROFIT</td><td className="px-6 py-4 text-right font-bold text-lg text-green-600">$10,820.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const BalanceSheet = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Balance Sheet</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">As of Date</label>
+            <input type="date" defaultValue="2025-01-19" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Generate Report</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-green-50 px-6 py-3 font-bold">ASSETS</div>
+          <table className="w-full">
+            <tbody className="divide-y divide-gray-200">
+              <tr><td className="px-6 py-3 font-semibold" colSpan={2}>Current Assets</td></tr>
+              <tr><td className="px-6 py-3 pl-12">Cash & Bank</td><td className="px-6 py-3 text-right">$145,230.00</td></tr>
+              <tr><td className="px-6 py-3 pl-12">Loans Receivable</td><td className="px-6 py-3 text-right">$850,000.00</td></tr>
+              <tr><td className="px-6 py-3 pl-12">Interest Receivable</td><td className="px-6 py-3 text-right">$12,450.00</td></tr>
+              <tr className="bg-gray-50"><td className="px-6 py-3 font-semibold pl-12">Total Current Assets</td><td className="px-6 py-3 text-right font-semibold">$1,007,680.00</td></tr>
+              
+              <tr><td className="px-6 py-3 font-semibold pt-4" colSpan={2}>Fixed Assets</td></tr>
+              <tr><td className="px-6 py-3 pl-12">Property & Equipment</td><td className="px-6 py-3 text-right">$75,000.00</td></tr>
+              <tr><td className="px-6 py-3 pl-12">Less: Depreciation</td><td className="px-6 py-3 text-right">($15,000.00)</td></tr>
+              <tr className="bg-gray-50"><td className="px-6 py-3 font-semibold pl-12">Total Fixed Assets</td><td className="px-6 py-3 text-right font-semibold">$60,000.00</td></tr>
+              
+              <tr className="bg-green-100"><td className="px-6 py-4 font-bold">TOTAL ASSETS</td><td className="px-6 py-4 text-right font-bold">$1,067,680.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <div className="bg-red-50 px-6 py-3 font-bold">LIABILITIES</div>
+            <table className="w-full">
+              <tbody className="divide-y divide-gray-200">
+                <tr><td className="px-6 py-3 font-semibold" colSpan={2}>Current Liabilities</td></tr>
+                <tr><td className="px-6 py-3 pl-12">Deposits</td><td className="px-6 py-3 text-right">$650,000.00</td></tr>
+                <tr><td className="px-6 py-3 pl-12">Interest Payable</td><td className="px-6 py-3 text-right">$8,500.00</td></tr>
+                <tr><td className="px-6 py-3 pl-12">Other Payables</td><td className="px-6 py-3 text-right">$12,340.00</td></tr>
+                <tr className="bg-gray-50"><td className="px-6 py-3 font-semibold pl-12">Total Liabilities</td><td className="px-6 py-3 text-right font-semibold">$670,840.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-blue-50 px-6 py-3 font-bold">EQUITY</div>
+            <table className="w-full">
+              <tbody className="divide-y divide-gray-200">
+                <tr><td className="px-6 py-3 pl-12">Share Capital</td><td className="px-6 py-3 text-right">$300,000.00</td></tr>
+                <tr><td className="px-6 py-3 pl-12">Retained Earnings</td><td className="px-6 py-3 text-right">$86,020.00</td></tr>
+                <tr><td className="px-6 py-3 pl-12">Current Year Profit</td><td className="px-6 py-3 text-right">$10,820.00</td></tr>
+                <tr className="bg-gray-50"><td className="px-6 py-3 font-semibold pl-12">Total Equity</td><td className="px-6 py-3 text-right font-semibold">$396,840.00</td></tr>
+                
+                <tr className="bg-blue-100"><td className="px-6 py-4 font-bold">TOTAL LIABILITIES & EQUITY</td><td className="px-6 py-4 text-right font-bold">$1,067,680.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TrialBalance = () => {
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Trial Balance</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">As of Date</label>
+            <input type="date" defaultValue="2025-01-19" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Generate Report</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account Code</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account Name</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Debit</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Credit</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            <tr><td className="px-6 py-4">1000</td><td className="px-6 py-4">Cash & Bank</td><td className="px-6 py-4 text-right">$145,230.00</td><td className="px-6 py-4 text-right">-</td></tr>
+            <tr><td className="px-6 py-4">1100</td><td className="px-6 py-4">Loans Receivable</td><td className="px-6 py-4 text-right">$850,000.00</td><td className="px-6 py-4 text-right">-</td></tr>
+            <tr><td className="px-6 py-4">1200</td><td className="px-6 py-4">Interest Receivable</td><td className="px-6 py-4 text-right">$12,450.00</td><td className="px-6 py-4 text-right">-</td></tr>
+            <tr><td className="px-6 py-4">1500</td><td className="px-6 py-4">Property & Equipment</td><td className="px-6 py-4 text-right">$75,000.00</td><td className="px-6 py-4 text-right">-</td></tr>
+            <tr><td className="px-6 py-4">1600</td><td className="px-6 py-4">Accumulated Depreciation</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$15,000.00</td></tr>
+            <tr><td className="px-6 py-4">2000</td><td className="px-6 py-4">Deposits</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$650,000.00</td></tr>
+            <tr><td className="px-6 py-4">2100</td><td className="px-6 py-4">Interest Payable</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$8,500.00</td></tr>
+            <tr><td className="px-6 py-4">2200</td><td className="px-6 py-4">Other Payables</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$12,340.00</td></tr>
+            <tr><td className="px-6 py-4">3000</td><td className="px-6 py-4">Share Capital</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$300,000.00</td></tr>
+            <tr><td className="px-6 py-4">3100</td><td className="px-6 py-4">Retained Earnings</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$96,840.00</td></tr>
+            <tr className="bg-gray-50 font-bold">
+              <td className="px-6 py-4" colSpan={2}>TOTALS</td>
+              <td className="px-6 py-4 text-right">$1,082,680.00</td>
+              <td className="px-6 py-4 text-right">$1,082,680.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const GeneralLedger = () => {
+  const [selectedAccount, setSelectedAccount] = useState('1000');
+  
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">General Ledger Summary</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="grid grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Account</label>
+            <select value={selectedAccount} onChange={(e) => setSelectedAccount(e.target.value)} className="w-full border rounded px-3 py-2">
+              <option value="1000">1000 - Cash & Bank</option>
+              <option value="1100">1100 - Loans Receivable</option>
+              <option value="4000">4000 - Interest Income</option>
+              <option value="5000">5000 - Salaries</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Date From</label>
+            <input type="date" defaultValue="2025-01-01" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Date To</label>
+            <input type="date" defaultValue="2025-01-19" className="w-full border rounded px-3 py-2" />
+          </div>
+          <div className="flex items-end">
+            <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">View Ledger</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-gray-50 px-6 py-4 border-b">
+          <h3 className="font-semibold">Account: 1000 - Cash & Bank</h3>
+          <p className="text-sm text-gray-600">Opening Balance: $120,000.00</p>
+        </div>
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reference</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Debit</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Credit</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Balance</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            <tr><td className="px-6 py-4">2025-01-02</td><td className="px-6 py-4">Loan Repayment - John Doe</td><td className="px-6 py-4">LR-001</td><td className="px-6 py-4 text-right">$5,230.00</td><td className="px-6 py-4 text-right">-</td><td className="px-6 py-4 text-right">$125,230.00</td></tr>
+            <tr><td className="px-6 py-4">2025-01-05</td><td className="px-6 py-4">Loan Disbursement</td><td className="px-6 py-4">LD

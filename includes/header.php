@@ -86,6 +86,19 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                     
                     <li><a href="<?php echo $base_path ?? ''; ?>collateral/collateral_register.php"><i class="fas fa-shield-alt"></i> <?php echo __('collateral'); ?></a></li>
                     
+                    <li class="has-submenu <?php echo ($current_page ?? '') === 'accounting' ? 'open' : ''; ?>">
+                        <a href="#"><i class="fas fa-calculator"></i> <?php echo __('accounting'); ?></a>
+                        <ul class="submenu <?php echo ($current_page ?? '') === 'accounting' ? 'show' : ''; ?>">
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/cash_flow.php"><?php echo __('cash_flow'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/profit_loss.php"><?php echo __('profit_loss'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/balance_sheet.php"><?php echo __('balance_sheet'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/trial_balance.php"><?php echo __('trial_balance'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/general_ledger.php"><?php echo __('general_ledger'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/chart_of_accounts.php"><?php echo __('chart_of_accounts'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>accounting/manual_journal.php"><?php echo __('manual_journal'); ?></a></li>
+                        </ul>
+                    </li>
+                    
                     <li class="has-submenu">
                         <a href="#"><i class="fas fa-file-invoice"></i> <?php echo __('collection_sheets'); ?></a>
                         <ul class="submenu">
