@@ -75,7 +75,10 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                         <a href="#"><i class="fas fa-money-bill-wave"></i> <?php echo __('repayments'); ?></a>
                         <ul class="submenu">
                             <li><a href="<?php echo $base_path ?? ''; ?>repayments/view_repayments.php"><?php echo __('view_repayments'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/add_bulk_repayments.php"><?php echo __('bulk_repayments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/add_bulk_repayments.php"><?php echo __('add_bulk_repayments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/import_csv.php"><?php echo __('add_repayments_csv'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/charts.php"><?php echo __('repayments_charts'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/approve_repayments.php"><?php echo __('approve_repayments'); ?></a></li>
                         </ul>
                     </li>
                     
