@@ -6,13 +6,14 @@ $current_page = 'assets';
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
 
-$assets = [
-    ['id' => 1, 'name' => 'Office Computer - Dell OptiPlex', 'type' => 'Equipment', 'type_sw' => 'Vifaa', 'purchase_date' => '2024-01-15', 'purchase_price' => 2500000, 'current_value' => 2000000, 'depreciation' => 500000, 'status' => 'active'],
-    ['id' => 2, 'name' => 'Office Furniture Set', 'type' => 'Furniture', 'type_sw' => 'Samani', 'purchase_date' => '2023-06-10', 'purchase_price' => 3500000, 'current_value' => 2800000, 'depreciation' => 700000, 'status' => 'active'],
-    ['id' => 3, 'name' => 'Toyota Corolla - Office Vehicle', 'type' => 'Vehicle', 'type_sw' => 'Gari', 'purchase_date' => '2022-03-20', 'purchase_price' => 45000000, 'current_value' => 35000000, 'depreciation' => 10000000, 'status' => 'active'],
-    ['id' => 4, 'name' => 'HP LaserJet Printer', 'type' => 'Equipment', 'type_sw' => 'Vifaa', 'purchase_date' => '2024-02-01', 'purchase_price' => 1200000, 'current_value' => 1000000, 'depreciation' => 200000, 'status' => 'active'],
-    ['id' => 5, 'name' => 'Air Conditioning Unit', 'type' => 'Equipment', 'type_sw' => 'Vifaa', 'purchase_date' => '2023-11-15', 'purchase_price' => 1800000, 'current_value' => 1500000, 'depreciation' => 300000, 'status' => 'active'],
-];
+$assets = [];
+try {
+    $db = $con;
+    $stmt = $db->query("SELECT * FROM assets ORDER BY purchase_date DESC");
+    $assets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $assets = [];
+}
 
 $total_purchase = array_sum(array_column($assets, 'purchase_price'));
 $total_current = array_sum(array_column($assets, 'current_value'));

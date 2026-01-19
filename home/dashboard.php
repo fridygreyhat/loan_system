@@ -191,45 +191,9 @@ include $base_path . 'includes/header.php';
                 <a href="#" class="btn btn-sm btn-primary"><?php echo __('view_all'); ?></a>
             </div>
             <div class="card-body">
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: rgba(0, 217, 126, 0.1); color: #00d97e;">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h6><?php echo __('loan_approved'); ?></h6>
-                        <p>Loan #1234 for John Doe was approved</p>
-                    </div>
-                    <span class="activity-time">2 <?php echo __('hours_ago'); ?></span>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: rgba(44, 123, 229, 0.1); color: #2c7be5;">
-                        <i class="fas fa-money-bill"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h6><?php echo __('payment_received'); ?></h6>
-                        <p>TZS 500 payment received from Jane Smith</p>
-                    </div>
-                    <span class="activity-time">4 <?php echo __('hours_ago'); ?></span>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: rgba(246, 195, 67, 0.1); color: #f6c343;">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h6><?php echo __('new_borrower'); ?></h6>
-                        <p>New borrower registration: Mike Johnson</p>
-                    </div>
-                    <span class="activity-time">6 <?php echo __('hours_ago'); ?></span>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: rgba(230, 55, 87, 0.1); color: #e63757;">
-                        <i class="fas fa-exclamation"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h6><?php echo __('missed_payment'); ?></h6>
-                        <p>Loan #1189 has a missed payment</p>
-                    </div>
-                    <span class="activity-time"><?php echo __('yesterday'); ?></span>
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-clock fa-3x mb-3 opacity-50"></i>
+                    <p><?php echo __('no_recent_activity'); ?></p>
                 </div>
             </div>
         </div>
@@ -270,14 +234,14 @@ new Chart(loanPerformanceCtx, {
         labels: ['<?php echo __('jan'); ?>', '<?php echo __('feb'); ?>', '<?php echo __('mar'); ?>', '<?php echo __('apr'); ?>', '<?php echo __('may'); ?>', '<?php echo __('jun'); ?>', '<?php echo __('jul'); ?>', '<?php echo __('aug'); ?>', '<?php echo __('sep'); ?>', '<?php echo __('oct'); ?>', '<?php echo __('nov'); ?>', '<?php echo __('dec'); ?>'],
         datasets: [{
             label: '<?php echo __('disbursements'); ?>',
-            data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 35000, 32000, 40000, 38000, 45000],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             borderColor: '#2c7be5',
             backgroundColor: 'rgba(44, 123, 229, 0.1)',
             fill: true,
             tension: 0.4
         }, {
             label: '<?php echo __('collections'); ?>',
-            data: [8000, 12000, 10000, 18000, 15000, 22000, 20000, 25000, 23000, 30000, 28000, 35000],
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             borderColor: '#00d97e',
             backgroundColor: 'rgba(0, 217, 126, 0.1)',
             fill: true,
@@ -311,7 +275,7 @@ new Chart(loanStatusCtx, {
     data: {
         labels: ['<?php echo __('active'); ?>', '<?php echo __('completed'); ?>', '<?php echo __('pending'); ?>', '<?php echo __('overdue'); ?>'],
         datasets: [{
-            data: [45, 30, 15, 10],
+            data: [0, 0, 0, 0],
             backgroundColor: ['#2c7be5', '#00d97e', '#f6c343', '#e63757'],
             borderWidth: 0
         }]

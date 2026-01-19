@@ -6,13 +6,14 @@ $current_page = 'accounting';
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
 
-$journals = [
-    ['id' => 'JE-001', 'date' => '2026-01-02', 'description' => 'Loan Disbursement - John Doe', 'debit' => 5000000, 'credit' => 5000000, 'status' => 'posted'],
-    ['id' => 'JE-002', 'date' => '2026-01-05', 'description' => 'Loan Repayment - Jane Smith', 'debit' => 250000, 'credit' => 250000, 'status' => 'posted'],
-    ['id' => 'JE-003', 'date' => '2026-01-10', 'description' => 'Salary Payment - January 2026', 'debit' => 1500000, 'credit' => 1500000, 'status' => 'posted'],
-    ['id' => 'JE-004', 'date' => '2026-01-15', 'description' => 'Office Rent - January 2026', 'debit' => 500000, 'credit' => 500000, 'status' => 'posted'],
-    ['id' => 'JE-005', 'date' => '2026-01-18', 'description' => 'Utilities Payment', 'debit' => 125000, 'credit' => 125000, 'status' => 'pending'],
-];
+$journals = [];
+try {
+    $db = $con;
+    $stmt = $db->query("SELECT * FROM journal_entries ORDER BY date DESC LIMIT 50");
+    $journals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $journals = [];
+}
 
 include $base_path . 'includes/header.php';
 ?>

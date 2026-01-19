@@ -6,13 +6,14 @@ $current_page = 'e_signature';
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
 
-$documents = [
-    ['id' => 1, 'name' => 'Loan Agreement - John Doe', 'borrower' => 'John Doe', 'loan_id' => 'LN-2026-001', 'sent_date' => '2026-01-10', 'signed_date' => '2026-01-11', 'status' => 'signed'],
-    ['id' => 2, 'name' => 'Loan Agreement - Jane Smith', 'borrower' => 'Jane Smith', 'loan_id' => 'LN-2026-002', 'sent_date' => '2026-01-12', 'signed_date' => null, 'status' => 'pending'],
-    ['id' => 3, 'name' => 'Collateral Agreement - Michael Brown', 'borrower' => 'Michael Brown', 'loan_id' => 'LN-2026-003', 'sent_date' => '2026-01-15', 'signed_date' => '2026-01-16', 'status' => 'signed'],
-    ['id' => 4, 'name' => 'Guarantor Form - Sarah Wilson', 'borrower' => 'Sarah Wilson', 'loan_id' => 'LN-2026-004', 'sent_date' => '2026-01-17', 'signed_date' => null, 'status' => 'expired'],
-    ['id' => 5, 'name' => 'Loan Agreement - David Lee', 'borrower' => 'David Lee', 'loan_id' => 'LN-2026-005', 'sent_date' => '2026-01-18', 'signed_date' => null, 'status' => 'pending'],
-];
+$documents = [];
+try {
+    $db = $con;
+    $stmt = $db->query("SELECT * FROM e_signature_documents ORDER BY sent_date DESC LIMIT 50");
+    $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $documents = [];
+}
 
 include $base_path . 'includes/header.php';
 ?>

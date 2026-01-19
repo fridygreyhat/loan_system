@@ -9,17 +9,15 @@ require_once $base_path . 'helpers/lang.php';
 $date_from = $_GET['from'] ?? date('Y-01-01');
 $date_to = $_GET['to'] ?? date('Y-m-d');
 
-$ledger_entries = [
-    ['date' => '2026-01-02', 'ref' => 'JE-001', 'description' => 'Loan Disbursement - John Doe', 'account' => 'Loans Receivable', 'debit' => 5000000, 'credit' => 0],
-    ['date' => '2026-01-02', 'ref' => 'JE-001', 'description' => 'Loan Disbursement - John Doe', 'account' => 'Cash & Bank', 'debit' => 0, 'credit' => 5000000],
-    ['date' => '2026-01-05', 'ref' => 'JE-002', 'description' => 'Loan Repayment - Jane Smith', 'account' => 'Cash & Bank', 'debit' => 250000, 'credit' => 0],
-    ['date' => '2026-01-05', 'ref' => 'JE-002', 'description' => 'Loan Repayment - Jane Smith', 'account' => 'Loans Receivable', 'debit' => 0, 'credit' => 200000],
-    ['date' => '2026-01-05', 'ref' => 'JE-002', 'description' => 'Interest Income - Jane Smith', 'account' => 'Interest Income', 'debit' => 0, 'credit' => 50000],
-    ['date' => '2026-01-10', 'ref' => 'JE-003', 'description' => 'Salary Payment', 'account' => 'Salaries & Wages', 'debit' => 1500000, 'credit' => 0],
-    ['date' => '2026-01-10', 'ref' => 'JE-003', 'description' => 'Salary Payment', 'account' => 'Cash & Bank', 'debit' => 0, 'credit' => 1500000],
-    ['date' => '2026-01-15', 'ref' => 'JE-004', 'description' => 'Office Rent', 'account' => 'Rent Expense', 'debit' => 500000, 'credit' => 0],
-    ['date' => '2026-01-15', 'ref' => 'JE-004', 'description' => 'Office Rent', 'account' => 'Cash & Bank', 'debit' => 0, 'credit' => 500000],
-];
+$ledger_entries = [];
+try {
+    $db = $con;
+    $stmt = $db->prepare("SELECT * FROM ledger_entries WHERE date BETWEEN :from_date AND :to_date ORDER BY date DESC");
+    $stmt->execute(['from_date' => $date_from, 'to_date' => $date_to]);
+    $ledger_entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $ledger_entries = [];
+}
 
 include $base_path . 'includes/header.php';
 ?>
