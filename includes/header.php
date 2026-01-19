@@ -54,7 +54,16 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                             <li><a href="<?php echo $base_path ?? ''; ?>loans/add_loan.php"><?php echo __('add_loan'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>loans/due_loans.php"><?php echo __('due_loans'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>loans/missed_repayments.php"><?php echo __('missed_repayments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/loans_in_arrears.php"><?php echo __('loans_in_arrears'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/no_repayments.php"><?php echo __('no_repayments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/past_maturity.php"><?php echo __('past_maturity_date'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/principal_outstanding.php"><?php echo __('principal_outstanding'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/one_month_late.php"><?php echo __('one_month_late_loans'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/three_months_late.php"><?php echo __('three_months_late_loans'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>loans/loan_calculator.php"><?php echo __('loan_calculator'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/guarantors.php"><?php echo __('guarantors'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/loan_comments.php"><?php echo __('loan_comments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>loans/approve_loans.php"><?php echo __('approve_loans'); ?></a></li>
                         </ul>
                     </li>
                     

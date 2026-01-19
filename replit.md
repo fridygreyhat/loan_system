@@ -113,6 +113,22 @@ LoanDisk is a comprehensive web-based loan management system built with PHP and 
 - Document templates (Loan Agreement, Collateral Agreement, Guarantor Form)
 - Resend capability for pending documents
 
+### 12. Complete Loans Menu (Matching LoanDisk)
+- View All Loans
+- Add Loan
+- Due Loans
+- Missed Repayments
+- Loans in Arrears
+- No Repayments
+- Past Maturity Date
+- Principal Outstanding
+- 1 Month Late Loans
+- 3 Months Late Loans
+- Loan Calculator
+- Guarantors
+- Loan Comments
+- Approve Loans
+
 ## Database
 PostgreSQL database with comprehensive schema including:
 - Core tables: borrower, loans, loan_product, staff, etc.
