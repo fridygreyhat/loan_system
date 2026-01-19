@@ -85,9 +85,13 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                     <li class="has-submenu">
                         <a href="#"><i class="fas fa-piggy-bank"></i> <?php echo __('savings'); ?></a>
                         <ul class="submenu">
-                            <li><a href="<?php echo $base_path ?? ''; ?>savings/view_accounts.php"><?php echo __('view_accounts'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>savings/add_account.php"><?php echo __('add_account'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>savings/transactions.php"><?php echo __('transactions'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/view_accounts.php"><?php echo __('view_savings_accounts'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/add_account.php"><?php echo __('add_savings_account'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/charts.php"><?php echo __('savings_charts'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/report.php"><?php echo __('savings_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/products_report.php"><?php echo __('savings_products_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/fee_report.php"><?php echo __('savings_fee_report'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>savings/cash_safe.php"><?php echo __('cash_safe_management'); ?></a></li>
                         </ul>
                     </li>
                     
@@ -96,7 +100,31 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                         <ul class="submenu">
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/view_investors.php"><?php echo __('view_investors'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/add_investor.php"><?php echo __('add_investor'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>investors/investments.php"><?php echo __('investments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>investors/send_sms_all.php"><?php echo __('send_sms_to_all_investors'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>investors/send_email_all.php"><?php echo __('send_email_to_all_investors'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>investors/invite_investors.php"><?php echo __('invite_investors'); ?></a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <?php echo __('expenses'); ?></a>
+                        <ul class="submenu">
+                            <li><a href="<?php echo $base_path ?? ''; ?>expenses/view_vendors.php"><?php echo __('view_vendors'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>expenses/add_vendor.php"><?php echo __('add_vendor'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>expenses/view_expenses.php"><?php echo __('view_expenses'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>expenses/add_expense.php"><?php echo __('add_expense'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>expenses/upload_csv.php"><?php echo __('upload_expenses_csv'); ?></a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-plus-circle"></i> <?php echo __('other_income'); ?></a>
+                        <ul class="submenu">
+                            <li><a href="<?php echo $base_path ?? ''; ?>other_income/view_customers.php"><?php echo __('view_customers'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>other_income/add_customer.php"><?php echo __('add_customer'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>other_income/view_income.php"><?php echo __('view_other_income'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>other_income/add_income.php"><?php echo __('add_other_income'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>other_income/upload_csv.php"><?php echo __('upload_other_income_csv'); ?></a></li>
                         </ul>
                     </li>
                     
