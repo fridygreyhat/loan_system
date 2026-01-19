@@ -210,6 +210,21 @@ $translations = [
         'sign_up' => 'Sign up',
         'invalid_credentials' => 'Invalid email or password',
         
+        // Profile
+        'my_profile' => 'My Profile',
+        'edit_profile' => 'Edit Profile',
+        'account_info' => 'Account Info',
+        'member_since' => 'Member Since',
+        'last_login' => 'Last Login',
+        'change_password' => 'Change Password',
+        'current_password' => 'Current Password',
+        'new_password' => 'New Password',
+        'confirm_password' => 'Confirm Password',
+        'update_password' => 'Update Password',
+        'save_changes' => 'Save Changes',
+        'first_name' => 'First Name',
+        'last_name' => 'Last Name',
+        
         // Common actions
         'actions' => 'Actions',
         'status' => 'Status',
@@ -786,6 +801,21 @@ $translations = [
         'dont_have_account' => 'Huna akaunti?',
         'sign_up' => 'Jisajili',
         'invalid_credentials' => 'Barua pepe au nenosiri si sahihi',
+        
+        // Profile
+        'my_profile' => 'Wasifu Wangu',
+        'edit_profile' => 'Hariri Wasifu',
+        'account_info' => 'Taarifa za Akaunti',
+        'member_since' => 'Mwanachama Tangu',
+        'last_login' => 'Kuingia Mwisho',
+        'change_password' => 'Badilisha Nenosiri',
+        'current_password' => 'Nenosiri la Sasa',
+        'new_password' => 'Nenosiri Jipya',
+        'confirm_password' => 'Thibitisha Nenosiri',
+        'update_password' => 'Sasisha Nenosiri',
+        'save_changes' => 'Hifadhi Mabadiliko',
+        'first_name' => 'Jina la Kwanza',
+        'last_name' => 'Jina la Mwisho',
         
         // Common actions
         'actions' => 'Vitendo',
