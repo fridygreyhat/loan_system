@@ -43,7 +43,11 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                         <ul class="submenu <?php echo in_array($current_page ?? '', ['borrowers', 'add-borrower']) ? 'show' : ''; ?>">
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/view_borrowers.php"><?php echo __('view_borrowers'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/add_borrower.php"><?php echo __('add_borrower'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/view_groups.php"><?php echo __('borrower_groups'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/view_groups.php"><?php echo __('view_borrower_groups'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/add_group.php"><?php echo __('add_borrowers_group'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/send_sms_all.php"><?php echo __('send_sms_to_all_borrowers'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/send_email_all.php"><?php echo __('send_email_to_all_borrowers'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/invite_borrowers.php"><?php echo __('invite_borrowers'); ?></a></li>
                         </ul>
                     </li>
                     
