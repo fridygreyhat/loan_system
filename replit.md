@@ -145,8 +145,14 @@ php -S 0.0.0.0:5000
 - `/login.php` - Modern login page
 - `/home/dashboard.php` - Main dashboard with charts
 - `/admin/index.php` - Admin panel
+- `/admin/general_settings.php` - General Settings (currency, date format, logo)
+- `/admin/branches.php` - Branch Management
+- `/admin/email_settings.php` - Email/SMTP Configuration
 - `/savings/view_accounts.php` - Savings management
 - `/investors/view_investors.php` - Investor management
+- `/investors/products.php` - Investor Products
+- `/payroll/view_payroll.php` - Payroll Management
+- `/payroll/add_payroll.php` - Add Staff Payroll
 - `/staff/roles.php` - Role & permission management
 - `/admin/sms_settings.php` - SMS configuration
 - `/admin/templates.php` - Agreement templates
@@ -157,6 +163,7 @@ php -S 0.0.0.0:5000
 - `/accounting/general_ledger.php` - General Ledger
 - `/accounting/chart_of_accounts.php` - Chart of Accounts
 - `/accounting/manual_journal.php` - Manual Journal
+- `/reports/cash_flow_projections.php` - Cash Flow Projections
 - `/calendar/view_calendar.php` - Calendar View
 - `/charts/view_charts.php` - Charts & Analytics
 - `/assets/view_assets.php` - Asset Management
@@ -173,6 +180,12 @@ php -S 0.0.0.0:5000
 - Migrated database from MySQL to PostgreSQL
 - Created comprehensive PostgreSQL schema with all new tables
 - **Full Kiswahili (Swahili) Translation System** - Complete bilingual support
+- **NEW: Payroll Module** - Staff salary management with payslips
+- **NEW: Branches Management** - Multi-branch support with capital tracking
+- **NEW: General Settings** - Company info, currency, date format, timezone
+- **NEW: Email Settings** - SMTP configuration and auto email triggers
+- **NEW: Investor Products** - Product types for investor accounts
+- **NEW: Cash Flow Projections** - Financial forecasting with Chart.js
 
 ## Bilingual Support (English/Kiswahili)
 The system supports full bilingual interface:
@@ -199,6 +212,12 @@ The system supports full bilingual interface:
 - **Charts & Analytics** - Full translation
 - **Asset Management** - Full translation
 - **E-Signature** - Full translation
+- **Payroll** - Full translation
+- **Branches** - Full translation
+- **General Settings** - Full translation
+- **Email Settings** - Full translation
+- **Investor Products** - Full translation
+- **Cash Flow Projections** - Full translation
 - All navigation menus
 
 ### Adding New Translations:

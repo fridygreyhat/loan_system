@@ -100,6 +100,7 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                         <ul class="submenu">
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/view_investors.php"><?php echo __('view_investors'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/add_investor.php"><?php echo __('add_investor'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>investors/products.php"><?php echo __('investor_products'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/send_sms_all.php"><?php echo __('send_sms_to_all_investors'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/send_email_all.php"><?php echo __('send_email_to_all_investors'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>investors/invite_investors.php"><?php echo __('invite_investors'); ?></a></li>
@@ -179,10 +180,19 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/monthly.php"><?php echo __('monthly_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/outstanding.php"><?php echo __('outstanding_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/portfolio_risk.php"><?php echo __('portfolio_at_risk_par'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>reports/cash_flow_projections.php"><?php echo __('cash_flow_projections'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/at_a_glance.php"><?php echo __('at_a_glance_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/fully_paid_loans.php"><?php echo __('fully_paid_loans_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/defaulted_loans.php"><?php echo __('defaulted_loans_report'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>reports/all_entries.php"><?php echo __('all_entries'); ?></a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-money-check-alt"></i> <?php echo __('payroll'); ?></a>
+                        <ul class="submenu">
+                            <li><a href="<?php echo $base_path ?? ''; ?>payroll/view_payroll.php"><?php echo __('view_payroll'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>payroll/add_payroll.php"><?php echo __('add_payroll'); ?></a></li>
                         </ul>
                     </li>
                     
@@ -198,6 +208,7 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                     <li class="has-submenu">
                         <a href="#"><i class="fas fa-cog"></i> <?php echo __('settings'); ?></a>
                         <ul class="submenu">
+                            <li><a href="<?php echo $base_path ?? ''; ?>admin/general_settings.php"><?php echo __('general_settings'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>admin/loan_products.php"><?php echo __('loan_products'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>admin/branches.php"><?php echo __('branches'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>admin/sms_settings.php"><?php echo __('sms_settings'); ?></a></li>
