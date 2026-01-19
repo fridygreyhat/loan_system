@@ -87,6 +87,32 @@ LoanDisk is a comprehensive web-based loan management system built with PHP and 
 - **Chart of Accounts** - Account code management with types (Asset, Liability, Equity, Revenue, Expense)
 - **Manual Journal** - Create and post journal entries
 
+### 8. Calendar View
+- View due amounts, disbursed amounts, and payments in calendar format
+- Monthly navigation with previous/next buttons
+- Color-coded entries (red = due, blue = disbursed, green = collected)
+- Today indicator
+
+### 9. Charts & Analytics
+- Loan Releases vs Collections line chart
+- Loan Status pie/doughnut chart
+- Monthly Disbursements bar chart
+- Monthly Collections bar chart
+- Outstanding Portfolio area chart
+- Recovery Rate bar chart with color-coded performance
+
+### 10. Asset Management
+- Add and manage company assets
+- Track purchase price, current value, and depreciation
+- Asset types: Equipment, Furniture, Vehicle, Property
+- Asset register with search and filter
+
+### 11. E-Signature
+- Send documents for electronic signature
+- Track document status (Pending, Signed, Expired)
+- Document templates (Loan Agreement, Collateral Agreement, Guarantor Form)
+- Resend capability for pending documents
+
 ## Database
 PostgreSQL database with comprehensive schema including:
 - Core tables: borrower, loans, loan_product, staff, etc.
@@ -115,6 +141,10 @@ php -S 0.0.0.0:5000
 - `/accounting/general_ledger.php` - General Ledger
 - `/accounting/chart_of_accounts.php` - Chart of Accounts
 - `/accounting/manual_journal.php` - Manual Journal
+- `/calendar/view_calendar.php` - Calendar View
+- `/charts/view_charts.php` - Charts & Analytics
+- `/assets/view_assets.php` - Asset Management
+- `/e_signature/view_documents.php` - E-Signature
 
 ## Recent Changes (January 2026)
 - Complete UI modernization with Bootstrap 5 and custom CSS
@@ -149,6 +179,10 @@ The system supports full bilingual interface:
 - Collection Sheets (collection_sheets/daily.php)
 - Settings (admin/loan_products.php)
 - **Accounting Module** - All 7 pages fully translated
+- **Calendar** - Full translation
+- **Charts & Analytics** - Full translation
+- **Asset Management** - Full translation
+- **E-Signature** - Full translation
 - All navigation menus
 
 ### Adding New Translations:

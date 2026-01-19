@@ -86,6 +86,14 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                     
                     <li><a href="<?php echo $base_path ?? ''; ?>collateral/collateral_register.php"><i class="fas fa-shield-alt"></i> <?php echo __('collateral'); ?></a></li>
                     
+                    <li><a href="<?php echo $base_path ?? ''; ?>calendar/view_calendar.php" class="<?php echo ($current_page ?? '') === 'calendar' ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> <?php echo __('calendar'); ?></a></li>
+                    
+                    <li><a href="<?php echo $base_path ?? ''; ?>charts/view_charts.php" class="<?php echo ($current_page ?? '') === 'charts' ? 'active' : ''; ?>"><i class="fas fa-chart-pie"></i> <?php echo __('charts_analytics'); ?></a></li>
+                    
+                    <li><a href="<?php echo $base_path ?? ''; ?>assets/view_assets.php" class="<?php echo ($current_page ?? '') === 'assets' ? 'active' : ''; ?>"><i class="fas fa-building"></i> <?php echo __('asset_management'); ?></a></li>
+                    
+                    <li><a href="<?php echo $base_path ?? ''; ?>e_signature/view_documents.php" class="<?php echo ($current_page ?? '') === 'e_signature' ? 'active' : ''; ?>"><i class="fas fa-file-signature"></i> <?php echo __('e_signature'); ?></a></li>
+                    
                     <li class="has-submenu <?php echo ($current_page ?? '') === 'accounting' ? 'open' : ''; ?>">
                         <a href="#"><i class="fas fa-calculator"></i> <?php echo __('accounting'); ?></a>
                         <ul class="submenu <?php echo ($current_page ?? '') === 'accounting' ? 'show' : ''; ?>">
