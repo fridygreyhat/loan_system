@@ -41,6 +41,7 @@ include $base_path . 'includes/header.php';
                     <div class="mb-3">
                         <label class="form-label">SMS Provider</label>
                         <select name="provider" class="form-select">
+                            <option value="messaging_service_tz" <?php echo ($settings['provider'] ?? '') === 'messaging_service_tz' ? 'selected' : ''; ?>>Messaging Service TZ</option>
                             <option value="twilio" <?php echo ($settings['provider'] ?? '') === 'twilio' ? 'selected' : ''; ?>>Twilio</option>
                             <option value="africas_talking" <?php echo ($settings['provider'] ?? '') === 'africas_talking' ? 'selected' : ''; ?>>Africa's Talking</option>
                             <option value="nexmo" <?php echo ($settings['provider'] ?? '') === 'nexmo' ? 'selected' : ''; ?>>Nexmo (Vonage)</option>
