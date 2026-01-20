@@ -9,7 +9,7 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?>Loan_system</title>
+    <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?>Loan Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,8 +21,8 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="<?php echo $base_path ?? ''; ?>home/dashboard.php" class="sidebar-logo">
-                    <i class="fas fa-coins"></i>
-                    <span>Loan_system</span>
+                    <img src="<?php echo $base_path ?? ''; ?>uploads/logo.jpg" alt="Loan Store" style="height: 32px; width: auto;">
+                    <span>Loan Store</span>
                 </a>
             </div>
             

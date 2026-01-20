@@ -9,7 +9,7 @@ require_once 'helpers/lang.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo __('sign_in'); ?> - Loan_system</title>
+    <title><?php echo __('sign_in'); ?> - Loan Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,8 @@ require_once 'helpers/lang.php';
 <body class="login-page">
     <div class="login-card">
         <div class="logo">
-            <h2><i class="fas fa-coins me-2"></i>Loan_system</h2>
+            <img src="uploads/logo.jpg" alt="Loan Store" style="height: 60px; width: auto; margin-bottom: 10px;">
+            <h2>Loan Store</h2>
             <p><?php echo __('loan_management_system'); ?></p>
         </div>
         
