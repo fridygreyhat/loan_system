@@ -1,1039 +1,419 @@
+<?php
+$base_path = '../';
+$page_title = 'Loan Details';
+$current_page = 'loans';
 
+require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Uwezo Admin</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!-- Bootstrap 3.3.5 -->
-        <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-        <!-- Ionicons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-        <!-- Theme style -->
-        <link rel="stylesheet" href="../dist/css/AdminLTE.css">
-        <link rel="stylesheet" href="../dist/css/skins/skin-blue.min.css">
+$loan_id = (int)($_GET['id'] ?? $_GET['loan_id'] ?? 0);
 
-        <link rel="stylesheet" href="../plugins/datatables/dataTables.bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/1.4.2/css/scroller.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+$loan = [];
+$borrower = [];
+$repayments = [];
+$applied_charges = [];
+$error = '';
 
-        
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-        <link rel="stylesheet" href="../css/style.css">
-        <script src="../plugins/jQuery/jQuery-2.1.4.min.js"></script>
-        <link type="text/css" rel="stylesheet" href="../tab_assets/jquery.pwstabs.css">
-        <script src="../tab_assets/jquery.pwstabs.min.js"></script>
-        <script>
-            jQuery(document).ready(function($){
-               $('.loan_tabs').pwstabs({
-                   effect: 'none',
-                   defaultTab: 1,
-                   containerWidth: '100%', 
-                   responsive: false,
-                   theme: 'pws_theme_grey'
-               })   
-            });
-        </script>       
-        <link rel="stylesheet" type="text/css" href="../css/jquery.datepick.css"> 
-        <script type="text/javascript" src="../include/js/jquery.plugin.js"></script> 
-        <script type="text/javascript" src="../include/js/jquery.datepick.js"></script>
-        <script type="text/javascript" src="../include/js/numbers.decimals.validation.js"></script>    
-    </head>
+if (!$loan_id) {
+    header("Location: view_loans.php");
+    exit;
+}
 
+try {
+    $stmt = $con->prepare("
+        SELECT l.*, b.fname, b.lname, b.mobile_no, b.email, b.address, b.city, b.country, b.photo, b.field2 as photo_path,
+               lp.name as product_name, lp.decimal_places
+        FROM loans l
+        LEFT JOIN borrower b ON l.borrower_id = b.id
+        LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
+        WHERE l.id = ?
+    ");
+    $stmt->execute([$loan_id]);
+    $loan = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if (!$loan) {
+        $error = 'Loan not found.';
+    } else {
+        $stmt2 = $con->prepare("SELECT * FROM loan_repayment WHERE loan_id = ? ORDER BY paid_date DESC");
+        $stmt2->execute([$loan_id]);
+        $repayments = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
+        $stmt3 = $con->prepare("
+            SELECT lac.*, lc.name as charge_name, lc.calculation_type
+            FROM loan_applied_charges lac
+            LEFT JOIN loan_charges lc ON lac.loan_charge_id = lc.id
+            WHERE lac.loan_id = ?
+        ");
+        $stmt3->execute([$loan_id]);
+        $applied_charges = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (PDOException $e) {
+    $error = $e->getMessage();
+}
 
+$total_paid = array_sum(array_column($repayments, 'amount'));
+$outstanding = ($loan['principal_amt'] ?? 0) - $total_paid;
+$pct_paid = ($loan['principal_amt'] ?? 0) > 0 ? round(($total_paid / $loan['principal_amt']) * 100, 1) : 0;
 
-    <body class="hold-transition skin-blue sidebar-mini" onload="doOnLoad();">    
-        <div class="wrapper">
-            <!-- Main Header -->
+include $base_path . 'includes/header.php';
+?>
 
-
-
-            
-            <header class="main-header">
-
-            <!-- Logo -->
-            <a href="../home/welcome.html" class="logo">
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <!-- logo for regular state and mobile devices -->
-                 <span class="logo-lg"><b>Uwezo</b> Admin</span>
-            </a>
-
-            <!-- Header Navbar -->
-            <nav class="navbar navbar-static-top" role="navigation">
-                <!-- Sidebar toggle button-->
-                
-                <div class="navbar-header">
-                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-                        Left Menu
-                    </a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-                        <i class="fa fa-bars">Top Menu</i>
-                    </button>
-                </div>
-                <!-- Navbar Right Menu -->
-                <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
-    
-                    <!-- Top Menu -->
-                    <ul class="nav navbar-nav">
-                            <li>     
-                                <a href="../admin/index.html"><i class="fa fa-ban"></i> <span>Admin</span></a>
-                            </li>  
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-link"></i> <span>Settings</span> <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">  
-                                    <li>          
-                                        <a href="../billing/billing.html"><i class="fa fa-circle-o"></i> Billing</a>
-                                   </li>  
-                                    <li>          
-                                        <a href="../home/change_password.html"><i class="fa fa-circle-o"></i> Change Password</a>
-                                   </li>  
-                                    <li>          
-                                        <a href="../index.html"><i class="fa fa-circle-o"></i> Logout</a>
-                                   </li>  
-                                </ul>
-                            </li>  
-                            <li>
-                                <a href="support_login.html" target="_blank"><i class="fa fa-support"></i> <span>Help</span></a>
-                            </li>  
-                        </ul>                 
-                </div>
-                
-            </nav>
-            </header>
-
-
-
-
-
-            <!-- Left side column. contains the logo and sidebar -->
-            <aside class="main-sidebar">
-                <!-- sidebar: style can be found in sidebar.less -->
-                <section class="sidebar">
-        
-                    <!-- Sidebar user panel (optional) -->
-                    <div class="user-panel">
-                        <div class="pull-left image">
-                            <img src="../uploads/staff_images/thumbnails/user2-160x160.jpg" class="img-circle" alt="User Image">
-                        </div>
-                        <div class="pull-left info">
-                            <h5>Japhet Ty Aiko</h5>
-                            
-                            
-                        </div>
-                    </div>
-                    <!-- Sidebar Menu -->
-                    <ul class="sidebar-menu">
-                            <li>     
-                                <a href="../admin/change_branch.html"><i class="fa fa-eye"></i> <span>View Another Branch</span></a>
-                            </li>
-                            <li style="border-top: 1px solid #000;"><a href="../home/home_branch.html"><i class="fa fa-circle-o text-aqua"></i> <span>Branch #1</span></a></li>
-                            <li>     
-                                <a href="../home/home_branch.html"><i class="fa fa-home"></i> <span>Home Branch</span></a>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-user"></i> <span>Borrowers</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../borrowers/view_borrowers_branch.html"><i class="fa fa-circle-o"></i> View Borrowers</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/add_borrower.html"><i class="fa fa-circle-o"></i> Add Borrower</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/groups/view_borrowers_groups_branch.html"><i class="fa fa-circle-o"></i> View Borrower Groups</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/groups/add_borrowers_group.html"><i class="fa fa-circle-o"></i> Add Borrowers Group</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/send_sms_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send SMS to All Borrowers</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/send_email_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send Email to All Borrowers</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-balance-scale"></i> <span>Loans</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../loans/view_loans_branch.html"><i class="fa fa-circle-o"></i> View All Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/missed_repayments.html"><i class="fa fa-circle-o"></i> Missed Repayments</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/due_loans.html"><i class="fa fa-circle-o"></i> Due Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_past_maturity_date_branch.html"><i class="fa fa-circle-o"></i> Past Maturity Date</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_late_1month_branch.html"><i class="fa fa-circle-o"></i> 1 Month Late Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_late_3months_branch.html"><i class="fa fa-circle-o"></i> 3 Months Late Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/loan_calculator.html"><i class="fa fa-circle-o"></i> Loan Calculator</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-dollar"></i> <span>Repayments</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../repayments/view_repayments_branch.html"><i class="fa fa-circle-o"></i> View Repayments</a>
-                                   </li>
-                                    <li>
-                                        <a href="../repayments/add_bulk_repayments.html"><i class="fa fa-circle-o"></i> Add Bulk Repayments</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li>     
-                                <a href="../collateral/collateral_register.html"><i class="fa fa-list"></i> <span>Collateral Register</span></a>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-file-text-o"></i> <span>Collection Sheets</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../collection_sheets/view_daily_collection.html"><i class="fa fa-circle-o"></i> Daily Collection Sheet</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/view_missed_repayments_sheet.html"><i class="fa fa-circle-o"></i> Missed Repayment Sheet</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/view_past_maturity_date.html"><i class="fa fa-circle-o"></i> Past Maturity Date Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/send_sms.html"><i class="fa fa-circle-o"></i> Send SMS</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/send_email.html"><i class="fa fa-circle-o"></i> Send Email</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-bank"></i> <span>Savings</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../savings/view_savings_branch.html"><i class="fa fa-circle-o"></i> View Savings Accounts</a>
-                                   </li>
-                                    <li>
-                                        <a href="../savings/view_savings_transactions_branch.html"><i class="fa fa-circle-o"></i> View Savings Transactions</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-paypal"></i> <span>Payroll</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../payroll/view_payroll_branch.html"><i class="fa fa-circle-o"></i> View Payroll</a>
-                                   </li>
-                                    <li>
-                                        <a href="../payroll/select_staff.html"><i class="fa fa-circle-o"></i> Add Payroll</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-share"></i> <span>Expenses</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../expenses/view_expenses_branch.html"><i class="fa fa-circle-o"></i> View Expenses</a>
-                                   </li>
-                                    <li>
-                                        <a href="../expenses/add_expense.html"><i class="fa fa-circle-o"></i> Add Expense</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-plus"></i> <span>Other Income</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../other_income/view_other_income_branch.html"><i class="fa fa-circle-o"></i> View Other Income</a>
-                                   </li>
-                                    <li>
-                                        <a href="../other_income/add_other_income.html"><i class="fa fa-circle-o"></i> Add Other Income</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-industry"></i> <span>Reports</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../reports/view_collections_report_branch.html"><i class="fa fa-circle-o"></i> Collections Report</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/collector_report.html"><i class="fa fa-circle-o"></i> Collector Report (Staff)</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_cash_flow_branch.html"><i class="fa fa-circle-o"></i> Cash flow</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_cash_flow_projection_branch.html"><i class="fa fa-circle-o"></i> Cash Flow Projection</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_profit_loss_branch.html"><i class="fa fa-circle-o"></i> Profit / Loss</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/mfrs_ratios.html"><i class="fa fa-circle-o"></i> MFRS Ratios</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/portfolio_at_risk.html"><i class="fa fa-circle-o"></i> Portfolio At Risk (PAR)</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/all_entries.html"><i class="fa fa-circle-o"></i> All Entries</a>
-                                   </li>
-                                </ul>
-                            </li>
-                        </ul> 
-                </section>
-            </aside>
-
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header"><h1>Rev.  Damus Kumi - View Loan #1000002</h1>
-                </section>
-
-                <!-- Main content -->
-                <section class="content">
-        <div class="box box-widget">
-            <div class="box-header with-border">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="user-block">
-                            <img class="img-circle" src="../uploads/borrower_images/thumbnails/user8-128x128.jpg" alt="user image">
-                            <span class="username">
-                                Rev.  Damus Kumi
-                            </span>
-                            <span class="description" style="font-size:13px; color:#000000">
-                    <a href="../../borrowers/groups/view_group_details.html">MAZAS</a><br>4556666<br>
-                    <a href="../../borrowers/add_borrower_edit.html">Edit</a><br>
-                                goods, Owner<br>Male, 19 years
-                            </span>
-                        </div><!-- /.user-block --><div class="btn-group-horizontal"><a type="button" class="btn bg-olive margin" href="view_loans_borrower.html">View All Loans</a><a type="button" class="btn bg-blue margin" href="../savings/view_savings_borrower.html">View Savings</a></div>         
-                    </div><!-- /.col -->
-                    <div class="col-sm-4">
-                        <ul class="list-unstyled">
-                        <li><b>Address:</b> fsaaa\</li>
-                        <li><b>City:</b> dfgfhjlk</li>
-                        <li><b>Province:</b> aasss</li>
-                        <li><b>Zipcode:</b> 42</li>
-                        
-                        <a data-toggle="collapse" data-parent="#accordion" href="#viewFiles">
-                            View Borrower Files
-                        </a>
-                        <div id="viewFiles" class="panel-collapse collapse">
-                            <div class="box-body">
-                                <ul  class="no-margin" style="font-size:12px; padding-left:10px">
-                    <li><a href="https://x.loandisk.com/uploads/index.php?file_id=467" target="_blank">‪+27 73 819 7980‬ 20151202_234238.jpg</a></li></ul>
-                            </div>
-                        </div>
-                        </ul>
-                    </div>
-                    <div class="col-sm-4">
-                        <ul class="list-unstyled">
-                        <li><b>Landline:</b> 45655</li>
-                        <li><b>Email:</b> <a onClick="javascript:window.open('mailto:sdd@mmmm.com', 'mail');event.preventDefault()" href="mailto:sdd@mmmm.com">sdd@mmmm.com</a><div class="btn-group-horizontal">
-    <a type="button" class="btn-xs bg-red" href="../borrowers/send_email_to_borrowers.html">Send Email</a></div></li>
-                        <li><b>Mobile:</b> 4588888<div class="btn-group-horizontal">
-<a type="button" class="btn-xs bg-red" href="../borrowers/send_sms_to_borrower.html">Send SMS</a></div></li>
-                        
-                        </ul>
-                    </div>
-                </div><!-- /.row -->
-            </div> 
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><?php echo __('loan_details'); ?></h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item"><a href="view_loans.php"><?php echo __('loans'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('loan_details'); ?></li>
+            </ol>
+        </nav>
+    </div>
+    <?php if ($loan): ?>
+    <div class="d-flex gap-2">
+        <a href="../repayments/add_repayment.php?loan_id=<?php echo $loan_id; ?>" class="btn btn-success"><i class="fas fa-plus me-2"></i><?php echo __('record_payment'); ?></a>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-ellipsis-v"></i></button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="edit_loan.php?loan_id=<?php echo $loan_id; ?>"><i class="fas fa-edit me-2"></i><?php echo __('edit_loan'); ?></a></li>
+                <li><a class="dropdown-item" href="loan_statement.php?loan_id=<?php echo $loan_id; ?>"><i class="fas fa-file-alt me-2"></i><?php echo __('loan_statement'); ?></a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="delete_loan.php?loan_id=<?php echo $loan_id; ?>" onclick="return confirm('<?php echo __('confirm_delete_loan'); ?>')"><i class="fas fa-trash me-2"></i><?php echo __('delete_loan'); ?></a></li>
+            </ul>
         </div>
-            <!-- Main content -->
-            <div class="box box-warning">
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-bordered table-condensed  table-hover">
-                        <tr style="background-color: #FFF8F2">
-                            
-                            <th>Loan #</th>
-                            <th><b>Released</b></th>
-                            <th><b>Maturity</b></th>
-                            <th><b>Repayment</b></th>
-                            <th><b>Principal &#85;&#83;&#104;</b></th>
-                            <th>Interest</th>
-                            <th>Fees</th>
-                            <th>Penalty</th>
-                            <th><b>Due</b></th>
-                            <th><b>Paid</b></th>
-                            <th><b>Balance</b></th>
-                            
-                            
-                            <th><b>Status</b></th>
-                            
-                            
-                        </tr>
-                        <tr>
-                            <td>
-                                1000002
-                            </td>
-                            <td>
-                                04/01/2017
-                            </td>
-                            <td>
-                                06/01/2017
-                            </td>
-                            <td>
-                                Daily
-                            </td> 
-                            <td>
-                                777.00<br>@1% Per Day
-                            </td>
-                            <td>
-                                7.77
-                            </td>
-                            <td>
-                                1.00
-                            </td>
-                            <td>
-                                0
-                            </td>                                 
-                            <td><s>785.77</s><br>6,233.00
-                                <br><small><a href="https://x.loandisk.com/loans/override_loan_total_due.php?loan_id=5226">Override</a></small>
-                            </td>
-                            <td>
-                                0
-                            </td>
-                            <td>
-                                <b>6,233.00</b>
-                            </td>
-                            <td>
-                                <span class="label label-info">
-                                    Processing
-                                </span>
-                            </td>
-                        </tr>
-                    </table>
-                
-                </div> 
-            </div>
-<div class="box no-border">
-    <div class="loan_tabs">
-        <div data-pws-tab="tab_repayments" data-pws-tab-name="Repayments">
-            <div class="tab_content"><div class="btn-group-horizontal"><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/repayments/add_repayment.php?loan_id=5226&tab=tab_repayments">Add Repayment</a><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/loans/view_loan_details.php?loan_id=5226&repayment_show_principal_interest=1">Show Principal &amp; Interest</a></div>Search found <b>0 results</b><p style="text-align:center">No Repayments Made</p>
-                </div>
-            </div>
-            <div data-pws-tab="tab_terms" data-pws-tab-name="Loan Terms">
-                <div class="tab_content">
-                <div class="row">
-                    <div class="col-sm-3">
-                        
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-info dropdown-toggle margin" data-toggle="dropdown">Loan Statement
-                    <span class="fa fa-caret-down"></span></button>
-                <ul class="dropdown-menu" role="menu">
-                
-                            <li><a  href="https://x.loandisk.com/loans/view_loan_statement.php?loan_id=5226" target="_blank">Print Statement</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/pdf_generator/www/generate_loan_statment.php?loan_id=5226" target="_blank">Download in PDF</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/loans/download_loan_statement_csv.php?loan_id=5226" target="_blank">Download in CSV</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/admin/format_borrower_reports.php" target="_blank">Format Report</a></li>
-                        </ul>
-                    </div>
-                    </div>
-                    <div class="col-sm-9 pull-right">
-                        <div class="btn-group-horizontal"><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/loans/add_loan.php?edit_loan=1&loan_id=5226&tab=tab_terms">Edit Loan</a><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/loans/delete_loan.php?loan_id=5226" onClick="javascript:return confirm('Are you sure you want to Delete Loan?')">Delete Loan</a></div>
-                    </div>
-                </div>
-                
-            <div class="box-body no-padding">
-                <table class="table table-condensed">
-                    <tr>
-                        <td><b>Loan Status</b></td> 
-                        <td>Processing</td>
-                    </tr>  
-                    <tr>
-                    
-                        <td width="200"><b>Loan Application ID</b></td>                      
-                        <td>1000002</td>
-                  
-                    </tr>
-                    <tr>
-                        <td><b>Loan Product</b></td>
-                        <td>Business Loan
-                        </td>             
-                    </tr>
-                    <tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td colspan="2" class="bg-navy disabled color-palette">
-                            Loan Terms
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Disbursed By</b></td>                      
-                        <td>Cash</td>
-                    </tr>   
-                    <tr>
-                    
-                        <td><b>Principal Amount</b></td>                      
-                        <td>&#85;&#83;&#104;777.00</td>
-                  
-                    </tr>                
-                    <tr>
-                    
-                        <td><b>Loan Release Date</b></td>                      
-                        <td>04/01/2017</td>
-                  
-                    </tr>  
-                    <tr>
-                        <td><b>Loan Interest Method</b></td>                      
-                        <td> Flat Rate
-                        </td>             
-                    </tr>
-                    <tr>
-                        <td><b>Loan Interest</b></td>                      
-                        <td>1% Per Day (Nominal APR: 360%)
-                        </td>             
-                    </tr>
-                    <tr>
-                        <td><b>Loan Duration</b></td>                      
-                        <td>1 Days
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Repayment Cycle</b></td>
-                        <td>Daily
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td><b>Number of Repayments</b></td>                      
-                        <td>2
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><b>Decimal Places</b></td>                      
-                        <td>Round Off to 2 Decimal Places
-                        </td>             
-                    </tr>
-                    <tr>
-                        <td><b>Interest Start Date</b></td>
-                        <td>04/01/2017</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="bg-navy disabled color-palette">Loan  Fees</td>
-                    </tr><tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td><b>Pining</b></td>                      
-                        <td>&#85;&#83;&#104;7.77 (1%) <b>(Deductable)</b></td>   
-                    </tr><tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td><b>Bavuu</b></td>                      
-                        <td>&#85;&#83;&#104;1.00</td>   
-                    </tr><tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td><b>Housing</b></td>                      
-                        <td>&#85;&#83;&#104;1.00 <b>(Deductable)</b></td>   
-                    </tr>
-                    <tr>
-                        <td><b>Schedule</b></td>                      
-                        <td>Charge Fees on the Released Date
-                        </td>             
-                    </tr>
-                    <tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td colspan="2" class="bg-navy disabled color-palette">
-                            System Generated Penalties
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="bg-blue disabled color-palette">Late Repayment Penalty
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-red" colspan="2"><b>Late Repayment Penalty is Enabled</b>
-                        </td>
-                    </tr>                         
-                    <tr>
-                        <td><b>Penalty Fixed Amount</b></td>
-                        <td>
-                            &#85;&#83;&#104;200.00
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td><b>Grace Period</b></td>                      
-                        <td>
-                        8 day(s)
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td style="width:340px"><b>Is Penalty on Late Repayments <u>Recurring</u>?</b></td>
-                        <td>
-                        Every 10 day(s)
-                        </td>
-                    </tr>
-            </table> 
-            <br><br>
-            <table class="table table-bordered table-hover">
-                <tbody>
-                    <tr>
-                        <td colspan="2" class="bg-blue disabled color-palette">After Maturity Date Penalty
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-red" colspan="2"><b>After Maturity Date Penalty is Enabled</b>
-                        </td>
-                    </tr>
-  
-                    <tr>
-                        <td><b>Calculate Penalty on</b></td>
-                        <td>Overdue Principal Amount
-                        </td>
-                    </tr>                         
-                    <tr>
-                        <td><b>Penalty Interest</b></td>
-                        <td>
-                            1.00%
-                        </td>
-                    </tr>
-                
-                    <tr>
-                        <td><b>Grace Period</b></td>
-                        <td>
-                        7 day(s)
-                        </td>
-                    </tr>
-             
-                    <tr>
-                        <td style="width:340px"><b>Is Penalty After Maturity Date <u>Recurring</u>?</b></td>
-                        <td>
-                        Every 13 day(s)
-                        </td>
-                    </tr>
-                    <tr><td colspan="2"> </td></tr>
-                    <tr>
-                        <td colspan="2" class="bg-navy disabled color-palette">
-                            Description
-                        </td>
-                    </tr>
-                    <tr> 
-                        <td colspan="2">
-                            shgkjkgfdvscaZZXCVBNM/LKJHMGNBFV
-                        </td>
-                    </tr>  
-                </tbody>  
-            </table>
-        </div>
-                </div>
-            </div>
-            <div data-pws-tab="tab_schedule" data-pws-tab-name="Loan Schedule">
-                <div class="tab_content">
-                <div class="row">
-                    <div class="col-sm-3">
-                        
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-info dropdown-toggle margin" data-toggle="dropdown">Loan Schedule
-                    <span class="fa fa-caret-down"></span></button>
-                <ul class="dropdown-menu" role="menu">
-                
-                            <li><a  href="https://x.loandisk.com/loans/view_loan_repayments_schedule.php?loan_id=5226" target="_blank">Print Schedule</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/pdf_generator/www/generate_loan_schedule.php?loan_id=5226" target="_blank">Download in PDF</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/loans/download_loan_schedule_csv.php?loan_id=5226" target="_blank">Download in CSV</a></li>
-                
-                            <li><a  href="https://x.loandisk.com/admin/format_borrower_reports.php" target="_blank">Format Report</a></li>
-                        </ul>
-                    </div>
-                    </div>
-                    <div class="col-sm-9 pull-right">
-                        <div class="btn-group-horizontal"><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/loans/view_loan_repayments_schedule.php?loan_id=5226" target="_blank">Print Schedule</a><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/collection_sheets/edit_collection_sheet.php?loan_id=5226&tab=tab_schedule">Edit Schedule</a></div>
-                    </div>
-                </div><p>Search found <b>3 results</b></p>
-                <div class="box box-success">
-                    <div class="box-body table-responsive no-padding">
-                        <table class="table table-bordered table-condensed table-hover">
-                            <tr style="background-color: #F2F8FF">
-                                <th style="width: 10px">
-                                  <b>#</b>
-                                </th>
-                                <th>
-                                    <b>Date</b>
-                                </th>
-                                <th>
-                                    <b>Description</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    <b>Principal</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    <b>Interest</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    <b>Fees</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    <b>Penalty</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    <b>Due</b>
-                                </th>
-                                <th style="text-align:right;">
-                                    Total Due
-                                </th>
-                                <th style="text-align:right;">
-                                    Principal Balance Owed
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    1
-                                </td>
-                                <td>
-                                    04/01/2017
-                                </td>
-                                <td>
-                                    Fees (Non Deductable)
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right">
-                                    1.00
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right; font-weight:bold">
-                                    1.00
-                                </td>
-                                <td style="text-align:right;">
-                                    1.00
-                                </td>
-                                <td style="text-align:right;">
-                                    777.00
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    2
-                                </td>
-                                <td>
-                                    05/01/2017
-                                </td>
-                                <td>
-                                    Repayment
-                                </td>
-                                <td style="text-align:right">
-                                    388.50
-                                </td>
-                                <td style="text-align:right">
-                                    3.88
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right; font-weight:bold">
-                                    392.38
-                                </td>
-                                <td style="text-align:right;">
-                                    393.38
-                                </td>
-                                <td style="text-align:right;">
-                                    388.50
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    3
-                                </td>
-                                <td>
-                                    06/01/2017
-                                </td>
-                                <td>
-                                    Repayment
-                                </td>
-                                <td style="text-align:right">
-                                    388.50
-                                </td>
-                                <td style="text-align:right">
-                                    3.89
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right">
-                                    0
-                                </td>
-                                <td style="text-align:right; font-weight:bold">
-                                    392.39
-                                </td>
-                                <td style="text-align:right;">
-                                    785.77
-                                </td>
-                                <td style="text-align:right;">
-                                    0
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td style="font-weight:bold">Total Due</td>
-                                <td style="text-align:right;">
-                                    777.00
-                                </td>
-                                <td style="text-align:right;">
-                                    7.77
-                                </td>
-                                <td style="text-align:right;">
-                                    1.00
-                                </td>
-                                <td style="text-align:right;">
-                                    0
-                                </td>
-                                <td style="text-align:right; font-weight:bold">
-                                    785.77
-                                </td>
-                            </tr>
-                        </table>         
-                               
-                </div>
-            </div>  
-                </div>
-            </div>
-            
-            
-            <div data-pws-tab="tab_pending_dues" data-pws-tab-name="Pending Dues">
-                <div class="tab_content">
-                    <p>Here you can see the pending due amounts for all-time and until today.</p>
-        <div class="box box-success">
-            <div class="box-body table-responsive no-padding">
-                <table class="table table-bordered table-condensed table-hover">
-                    <tr style="background-color: #F2F8FF">
-                        <th width="200">
-                            <b>Based on Loan Terms:</b>
-                        </th>
-                        <th style="text-align:right;">
-                            <b>Principal</b>
-                        </th>
-                        <th style="text-align:right;">
-                            <b>Interest</b>
-                        </th>
-                        <th style="text-align:right;">
-                            <b>Fees</b>
-                        </th>
-                        <th style="text-align:right;">
-                            <b>Penalty</b>
-                        </th>
-                        <th style="text-align:right;">
-                            <b>Total</b>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td class="text-bold bg-red">
-                            Total Due
-                        </td>
-                        <td style="text-align:right">
-                            777.00
-                        </td>
-                        <td style="text-align:right">
-                            7.77
-                        </td>
-                        <td style="text-align:right">
-                            1.00
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            6,233.00
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-bold bg-green">
-                            Total Paid
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            0
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-bold bg-gray">
-                            Balance
-                        </td>
-                        <td style="text-align:right">
-                            777.00
-                        </td>
-                        <td style="text-align:right">
-                            7.77
-                        </td>
-                        <td style="text-align:right">
-                            1.00
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            6,233.00
-                        </td>
-                    </tr>
-                    <tr><td colspan="6"><br><br><b>Based on Loan Schedule:</b></td></tr>
-                    <tr>
-                        <td class="text-bold bg-red">
-                            Due till 
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            0
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-bold bg-green">
-                            Paid till 
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            0
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-bold bg-gray">
-                            Balance  till 
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right">
-                            0
-                        </td>
-                        <td style="text-align:right; font-weight:bold">
-                            0
-                        </td>
-                    </tr>
-                </table>
+    </div>
+    <?php endif; ?>
+</div>
+
+<?php if ($error): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?></div>
+<?php elseif ($loan): ?>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-icon primary"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-info">
+                <h3>TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></h3>
+                <p><?php echo __('principal_amount'); ?></p>
             </div>
         </div>
-                </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <h3>TZS <?php echo number_format($total_paid, 2); ?></h3>
+                <p><?php echo __('total_paid'); ?></p>
             </div>
-            <div data-pws-tab="tab_collateral" data-pws-tab-name="Loan Collateral">
-                <div class="tab_content"><div class="btn-group-horizontal"><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/collateral/add_collateral.php?loan_id=5226&tab=tab_collateral">Add Collateral</a></div><p><b>No Collateral Found</b></p>
-                </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-icon danger"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="stat-info">
+                <h3>TZS <?php echo number_format(max(0, $outstanding), 2); ?></h3>
+                <p><?php echo __('outstanding'); ?></p>
             </div>
-            <div data-pws-tab="tab_files" data-pws-tab-name="Loan Files">
-                <div class="tab_content">
-                    <p>To add new loan files or remove existing files, pls click the <b>Loan Terms</b> tab and then <b>Edit Loan</b>.</p>
-            <div class="box box-success">
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-bordered table-condensed table-hover">
-                        <tr style="background-color: #F2F8FF">
-                            <th>
-                              <b>Files</b>
-                            </th>
-                       </tr>
-                       <tr>
-                            <td class="margin"><ul class="margin">
-                    <li><a href="https://x.loandisk.com/uploads/index.php?file_id=468" target="_blank">‪+250 722 212 160‬ 20151204_221727.jpg</a></li></ul></td>
-                        </tr>
-                    </table> 
-                                       
-                </div>
-            </div>  
-                </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-icon warning"><i class="fas fa-percentage"></i></div>
+            <div class="stat-info">
+                <h3><?php echo $pct_paid; ?>%</h3>
+                <p><?php echo __('repaid'); ?></p>
             </div>
-            <div data-pws-tab="tab_comments" data-pws-tab-name="Loan Comments">
-                <div class="tab_content"><div class="btn-group-horizontal"><a type="button" class="btn bg-gray margin" href="https://x.loandisk.com/loans/add_comments.php?loan_id=5226&tab=tab_comments">Add Comments</a></div><br>
-                <div class="box-footer box-comments">
-                        <div class="box-comment">
-                            <!-- User image -->
-                            <img src="https://x.loandisk.com/uploads/staff_images/thumbnails/586b8bc6e5c18.PNG" class="img-circle" alt="User Image">
-                            <div class="comment-text">
-                                <span class="username">
-                                    Japhet Ty Aiko
-                                 
-                                    <span class="text-muted pull-right">
-                                        03/01/2017 6:52pm
-                                    </span>
-                                </span><!-- /.username -->
-                            DJHDVHHGDSHGJHDS
-                                <span class="text-muted pull-right"><div class="btn-group-horizontal"><a type="button" class="btn bg-white btn-xs text-bold" href="https://x.loandisk.com/loans/add_comments.php?edit_comments=1&comments_id=172&tab=tab_comments">Edit</a><a type="button" class="btn bg-white btn-xs text-bold" href="https://x.loandisk.com/loans/view_loan_details.php?delete_comments=delete&comments_id=172&tab=tab_comments" onClick="javascript:return confirm('Are you sure you want to Delete?')">Delete</a></div>
-                                </span>
-                            </div>
-                            <!-- /.comment-text -->
-                        </div>
-                    </div>
-                </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h5><i class="fas fa-user me-2"></i><?php echo __('borrower_information'); ?></h5></div>
+            <div class="card-body text-center pb-2">
+                <?php
+                $photoSrc = 'https://ui-avatars.com/api/?name=' . urlencode(($loan['fname'] ?? 'U') . '+' . ($loan['lname'] ?? 'N')) . '&size=100&background=2c7be5&color=fff';
+                if (!empty($loan['photo_path']) && file_exists($base_path . $loan['photo_path'])) {
+                    $photoSrc = $base_path . $loan['photo_path'];
+                }
+                ?>
+                <img src="<?php echo $photoSrc; ?>" class="rounded-circle mb-3" style="width:80px;height:80px;object-fit:cover;">
+                <h5 class="mb-0"><?php echo htmlspecialchars(($loan['fname'] ?? '') . ' ' . ($loan['lname'] ?? '')); ?></h5>
+                <p class="text-muted small mb-3"><?php echo htmlspecialchars($loan['email'] ?? ''); ?></p>
             </div>
-        </div>   
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted"><?php echo __('phone'); ?></span>
+                    <span><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted"><?php echo __('address'); ?></span>
+                    <span><?php echo htmlspecialchars(trim(($loan['address'] ?? '') . ' ' . ($loan['city'] ?? ''))); ?></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted"><?php echo __('country'); ?></span>
+                    <span><?php echo htmlspecialchars($loan['country'] ?? '-'); ?></span>
+                </li>
+            </ul>
+            <div class="card-body pt-2">
+                <a href="../borrowers/view_borrowers.php" class="btn btn-sm btn-outline-primary w-100"><?php echo __('view_profile'); ?></a>
+            </div>
+        </div>
     </div>
 
-                    </section>
-                </div><!-- /.content-wrapper -->
-            </div><!-- ./wrapper -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="loanTabs">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-terms"><?php echo __('loan_terms'); ?></a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-repayments"><?php echo __('repayments'); ?></a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-schedule"><?php echo __('schedule'); ?></a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-charges"><?php echo __('charges_fees'); ?></a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-terms">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('loan_no'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['loan_no'] ?? 'L-' . $loan_id); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('status'); ?></small>
+                                    <?php
+                                    $status = strtolower($loan['status'] ?? 'active');
+                                    $badgeClass = match($status) {
+                                        'active' => 'bg-success',
+                                        'pending','pending_approval' => 'bg-warning text-dark',
+                                        'paid','closed' => 'bg-secondary',
+                                        'overdue','arrears' => 'bg-danger',
+                                        default => 'bg-primary'
+                                    };
+                                    ?>
+                                    <span class="badge <?php echo $badgeClass; ?> fs-6"><?php echo htmlspecialchars(ucfirst($loan['status'] ?? 'Active')); ?></span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('loan_product'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('principal_amount'); ?></small>
+                                    <strong>TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('release_date'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['release_date'] ?? '-'); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('disbursed_by'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['disbursement_mtd'] ?? '-'); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('interest_method'); ?></small>
+                                    <strong><?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $loan['interest_mtd'] ?? '-'))); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('interest_rate'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['loan_interest'] ?? '0'); ?>% <?php echo htmlspecialchars($loan['loan_interest_pd'] ?? ''); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('loan_duration'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['loan_duration'] ?? '-'); ?> <?php echo htmlspecialchars($loan['loan_duration_pd'] ?? ''); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('repayment_cycle'); ?></small>
+                                    <strong><?php echo htmlspecialchars(ucfirst($loan['repayment_cycle'] ?? '-')); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block"><?php echo __('no_of_repayments'); ?></small>
+                                    <strong><?php echo htmlspecialchars($loan['no_repayment_cycle'] ?? '-'); ?></strong>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="p-3 bg-light rounded">
+                                    <small class="text-muted d-block mb-1"><?php echo __('repayment_progress'); ?></small>
+                                    <div class="progress" style="height:10px;">
+                                        <div class="progress-bar bg-success" style="width:<?php echo $pct_paid; ?>%"></div>
+                                    </div>
+                                    <small class="text-muted"><?php echo $pct_paid; ?>% <?php echo __('repaid'); ?> (TZS <?php echo number_format($total_paid, 2); ?> / TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?>)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- REQUIRED JS SCRIPTS -->
-        
-            <!-- Bootstrap 3.3.5 -->
-            <script src="https://x.loandisk.com/bootstrap/js/bootstrap.min.js"></script>
-            <!-- AdminLTE App -->
-            <script src="https://x.loandisk.com/dist/js/app.min.js"></script>
-            
-    </body>
-</html>
+                    <div class="tab-pane fade" id="tab-repayments">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0"><?php echo __('payment_history'); ?></h6>
+                            <a href="../repayments/add_repayment.php?loan_id=<?php echo $loan_id; ?>" class="btn btn-sm btn-success"><i class="fas fa-plus me-1"></i><?php echo __('record_payment'); ?></a>
+                        </div>
+                        <?php if (empty($repayments)): ?>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-receipt fa-2x mb-2"></i>
+                            <p><?php echo __('no_repayments_made'); ?></p>
+                        </div>
+                        <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th><?php echo __('date'); ?></th>
+                                        <th><?php echo __('amount'); ?></th>
+                                        <th><?php echo __('principal'); ?></th>
+                                        <th><?php echo __('interest'); ?></th>
+                                        <th><?php echo __('receipt_no'); ?></th>
+                                        <th><?php echo __('notes'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 1; foreach ($repayments as $r): ?>
+                                    <tr>
+                                        <td><?php echo $i++; ?></td>
+                                        <td><?php echo date('d M Y', strtotime($r['paid_date'])); ?></td>
+                                        <td class="fw-semibold text-success">TZS <?php echo number_format($r['amount'], 2); ?></td>
+                                        <td><?php echo number_format($r['principal'] ?? 0, 2); ?></td>
+                                        <td><?php echo number_format($r['interest'] ?? 0, 2); ?></td>
+                                        <td><?php echo htmlspecialchars($r['receipt_no'] ?? '-'); ?></td>
+                                        <td><?php echo htmlspecialchars($r['notes'] ?? ''); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="2"><?php echo __('total'); ?></th>
+                                        <th class="text-success">TZS <?php echo number_format($total_paid, 2); ?></th>
+                                        <th colspan="4"></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-schedule">
+                        <?php
+                        $principal = $loan['principal_amt'] ?? 0;
+                        $numRepayments = $loan['no_repayment_cycle'] ?? 1;
+                        $interestRate = $loan['loan_interest'] ?? 0;
+                        $releaseDate = $loan['release_date'] ?? date('Y-m-d');
+                        $cycle = strtolower($loan['repayment_cycle'] ?? 'monthly');
+                        try {
+                            $startDate = new DateTime($releaseDate);
+                        } catch (Exception $e) {
+                            $startDate = new DateTime();
+                        }
+                        $perPayment = $numRepayments > 0 ? $principal / $numRepayments : 0;
+                        $intervalMap = ['daily' => 'P1D', 'weekly' => 'P7D', 'bi_weekly' => 'P14D', 'monthly' => 'P1M', 'quarterly' => 'P3M', 'yearly' => 'P1Y'];
+                        $interval = $intervalMap[$cycle] ?? 'P1M';
+                        ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th><?php echo __('due_date'); ?></th>
+                                        <th><?php echo __('principal'); ?></th>
+                                        <th><?php echo __('interest'); ?></th>
+                                        <th><?php echo __('total_due'); ?></th>
+                                        <th><?php echo __('status'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $currentDate = clone $startDate;
+                                    $today = new DateTime();
+                                    $repaymentAmounts = array_column($repayments, 'amount');
+                                    $repaidIdx = 0;
+                                    for ($n = 1; $n <= min($numRepayments, 60); $n++):
+                                        $currentDate->add(new DateInterval($interval));
+                                        $interestAmt = $perPayment * ($interestRate / 100);
+                                        $totalDue = $perPayment + $interestAmt;
+                                        $isPaid = isset($repaymentAmounts[$repaidIdx]) && $repaidIdx < count($repayments);
+                                        $isOverdue = $currentDate < $today && !$isPaid;
+                                    ?>
+                                    <tr class="<?php echo $isOverdue ? 'table-danger' : ($isPaid ? 'table-success' : ''); ?>">
+                                        <td><?php echo $n; ?></td>
+                                        <td><?php echo $currentDate->format('d M Y'); ?></td>
+                                        <td>TZS <?php echo number_format($perPayment, 2); ?></td>
+                                        <td>TZS <?php echo number_format($interestAmt, 2); ?></td>
+                                        <td class="fw-semibold">TZS <?php echo number_format($totalDue, 2); ?></td>
+                                        <td>
+                                            <?php if ($isPaid): $repaidIdx++; ?>
+                                            <span class="badge bg-success"><?php echo __('paid'); ?></span>
+                                            <?php elseif ($isOverdue): ?>
+                                            <span class="badge bg-danger"><?php echo __('overdue'); ?></span>
+                                            <?php else: ?>
+                                            <span class="badge bg-light text-dark border"><?php echo __('pending'); ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endfor; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-charges">
+                        <?php if (empty($applied_charges)): ?>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i>
+                            <p><?php echo __('no_charges_applied'); ?></p>
+                        </div>
+                        <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><?php echo __('charge'); ?></th>
+                                        <th><?php echo __('amount'); ?></th>
+                                        <th><?php echo __('type'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($applied_charges as $charge): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($charge['charge_name'] ?? '-'); ?></td>
+                                        <td>TZS <?php echo number_format($charge['amount'] ?? 0, 2); ?></td>
+                                        <td><?php echo htmlspecialchars($charge['calculation_type'] ?? '-'); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php else: ?>
+<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Loan not found. <a href="view_loans.php">Back to loans</a></div>
+<?php endif; ?>
+
+<?php include $base_path . 'includes/footer.php'; ?>

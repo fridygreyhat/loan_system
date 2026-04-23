@@ -1,372 +1,160 @@
+<?php
+$base_path = '../';
+$page_title = 'Due Loans';
+$current_page = 'loans';
 
+require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Uwezo Admin</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!-- Bootstrap 3.3.5 -->
-        <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-        <!-- Ionicons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-        <!-- Theme style -->
-        <link rel="stylesheet" href="../dist/css/AdminLTE.css">
-        <link rel="stylesheet" href="../dist/css/skins/skin-blue.min.css">
+$due_loans = [];
+$total_due = 0;
+$total_loans = 0;
+try {
+    $stmt = $con->query("
+        SELECT l.*, b.fname, b.lname, b.mobile_no, lp.name as product_name,
+               COALESCE(
+                   (SELECT SUM(lr.amount) FROM loan_repayment lr WHERE lr.loan_id = l.id),
+                   0
+               ) as paid_amount,
+               l.principal_amt as total_due_amount
+        FROM loans l
+        LEFT JOIN borrower b ON l.borrower_id = b.id
+        LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
+        WHERE l.status NOT IN ('paid','closed','written_off')
+        ORDER BY l.release_date ASC
+    ");
+    $due_loans = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $total_loans = count($due_loans);
+    foreach ($due_loans as $loan) {
+        $total_due += ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
+    }
+} catch (PDOException $e) {
+}
 
-        <link rel="stylesheet" href="../plugins/datatables/dataTables.bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.1/css/select.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/1.4.2/css/scroller.dataTables.min.css">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+include $base_path . 'includes/header.php';
+?>
 
-        
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
-        <link rel="stylesheet" href="../css/style.css">
-        <script src="../plugins/jQuery/jQuery-2.1.4.min.js"></script>
-        <link type="text/css" rel="stylesheet" href="../tab_assets/jquery.pwstabs.css">
-        <script src="../tab_assets/jquery.pwstabs.min.js"></script>
-        <script>
-            jQuery(document).ready(function($){
-               $('.loan_tabs').pwstabs({
-                   effect: 'none',
-                   defaultTab: 1,
-                   containerWidth: '100%', 
-                   responsive: false,
-                   theme: 'pws_theme_grey'
-               })   
-            });
-        </script>       
-        <link rel="stylesheet" type="text/css" href="../css/jquery.datepick.css"> 
-        <script type="text/javascript" src="../include/js/jquery.plugin.js"></script> 
-        <script type="text/javascript" src="../include/js/jquery.datepick.js"></script>
-        <script type="text/javascript" src="../include/js/numbers.decimals.validation.js"></script>    
-    </head>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1><?php echo __('due_loans'); ?></h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="<?php echo $base_path; ?>home/dashboard.php"><?php echo __('dashboard'); ?></a></li>
+                <li class="breadcrumb-item"><a href="view_loans.php"><?php echo __('loans'); ?></a></li>
+                <li class="breadcrumb-item active"><?php echo __('due_loans'); ?></li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
-
-
-
-
-    <body class="hold-transition skin-blue sidebar-mini" onload="doOnLoad();">    
-        <div class="wrapper">
-            <!-- Main Header -->
-
-
-
-            
-            <header class="main-header">
-
-            <!-- Logo -->
-            <a href="../home/welcome.html" class="logo">
-                <!-- mini logo for sidebar mini 50x50 pixels -->
-                <!-- logo for regular state and mobile devices -->
-                 <span class="logo-lg"><b>Uwezo</b> Admin</span>
-            </a>
-
-            <!-- Header Navbar -->
-            <nav class="navbar navbar-static-top" role="navigation">
-                <!-- Sidebar toggle button-->
-                
-                <div class="navbar-header">
-                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-                        Left Menu
-                    </a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-                        <i class="fa fa-bars">Top Menu</i>
-                    </button>
-                </div>
-                <!-- Navbar Right Menu -->
-                <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
-    
-                    <!-- Top Menu -->
-                    <ul class="nav navbar-nav">
-                            <li>     
-                                <a href="../admin/index.html"><i class="fa fa-ban"></i> <span>Admin</span></a>
-                            </li>  
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-link"></i> <span>Settings</span> <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">  
-                                    <li>          
-                                        <a href="../billing/billing.html"><i class="fa fa-circle-o"></i> Billing</a>
-                                   </li>  
-                                    <li>          
-                                        <a href="../home/change_password.html"><i class="fa fa-circle-o"></i> Change Password</a>
-                                   </li>  
-                                    <li>          
-                                        <a href="../index.html"><i class="fa fa-circle-o"></i> Logout</a>
-                                   </li>  
-                                </ul>
-                            </li>  
-                            <li>
-                                <a href="support_login.html" target="_blank"><i class="fa fa-support"></i> <span>Help</span></a>
-                            </li>  
-                        </ul>                 
-                </div>
-                
-            </nav>
-            </header>
-
-
-
-
-
-            <!-- Left side column. contains the logo and sidebar -->
-            <aside class="main-sidebar">
-                <!-- sidebar: style can be found in sidebar.less -->
-                <section class="sidebar">
-        
-                    <!-- Sidebar user panel (optional) -->
-                    <div class="user-panel">
-                        <div class="pull-left image">
-                            <img src="../uploads/staff_images/thumbnails/user2-160x160.jpg" class="img-circle" alt="User Image">
-                        </div>
-                        <div class="pull-left info">
-                            <h5>Japhet Ty Aiko</h5>
-                            
-                            
-                        </div>
-                    </div>
-                    <!-- Sidebar Menu -->
-                    <ul class="sidebar-menu">
-                            <li>     
-                                <a href="../admin/change_branch.html"><i class="fa fa-eye"></i> <span>View Another Branch</span></a>
-                            </li>
-                            <li style="border-top: 1px solid #000;"><a href="../home/home_branch.html"><i class="fa fa-circle-o text-aqua"></i> <span>Branch #1</span></a></li>
-                            <li>     
-                                <a href="../home/home_branch.html"><i class="fa fa-home"></i> <span>Home Branch</span></a>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-user"></i> <span>Borrowers</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../borrowers/view_borrowers_branch.html"><i class="fa fa-circle-o"></i> View Borrowers</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/add_borrower.html"><i class="fa fa-circle-o"></i> Add Borrower</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/groups/view_borrowers_groups_branch.html"><i class="fa fa-circle-o"></i> View Borrower Groups</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/groups/add_borrowers_group.html"><i class="fa fa-circle-o"></i> Add Borrowers Group</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/send_sms_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send SMS to All Borrowers</a>
-                                   </li>
-                                    <li>
-                                        <a href="../borrowers/send_email_to_all_borrowers.html"><i class="fa fa-circle-o"></i> Send Email to All Borrowers</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-balance-scale"></i> <span>Loans</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../loans/view_loans_branch.html"><i class="fa fa-circle-o"></i> View All Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/missed_repayments.html"><i class="fa fa-circle-o"></i> Missed Repayments</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/due_loans.html"><i class="fa fa-circle-o"></i> Due Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_past_maturity_date_branch.html"><i class="fa fa-circle-o"></i> Past Maturity Date</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_late_1month_branch.html"><i class="fa fa-circle-o"></i> 1 Month Late Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/view_loans_late_3months_branch.html"><i class="fa fa-circle-o"></i> 3 Months Late Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../loans/loan_calculator.html"><i class="fa fa-circle-o"></i> Loan Calculator</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-dollar"></i> <span>Repayments</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../repayments/view_repayments_branch.html"><i class="fa fa-circle-o"></i> View Repayments</a>
-                                   </li>
-                                    <li>
-                                        <a href="../repayments/add_bulk_repayments.html"><i class="fa fa-circle-o"></i> Add Bulk Repayments</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li>     
-                                <a href="../collateral/collateral_register.html"><i class="fa fa-list"></i> <span>Collateral Register</span></a>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-file-text-o"></i> <span>Collection Sheets</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../collection_sheets/view_daily_collection.html"><i class="fa fa-circle-o"></i> Daily Collection Sheet</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/view_missed_repayments_sheet.html"><i class="fa fa-circle-o"></i> Missed Repayment Sheet</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/view_past_maturity_date.html"><i class="fa fa-circle-o"></i> Past Maturity Date Loans</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/send_sms.html"><i class="fa fa-circle-o"></i> Send SMS</a>
-                                   </li>
-                                    <li>
-                                        <a href="../collection_sheets/send_email.html"><i class="fa fa-circle-o"></i> Send Email</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-bank"></i> <span>Savings</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../savings/view_savings_branch.html"><i class="fa fa-circle-o"></i> View Savings Accounts</a>
-                                   </li>
-                                    <li>
-                                        <a href="../savings/view_savings_transactions_branch.html"><i class="fa fa-circle-o"></i> View Savings Transactions</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-paypal"></i> <span>Payroll</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../payroll/view_payroll_branch.html"><i class="fa fa-circle-o"></i> View Payroll</a>
-                                   </li>
-                                    <li>
-                                        <a href="../payroll/select_staff.html"><i class="fa fa-circle-o"></i> Add Payroll</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-share"></i> <span>Expenses</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../expenses/view_expenses_branch.html"><i class="fa fa-circle-o"></i> View Expenses</a>
-                                   </li>
-                                    <li>
-                                        <a href="../expenses/add_expense.html"><i class="fa fa-circle-o"></i> Add Expense</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-plus"></i> <span>Other Income</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../other_income/view_other_income_branch.html"><i class="fa fa-circle-o"></i> View Other Income</a>
-                                   </li>
-                                    <li>
-                                        <a href="../other_income/add_other_income.html"><i class="fa fa-circle-o"></i> Add Other Income</a>
-                                   </li>
-                                </ul>
-                            </li>
-                            <li class="treeview">     
-                                <a href="#"><i class="fa fa-industry"></i> <span>Reports</span> <i class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li>
-                                        <a href="../reports/view_collections_report_branch.html"><i class="fa fa-circle-o"></i> Collections Report</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/collector_report.html"><i class="fa fa-circle-o"></i> Collector Report (Staff)</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_cash_flow_branch.html"><i class="fa fa-circle-o"></i> Cash flow</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_cash_flow_projection_branch.html"><i class="fa fa-circle-o"></i> Cash Flow Projection</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/view_profit_loss_branch.html"><i class="fa fa-circle-o"></i> Profit / Loss</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/mfrs_ratios.html"><i class="fa fa-circle-o"></i> MFRS Ratios</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/portfolio_at_risk.html"><i class="fa fa-circle-o"></i> Portfolio At Risk (PAR)</a>
-                                   </li>
-                                    <li>
-                                        <a href="../reports/all_entries.html"><i class="fa fa-circle-o"></i> All Entries</a>
-                                   </li>
-                                </ul>
-                            </li>
-                        </ul> 
-                </section>
-            </aside>
-
-
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header"><h1>Due Loans</h1>
-                </section>
-
-                <!-- Main content -->
-                <section class="content"><p>Open loans that have due repayments based on the Loan Schedule dates.</p>        <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title">Date Range</h3>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-icon warning">
+                <i class="fas fa-clock"></i>
             </div>
-            <form class="form-horizontal" method="get"  enctype="multipart/form-data">
-                <input type="hidden" name="search" value="1">
-                <div class="box-body">
-                  <div class="row">
-                      <script>
-                        $(function() {
-                            $('#startPicker,#endPicker').datepick({ 
-                                onSelect: customRange, showTrigger: '#calImg',
-                                dateFormat: 'dd/mm/yyyy'}); 
-                 
-                                function customRange(dates) { 
-                                    if (this.id == 'startPicker') { 
-                                        $('#endPicker').datepick('option', 'minDate', dates[0] || null); 
-                                    } 
-                                    else { 
-                                        $('#startPicker').datepick('option', 'maxDate', dates[0] || null); 
-                                    } 
-                                }
-                        });
-        
-                    </script>
-                    <div class="col-xs-2">
-                        <input type="text" name="start_date" class="form-control" id="startPicker" placeholder="From Date" value="06/01/2017" required>
-                    </div>
-                    <div class="col-xs-2">
-                        <input type="text" name="end_date" class="form-control" id="endPicker" placeholder="To Date" value="06/01/2017" required>
-                    </div>
-                    <div class="col-xs-1">
-                        <span class="input-group-btn">
-                          <button type="submit" class="btn bg-olive btn-flat">Search!</button>
-                        </span>
+            <div class="stat-info">
+                <h3><?php echo $total_loans; ?></h3>
+                <p><?php echo __('due_loans'); ?></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-icon danger">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-info">
+                <h3>TZS <?php echo number_format($total_due, 2); ?></h3>
+                <p><?php echo __('total_outstanding'); ?></p>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <span class="input-group-btn">
-        <button type="button" class="btn bg-purple  btn-flat" onClick="parent.location='due_loans.html'">Reset!</button>
-                        </span>
-                    </div>
-                  </div>
-                </div><!-- /.box-body -->
-            </form>
-          </div><!-- /.box -->
-No loans found.
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="fas fa-clock me-2"></i><?php echo __('due_loans'); ?></h5>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="<?php echo __('search'); ?>..." style="width:220px;">
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="dueLoansTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th><?php echo __('loan_no'); ?></th>
+                        <th><?php echo __('borrower'); ?></th>
+                        <th><?php echo __('phone'); ?></th>
+                        <th><?php echo __('product'); ?></th>
+                        <th><?php echo __('principal'); ?></th>
+                        <th><?php echo __('paid'); ?></th>
+                        <th><?php echo __('outstanding'); ?></th>
+                        <th><?php echo __('release_date'); ?></th>
+                        <th><?php echo __('status'); ?></th>
+                        <th><?php echo __('actions'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($due_loans)): ?>
+                    <tr>
+                        <td colspan="11" class="text-center py-4 text-muted">
+                            <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                            <p class="mb-0"><?php echo __('no_due_loans'); ?></p>
+                        </td>
+                    </tr>
+                    <?php else: ?>
+                    <?php $i = 1; foreach ($due_loans as $loan):
+                        $outstanding = ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
+                        $pct = $loan['principal_amt'] > 0 ? round(($loan['paid_amount'] / $loan['principal_amt']) * 100) : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo $i++; ?></td>
+                        <td><a href="view_loan_details.php?id=<?php echo $loan['id']; ?>" class="fw-semibold text-primary"><?php echo htmlspecialchars($loan['loan_no'] ?? 'L-' . $loan['id']); ?></a></td>
+                        <td><?php echo htmlspecialchars($loan['fname'] . ' ' . $loan['lname']); ?></td>
+                        <td><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></td>
+                        <td><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></td>
+                        <td class="fw-semibold">TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></td>
+                        <td class="text-success">TZS <?php echo number_format($loan['paid_amount'] ?? 0, 2); ?></td>
+                        <td class="text-danger fw-semibold">TZS <?php echo number_format($outstanding, 2); ?></td>
+                        <td><?php echo htmlspecialchars($loan['release_date'] ?? '-'); ?></td>
+                        <td>
+                            <?php
+                            $status = strtolower($loan['status'] ?? 'active');
+                            $badgeClass = match($status) {
+                                'active' => 'bg-success',
+                                'pending','pending_approval' => 'bg-warning text-dark',
+                                'overdue','arrears' => 'bg-danger',
+                                default => 'bg-secondary'
+                            };
+                            ?>
+                            <span class="badge <?php echo $badgeClass; ?>"><?php echo htmlspecialchars(ucfirst($loan['status'] ?? 'Active')); ?></span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="view_loan_details.php?id=<?php echo $loan['id']; ?>" class="btn btn-outline-primary btn-sm" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="../repayments/add_repayment.php?loan_id=<?php echo $loan['id']; ?>" class="btn btn-outline-success btn-sm" title="Record Payment"><i class="fas fa-plus"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                    </section>
-                </div><!-- /.content-wrapper -->
-            </div><!-- ./wrapper -->
+<script>
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#dueLoansTable tbody tr');
+    rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+});
+</script>
 
-            <!-- REQUIRED JS SCRIPTS -->
-        
-            <!-- Bootstrap 3.3.5 -->
-            <script src="/bootstrap/js/bootstrap.min.js"></script>
-            <!-- AdminLTE App -->
-            <script src="../dist/js/app.min.js"></script>
-            
-    </body>
-</html>
+<?php include $base_path . 'includes/footer.php'; ?>
