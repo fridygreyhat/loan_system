@@ -6,7 +6,7 @@ $current_page = 'reports';
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
 
-$ratios = [];
+$ratios = ['par_30' => 0, 'collection_rate' => 0, 'total_portfolio' => 0, 'total_collections' => 0, 'disbursed_ytd' => 0];
 
 try {
     $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) as total_portfolio FROM loans WHERE status = 'approved'");

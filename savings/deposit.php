@@ -28,17 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($amount > 0) {
         try {
-            $new_balance = $account['balance'] + $amount;
-            
-            $stmt = $con->prepare("UPDATE savings_accounts SET balance = ? WHERE id = ?");
-            $stmt->execute([$new_balance, $account_id]);
-            
-            $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, reference, created_by) VALUES (?, 'deposit', ?, ?, ?, ?, 1)");
-            $stmt->execute([$account_id, $amount, $new_balance, $description, $reference]);
-            
+            // Atomic: the database adds to the current balance, so concurrent postings can't overwrite each other.
+            $con->beginTransaction();
+            $stmt = $con->prepare("UPDATE savings_accounts SET balance = balance + ? WHERE id = ? RETURNING balance");
+            $stmt->execute([$amount, $account_id]);
+            $new_balance = $stmt->fetchColumn();
+
+            $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, reference, created_by) VALUES (?, 'deposit', ?, ?, ?, ?, ?)");
+            $stmt->execute([$account_id, $amount, $new_balance, $description, $reference, $_SESSION['user_id'] ?? null]);
+            $con->commit();
+
             header("Location: view_account.php?id=$account_id&success=deposit");
             exit;
         } catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
             $message = '<div class="alert alert-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
         }
     } else {

@@ -26,15 +26,15 @@ try {
     $stmt->execute([$date_from, $date_to]);
     $interest_income = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE created_at BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE creation_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $loan_disbursements = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE date BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE expense_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $operating_expenses = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(net_salary), 0) as total FROM payroll WHERE pay_date BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(net_pay), 0) as total FROM payroll WHERE pay_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $salaries = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 } catch (PDOException $e) {

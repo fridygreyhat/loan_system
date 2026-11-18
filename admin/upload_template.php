@@ -4,7 +4,7 @@ require_once '../helpers/connect.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $is_default = isset($_POST['is_default']) ? true : false;
+    $is_default = isset($_POST['is_default']); // bound below as 'true'/'false': PDO sends PHP false as ''
     
     if (empty($name)) {
         header("Location: templates.php?error=Name is required");
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             $stmt = $con->prepare("INSERT INTO agreement_templates (name, description, file_path, placeholders, is_default, is_active) VALUES (?, ?, ?, ?, ?, TRUE)");
-            $stmt->execute([$name, $description, $filepath, $placeholders, $is_default]);
+            $stmt->execute([$name, $description, $filepath, $placeholders, $is_default ? 'true' : 'false']);
             
             header("Location: templates.php?success=1");
             exit;

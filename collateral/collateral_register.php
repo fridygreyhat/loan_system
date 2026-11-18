@@ -91,10 +91,10 @@ include $base_path . 'includes/header.php';
                         <td>TZS <?php echo number_format($item['value'] ?? $item['collateral_value'] ?? 0, 2); ?></td>
                         <td>
                             <?php 
-                            $status = $item['status'] ?? 'active';
-                            $badge_class = $status === 'active' ? 'success' : 'secondary';
+                            $status = $item['status'] ?? 'held';
+                            $badge_class = ['held' => 'success', 'released' => 'secondary', 'seized' => 'danger', 'sold' => 'dark'][$status] ?? 'secondary';
                             ?>
-                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo __($status); ?></span>
+                            <span class="badge bg-<?php echo $badge_class; ?>"><?php echo htmlspecialchars(ucfirst($status)); ?></span>
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">

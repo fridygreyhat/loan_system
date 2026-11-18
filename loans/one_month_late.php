@@ -9,16 +9,16 @@ require_once $base_path . 'helpers/lang.php';
 $loans = [];
 try {
     $stmt = $con->query("
-        SELECT l.*, b.fname, b.lname, b.mobile, lp.name as product_name,
+        SELECT l.*, b.fname, b.lname, b.mobile_no, lp.name as product_name,
                COALESCE(SUM(r.amount), 0) as total_paid
         FROM loans l
         LEFT JOIN borrower b ON l.borrower_id = b.id
         LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
-        LEFT JOIN repayments r ON l.id = r.loan_id
+        LEFT JOIN loan_repayment r ON l.id = r.loan_id
         WHERE l.status = 'approved' 
         AND l.maturity_date < CURRENT_DATE - INTERVAL '30 days'
         AND l.maturity_date >= CURRENT_DATE - INTERVAL '90 days'
-        GROUP BY l.id, b.fname, b.lname, b.mobile, lp.name
+        GROUP BY l.id, b.fname, b.lname, b.mobile_no, lp.name
         ORDER BY l.maturity_date ASC
     ");
     $loans = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -89,7 +89,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td><strong>#<?php echo $loan['id']; ?></strong></td>
                         <td><?php echo htmlspecialchars(($loan['fname'] ?? '') . ' ' . ($loan['lname'] ?? '')); ?></td>
-                        <td><?php echo htmlspecialchars($loan['mobile'] ?? '-'); ?></td>
+                        <td><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></td>
                         <td>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
                         <td>TZS <?php echo number_format($loan['total_paid'] ?? 0, 2); ?></td>
                         <td><?php echo date('M d, Y', strtotime($loan['maturity_date'])); ?></td>

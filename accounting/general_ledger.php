@@ -12,7 +12,14 @@ $date_to = $_GET['to'] ?? date('Y-m-d');
 $ledger_entries = [];
 try {
     $db = $con;
-    $stmt = $db->prepare("SELECT * FROM ledger_entries WHERE date BETWEEN :from_date AND :to_date ORDER BY date DESC");
+    $stmt = $db->prepare("
+        SELECT je.id, je.entry_date AS date, coa.account_code || ' - ' || coa.account_name AS account,
+               je.reference AS ref, je.description, je.debit, je.credit
+        FROM journal_entries je
+        LEFT JOIN chart_of_accounts coa ON je.account_id = coa.id
+        WHERE je.entry_date BETWEEN :from_date AND :to_date AND je.status = 'posted'
+        ORDER BY je.entry_date DESC, je.id DESC
+    ");
     $stmt->execute(['from_date' => $date_from, 'to_date' => $date_to]);
     $ledger_entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {

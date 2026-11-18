@@ -15,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     try {
         if ($action === 'approve') {
-            $stmt = $con->prepare("UPDATE repayments SET status = 'approved' WHERE id = ?");
+            $stmt = $con->prepare("UPDATE loan_repayment SET status = 'approved' WHERE id = ?");
             $stmt->execute([$repayment_id]);
             $message = 'Repayment approved successfully';
         } elseif ($action === 'reject') {
-            $stmt = $con->prepare("UPDATE repayments SET status = 'rejected' WHERE id = ?");
+            $stmt = $con->prepare("UPDATE loan_repayment SET status = 'rejected' WHERE id = ?");
             $stmt->execute([$repayment_id]);
             $message = 'Repayment rejected';
         }
@@ -32,11 +32,11 @@ $repayments = [];
 try {
     $stmt = $con->query("
         SELECT r.*, l.id as loan_id, b.fname, b.lname
-        FROM repayments r
+        FROM loan_repayment r
         LEFT JOIN loans l ON r.loan_id = l.id
         LEFT JOIN borrower b ON l.borrower_id = b.id
         WHERE r.status = 'pending' OR r.status IS NULL
-        ORDER BY r.collection_date DESC
+        ORDER BY r.paid_date DESC
     ");
     $repayments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -119,7 +119,7 @@ include $base_path . 'includes/header.php';
                         <td>#<?php echo $r['loan_id']; ?></td>
                         <td><?php echo htmlspecialchars(($r['fname'] ?? '') . ' ' . ($r['lname'] ?? '')); ?></td>
                         <td class="text-success fw-bold">TZS <?php echo number_format($r['amount'] ?? 0, 2); ?></td>
-                        <td><?php echo date('M d, Y', strtotime($r['collection_date'])); ?></td>
+                        <td><?php echo date('M d, Y', strtotime($r['paid_date'])); ?></td>
                         <td><?php echo htmlspecialchars($r['payment_method'] ?? 'Cash'); ?></td>
                         <td>
                             <div class="btn-group btn-group-sm">

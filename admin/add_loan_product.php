@@ -61,7 +61,7 @@ if (!empty($_POST) && isset($_POST['loan_product_name'])) {
          $data1=[
             "loan_product_id"=>$savePdctId,
             "method"=>$loan_interest_method,
-            "mini_interest "=>$min_loan_interest,
+            "mini_interest"=>$min_loan_interest,
             "mini_interest_rate"=>$min_loan_interest_period,
             "default_interest"=>$default_loan_interest,
             "default_interest_date"=>$default_loan_interest_period,
@@ -76,9 +76,9 @@ if (!empty($_POST) && isset($_POST['loan_product_name'])) {
           $dataDur=[
             "loan_product_id"=>$savePdctId,
             "min_duration"=>$min_loan_duration,
-            "min_duration_rate "=>$min_loan_duration_period,
+            "min_duration_rate"=>$min_loan_duration_period,
             "default_duration"=>$default_loan_duration,
-            "default_duration_rate"=>$max_loan_duration_period,
+            "default_duration_rate"=>($_POST["default_loan_duration_period"] ?? $max_loan_duration_period),
             "max_duration"=>$max_loan_duration,
             "max_duration_rate"=>$max_loan_duration_period,
             "creation_user"=>1

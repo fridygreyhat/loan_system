@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_key = $_POST['api_key'] ?? '';
     $api_secret = $_POST['api_secret'] ?? '';
     $sender_id = $_POST['sender_id'] ?? '';
-    $is_active = isset($_POST['is_active']) ? true : false;
+    $is_active = isset($_POST['is_active']) ? 'true' : 'false'; // PDO sends PHP false as '' which Postgres rejects for BOOLEAN
     
     try {
         $stmt = $con->query("SELECT id FROM sms_settings LIMIT 1");

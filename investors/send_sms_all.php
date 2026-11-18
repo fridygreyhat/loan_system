@@ -14,11 +14,8 @@ try {
     $stmt = $con->query("SELECT id, first_name, last_name, phone FROM investors WHERE phone IS NOT NULL AND phone != '' ORDER BY first_name, last_name");
     $investors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $investors = [
-        ['id' => 1, 'first_name' => 'James', 'last_name' => 'Wilson', 'phone' => '+255712345678'],
-        ['id' => 2, 'first_name' => 'Sarah', 'last_name' => 'Brown', 'phone' => '+255723456789'],
-        ['id' => 3, 'first_name' => 'Michael', 'last_name' => 'Davis', 'phone' => '+255734567890'],
-    ];
+    $investors = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,6 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header">
     <div>

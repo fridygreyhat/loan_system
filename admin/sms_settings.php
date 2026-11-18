@@ -8,8 +8,8 @@ require_once $base_path . 'helpers/connect.php';
 $settings = null;
 $templates = [];
 try {
-    $stmt = $con->query("SELECT * FROM sms_settings WHERE is_active = TRUE LIMIT 1");
-    $settings = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $con->query("SELECT * FROM sms_settings ORDER BY is_active DESC, id LIMIT 1");
+    $settings = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     
     $stmt = $con->query("SELECT * FROM sms_templates ORDER BY name");
     $templates = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -54,7 +54,7 @@ include $base_path . 'includes/header.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">API Secret / Auth Token</label>
-                        <input type="password" name="api_secret" class="form-control" value="<?php echo $settings['api_secret'] ? '********' : ''; ?>" placeholder="Enter your API secret">
+                        <input type="password" name="api_secret" class="form-control" value="<?php echo !empty($settings["api_secret"]) ? "********" : ""; ?>" placeholder="Enter your API secret">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sender ID</label>

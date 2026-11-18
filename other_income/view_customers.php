@@ -22,16 +22,16 @@ try {
     $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_customers = count($customers);
 } catch (PDOException $e) {
-    $customers = [
-        ['id' => 1, 'name' => 'ABC Corporation', 'email' => 'abc@example.com', 'phone' => '+255712345678', 'status' => 'active', 'total_income' => 1500000, 'income_count' => 10],
-        ['id' => 2, 'name' => 'XYZ Limited', 'email' => 'xyz@example.com', 'phone' => '+255723456789', 'status' => 'active', 'total_income' => 800000, 'income_count' => 5],
-        ['id' => 3, 'name' => 'Global Services', 'email' => 'global@example.com', 'phone' => '+255734567890', 'status' => 'active', 'total_income' => 2200000, 'income_count' => 15],
-    ];
+    $customers = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $total_customers = count($customers);
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
@@ -124,7 +124,7 @@ include $base_path . 'includes/header.php';
                         <td><strong class="text-success">TZS <?php echo number_format($customer['total_income'], 2); ?></strong></td>
                         <td><?php echo $customer['income_count']; ?></td>
                         <td>
-                            <span class="badge badge-<?php echo $customer['status'] === 'active' ? 'success' : 'secondary'; ?>">
+                            <span class="badge bg-<?php echo $customer['status'] === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo __($customer['status']); ?>
                             </span>
                         </td>

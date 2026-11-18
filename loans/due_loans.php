@@ -16,7 +16,7 @@ try {
                    (SELECT SUM(lr.amount) FROM loan_repayment lr WHERE lr.loan_id = l.id),
                    0
                ) as paid_amount,
-               l.principal_amt as total_due_amount
+               l.principal_amount as total_due_amount
         FROM loans l
         LEFT JOIN borrower b ON l.borrower_id = b.id
         LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
@@ -26,7 +26,7 @@ try {
     $due_loans = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_loans = count($due_loans);
     foreach ($due_loans as $loan) {
-        $total_due += ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
+        $total_due += ($loan['principal_amount'] ?? 0) - ($loan['paid_amount'] ?? 0);
     }
 } catch (PDOException $e) {
 }
@@ -107,8 +107,8 @@ include $base_path . 'includes/header.php';
                     </tr>
                     <?php else: ?>
                     <?php $i = 1; foreach ($due_loans as $loan):
-                        $outstanding = ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
-                        $pct = $loan['principal_amt'] > 0 ? round(($loan['paid_amount'] / $loan['principal_amt']) * 100) : 0;
+                        $outstanding = ($loan['principal_amount'] ?? 0) - ($loan['paid_amount'] ?? 0);
+                        $pct = $loan['principal_amount'] > 0 ? round(($loan['paid_amount'] / $loan['principal_amount']) * 100) : 0;
                     ?>
                     <tr>
                         <td><?php echo $i++; ?></td>
@@ -116,7 +116,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo htmlspecialchars($loan['fname'] . ' ' . $loan['lname']); ?></td>
                         <td><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></td>
-                        <td class="fw-semibold">TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></td>
+                        <td class="fw-semibold">TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
                         <td class="text-success">TZS <?php echo number_format($loan['paid_amount'] ?? 0, 2); ?></td>
                         <td class="text-danger fw-semibold">TZS <?php echo number_format($outstanding, 2); ?></td>
                         <td><?php echo htmlspecialchars($loan['release_date'] ?? '-'); ?></td>

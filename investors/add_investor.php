@@ -19,26 +19,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($first_name && $last_name) {
         try {
+            $con->beginTransaction();
             $stmt = $con->prepare("INSERT INTO investors (first_name, last_name, email, phone, address, id_number, status) VALUES (?, ?, ?, ?, ?, ?, 'active') RETURNING id");
             $stmt->execute([$first_name, $last_name, $email, $phone, $address, $id_number]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $investor_id = $result['id'];
             
             if ($initial_investment > 0) {
-                $account_number = 'INV' . date('Ymd') . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+                $account_number = 'INV' . date('Ymd') . str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 
                 $stmt = $con->prepare("INSERT INTO investor_accounts (investor_id, account_number, investment_amount, interest_rate, status) VALUES (?, ?, ?, ?, 'active') RETURNING id");
                 $stmt->execute([$investor_id, $account_number, $initial_investment, $interest_rate]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 $account_id = $result['id'];
                 
-                $stmt = $con->prepare("INSERT INTO investor_transactions (account_id, type, amount, balance_after, description, created_by) VALUES (?, 'investment', ?, ?, 'Initial investment', 1)");
-                $stmt->execute([$account_id, $initial_investment, $initial_investment]);
+                $stmt = $con->prepare("INSERT INTO investor_transactions (account_id, type, amount, balance_after, description, created_by) VALUES (?, 'investment', ?, ?, 'Initial investment', ?)");
+                $stmt->execute([$account_id, $initial_investment, $initial_investment, $_SESSION['user_id'] ?? null]);
             }
-            
-            header("Location: view_investors.php?success=1");
+            $con->commit();
+
+            header("Location: view_investor.php?id=" . (int)$investor_id);
             exit;
         } catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
             $message = '<div class="alert alert-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
         }
     } else {

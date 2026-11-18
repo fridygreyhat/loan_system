@@ -2,17 +2,19 @@
 $base_path = '../';
 $page_title = 'Branches';
 $current_page = 'settings';
-include '../includes/header.php';
 require_once '../helpers/connect.php';
+require_once '../helpers/lang.php';
+include '../includes/header.php';
 
 $db = $con;
 
 $branches = [];
 try {
-    $stmt = $db->query("SELECT * FROM branches ORDER BY name");
+    $stmt = $db->query("SELECT *, address AS location, CASE WHEN is_active THEN 'active' ELSE 'inactive' END AS status FROM branches ORDER BY name");
     $branches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $branches = [];
+    $load_error = 'Could not load branches: ' . $e->getMessage();
 }
 
 $total_branches = count($branches);
@@ -26,6 +28,15 @@ foreach ($branches as $branch) {
     $total_capital += $branch['capital'] ?? 0;
 }
 ?>
+
+<?php if (isset($_GET['success'])): ?>
+<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Branch saved.</div>
+<?php elseif (!empty($_GET['error'])): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_GET['error']); ?></div>
+<?php endif; ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="content-header">
     <h1><i class="fas fa-building"></i> <?php echo __('branches'); ?></h1>
@@ -122,11 +133,10 @@ foreach ($branches as $branch) {
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" title="<?php echo __('edit'); ?>">
+                                <button type="button" class="btn btn-outline-primary" title="<?php echo __('edit'); ?>"
+                                        data-bs-toggle="modal" data-bs-target="#addBranchModal"
+                                        data-branch="<?php echo htmlspecialchars(json_encode($branch), ENT_QUOTES); ?>">
                                     <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-outline-info" title="<?php echo __('holidays'); ?>">
-                                    <i class="fas fa-calendar"></i>
                                 </button>
                             </div>
                         </td>
@@ -146,7 +156,8 @@ foreach ($branches as $branch) {
                 <h5 class="modal-title"><?php echo __('add_branch'); ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="save_branch.php" method="POST">
+            <form action="save_branch.php" method="POST" id="branchForm">
+                <input type="hidden" name="id" value="">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -201,6 +212,15 @@ foreach ($branches as $branch) {
                             <input type="number" name="max_interest_rate" class="form-control" value="100" step="0.1">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><?php echo __('status'); ?></label>
+                            <select name="status" class="form-select">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('cancel'); ?></button>
@@ -210,5 +230,20 @@ foreach ($branches as $branch) {
         </div>
     </div>
 </div>
+
+<script>
+// The same modal adds a branch or, when opened from an Edit button, edits one.
+document.getElementById('addBranchModal').addEventListener('show.bs.modal', function (e) {
+    const form = document.getElementById('branchForm');
+    const branch = JSON.parse((e.relatedTarget && e.relatedTarget.getAttribute('data-branch')) || '{}');
+    form.reset();
+    form.elements['id'].value = branch.id || '';
+    this.querySelector('.modal-title').textContent = branch.id ? 'Edit Branch' : <?php echo json_encode(__('add_branch')); ?>;
+    ['name', 'code', 'location', 'phone', 'capital', 'min_loan_amount', 'max_loan_amount', 'min_interest_rate', 'max_interest_rate', 'status']
+        .forEach(function (f) {
+            if (form.elements[f] && branch[f] !== undefined && branch[f] !== null) form.elements[f].value = branch[f];
+        });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

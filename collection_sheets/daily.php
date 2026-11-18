@@ -10,20 +10,37 @@ $collections = [];
 $today = date('Y-m-d');
 try {
     $stmt = $con->prepare("
-        SELECT lr.*, l.id as loan_id, l.principal_amount, b.fname, b.lname, b.mobile
-        FROM loan_repayment lr
-        LEFT JOIN loans l ON lr.loan_id = l.id
+        WITH sched AS (
+            SELECT ls.*, SUM(ls.amount_due) OVER (PARTITION BY ls.loan_id ORDER BY ls.installment_no) AS cum_due
+            FROM loan_schedule ls
+        ), paid AS (
+            SELECT loan_id, SUM(amount) AS total_paid
+            FROM loan_repayment
+            WHERE COALESCE(status, '') <> 'rejected'
+            GROUP BY loan_id
+        )
+        SELECT s.loan_id, s.installment_no, s.due_date,
+               GREATEST(0, LEAST(s.amount_due, s.cum_due - COALESCE(p.total_paid, 0))) AS amount,
+               CASE WHEN s.cum_due - COALESCE(p.total_paid, 0) <= 0 THEN 'paid' ELSE 'due' END AS status,
+               l.principal_amount, b.fname, b.lname, b.mobile_no
+        FROM sched s
+        JOIN loans l ON l.id = s.loan_id AND l.status = 'approved'
+        LEFT JOIN paid p ON p.loan_id = s.loan_id
         LEFT JOIN borrower b ON l.borrower_id = b.id
-        WHERE DATE(lr.due_date) = ?
-        ORDER BY lr.due_date ASC
+        WHERE s.due_date = ?
+        ORDER BY b.fname, b.lname
     ");
     $stmt->execute([$today]);
     $collections = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
+    $load_error = 'Could not load collection sheet: ' . $e->getMessage();
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
@@ -96,7 +113,7 @@ include $base_path . 'includes/header.php';
                     <?php foreach ($collections as $item): ?>
                     <tr>
                         <td><strong><?php echo htmlspecialchars(($item['fname'] ?? '') . ' ' . ($item['lname'] ?? '')); ?></strong></td>
-                        <td><?php echo htmlspecialchars($item['mobile'] ?? '-'); ?></td>
+                        <td><?php echo htmlspecialchars($item['mobile_no'] ?? '-'); ?></td>
                         <td>#<?php echo $item['loan_id']; ?></td>
                         <td>TZS <?php echo number_format($item['amount'] ?? 0, 2); ?></td>
                         <td>

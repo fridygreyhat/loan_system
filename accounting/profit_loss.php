@@ -28,15 +28,15 @@ try {
     $stmt->execute([$date_from, $date_to]);
     $fee_income = $stmt->fetch(PDO::FETCH_ASSOC)['total'] * 0.02;
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM other_income WHERE date BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM other_income WHERE income_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $other_income = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(net_salary), 0) as total FROM payroll WHERE pay_date BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(net_pay), 0) as total FROM payroll WHERE pay_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $salaries = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
-    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE date BETWEEN ? AND ?");
+    $stmt = $con->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE expense_date BETWEEN ? AND ?");
     $stmt->execute([$date_from, $date_to]);
     $total_exp = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     $rent = $total_exp * 0.3;

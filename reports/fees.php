@@ -12,13 +12,14 @@ $end_date = $_GET['end'] ?? date('Y-m-d');
 
 try {
     $stmt = $con->prepare("
-        SELECT lf.*, l.id as loan_id, b.fname, b.lname, ft.name as fee_type
-        FROM loan_fees lf
-        LEFT JOIN loans l ON lf.loan_id = l.id
+        SELECT lac.id, lac.amount, lac.creation_date AS created_at, l.id AS loan_id,
+               b.fname, b.lname, lc.name AS fee_type
+        FROM loan_applied_charges lac
+        LEFT JOIN loans l ON lac.loan_id = l.id
         LEFT JOIN borrower b ON l.borrower_id = b.id
-        LEFT JOIN fee_types ft ON lf.fee_type_id = ft.id
-        WHERE lf.created_at BETWEEN ? AND ?
-        ORDER BY lf.created_at DESC
+        LEFT JOIN loan_charges lc ON lac.loan_charge_id = lc.id
+        WHERE lac.creation_date >= ? AND lac.creation_date < (?::date + 1)
+        ORDER BY lac.creation_date DESC
     ");
     $stmt->execute([$start_date, $end_date]);
     $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);

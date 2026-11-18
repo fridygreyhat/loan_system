@@ -11,7 +11,7 @@ $message = '';
 $error = '';
 
 try {
-    $stmt = $con->query("SELECT id, fname, lname, mobile FROM borrower WHERE mobile IS NOT NULL AND mobile != '' ORDER BY fname, lname");
+    $stmt = $con->query("SELECT id, fname, lname, mobile_no FROM borrower WHERE mobile_no IS NOT NULL AND mobile_no != '' ORDER BY fname, lname");
     $borrowers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
 }
@@ -84,7 +84,7 @@ include $base_path . 'includes/header.php';
                             <div class="form-check">
                                 <input class="form-check-input borrower-check" type="checkbox" name="borrowers[]" value="<?php echo $b['id']; ?>" id="b<?php echo $b['id']; ?>">
                                 <label class="form-check-label" for="b<?php echo $b['id']; ?>">
-                                    <?php echo htmlspecialchars($b['fname'] . ' ' . $b['lname']); ?> - <?php echo htmlspecialchars($b['mobile']); ?>
+                                    <?php echo htmlspecialchars($b['fname'] . ' ' . $b['lname']); ?> - <?php echo htmlspecialchars($b['mobile_no']); ?>
                                 </label>
                             </div>
                             <?php endforeach; ?>

@@ -139,42 +139,6 @@ CREATE TABLE IF NOT EXISTS loan_product (
   field2 VARCHAR(100) DEFAULT NULL
 );
 
--- View structure for loan_product_fulldetails (joins loan product with related tables)
-CREATE OR REPLACE VIEW loan_product_fulldetails AS
-SELECT 
-    lp.id,
-    lp.name,
-    lp.decimal_places,
-    lp.repayment_order,
-    lp.creation_user,
-    lp.creation_date,
-    lp.disbursement_mtds,
-    ld.min_duration,
-    ld.min_duration_rate AS mini_duration_pd,
-    ld.default_duration,
-    ld.default_duration_rate AS default_duration_pd,
-    ld.max_duration,
-    ld.max_duration_rate AS max_duration_pd,
-    lpi.method AS interest_mtd,
-    lpi.mini_interest,
-    lpi.mini_interest_rate AS mini_interest_pd,
-    lpi.default_interest,
-    lpi.default_interest_date AS default_interest_pd,
-    lpi.max_interest,
-    lpi.max_interest_rate AS max_interest_pd,
-    lr.repayment_cycle,
-    lr.mini_no_repayments,
-    lr.default_no_repayments,
-    lr.max_no_repayments,
-    pa.mini AS minimum_principal,
-    pa.default_amount AS default_principal_amount,
-    pa.max AS max_principal_amount
-FROM loan_product lp
-LEFT JOIN loan_duration ld ON lp.id = ld.loan_product_id
-LEFT JOIN loan_product_interest lpi ON lp.id = lpi.loan_product_id
-LEFT JOIN loan_repayments lr ON lp.id = lr.loan_product_id
-LEFT JOIN principal_amount pa ON lp.id = pa.loan_product_id;
-
 -- Table structure for table loan_product_interest
 CREATE TABLE IF NOT EXISTS loan_product_interest (
   id SERIAL PRIMARY KEY,
@@ -262,8 +226,48 @@ CREATE TABLE IF NOT EXISTS staff_roles (
   field1 VARCHAR(100) DEFAULT NULL
 );
 
--- Insert sample data
-INSERT INTO staff_roles (name, description, creation_user) VALUES ('Admin', 'System Administrator', 1);
-INSERT INTO staff (branch_id, role_id, fname, lname, email) VALUES (1, 1, 'Admin', 'User', 'admin@loandisk.com');
-INSERT INTO disbursement_methods (name, description) VALUES ('Cash', 'Cash disbursement');
-INSERT INTO disbursement_methods (name, description) VALUES ('Bank Transfer', 'Bank transfer disbursement');
+-- View structure for loan_product_fulldetails (joins loan product with related tables).
+-- Defined after all the tables it references.
+CREATE OR REPLACE VIEW loan_product_fulldetails AS
+SELECT 
+    lp.id,
+    lp.name,
+    lp.decimal_places,
+    lp.repayment_order,
+    lp.creation_user,
+    lp.creation_date,
+    lp.disbursement_mtds,
+    ld.min_duration,
+    ld.min_duration_rate AS mini_duration_pd,
+    ld.default_duration,
+    ld.default_duration_rate AS default_duration_pd,
+    ld.max_duration,
+    ld.max_duration_rate AS max_duration_pd,
+    lpi.method AS interest_mtd,
+    lpi.mini_interest,
+    lpi.mini_interest_rate AS mini_interest_pd,
+    lpi.default_interest,
+    lpi.default_interest_date AS default_interest_pd,
+    lpi.max_interest,
+    lpi.max_interest_rate AS max_interest_pd,
+    lr.repayment_cycle,
+    lr.mini_no_repayments,
+    lr.default_no_repayments,
+    lr.max_no_repayments,
+    pa.mini AS minimum_principal,
+    pa.default_amount AS default_principal_amount,
+    pa.max AS max_principal_amount
+FROM loan_product lp
+LEFT JOIN loan_duration ld ON lp.id = ld.loan_product_id
+LEFT JOIN loan_product_interest lpi ON lp.id = lpi.loan_product_id
+LEFT JOIN loan_repayments lr ON lp.id = lr.loan_product_id
+LEFT JOIN principal_amount pa ON lp.id = pa.loan_product_id;
+
+-- Seed data (idempotent). The login account is created separately with
+-- SQLDB/create_super_admin.php so no password is ever stored in this file.
+INSERT INTO staff_roles (name, description, creation_user)
+SELECT 'Admin', 'System Administrator', 1
+WHERE NOT EXISTS (SELECT 1 FROM staff_roles WHERE name = 'Admin');
+INSERT INTO disbursement_methods (name, description)
+SELECT v.name, v.description FROM (VALUES ('Cash', 'Cash disbursement'), ('Bank Transfer', 'Bank transfer disbursement')) AS v(name, description)
+WHERE NOT EXISTS (SELECT 1 FROM disbursement_methods d WHERE d.name = v.name);

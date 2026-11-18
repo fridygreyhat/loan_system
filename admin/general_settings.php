@@ -2,8 +2,9 @@
 $base_path = '../';
 $page_title = 'General Settings';
 $current_page = 'settings';
-include '../includes/header.php';
 require_once '../helpers/connect.php';
+require_once '../helpers/lang.php';
+include '../includes/header.php';
 
 $db = $con;
 
@@ -15,6 +16,12 @@ try {
     $settings = [];
 }
 ?>
+
+<?php if (isset($_GET['success'])): ?>
+<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Settings saved.</div>
+<?php elseif (!empty($_GET['error'])): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_GET['error']); ?></div>
+<?php endif; ?>
 
 <div class="content-header">
     <h1><i class="fas fa-cogs"></i> <?php echo __('general_settings'); ?></h1>

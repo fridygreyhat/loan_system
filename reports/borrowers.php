@@ -19,7 +19,7 @@ try {
     $stmt = $con->query("SELECT COUNT(*) FROM borrower b WHERE EXISTS (SELECT 1 FROM loans l WHERE l.borrower_id = b.id AND l.status = 'approved')");
     $active_borrowers = $stmt->fetchColumn() ?: 0;
     
-    $stmt = $con->query("SELECT COUNT(*) FROM borrower WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE)");
+    $stmt = $con->query("SELECT COUNT(*) FROM borrower WHERE creation_date >= DATE_TRUNC('month', CURRENT_DATE)");
     $new_this_month = $stmt->fetchColumn() ?: 0;
 } catch (PDOException $e) {
 }

@@ -26,23 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'] ?? 'Withdrawal';
     $reference = $_POST['reference'] ?? '';
     
-    if ($amount > 0 && $amount <= $account['balance']) {
+    if ($amount > 0) {
         try {
-            $new_balance = $account['balance'] - $amount;
-            
-            $stmt = $con->prepare("UPDATE savings_accounts SET balance = ? WHERE id = ?");
-            $stmt->execute([$new_balance, $account_id]);
-            
-            $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, reference, created_by) VALUES (?, 'withdrawal', ?, ?, ?, ?, 1)");
-            $stmt->execute([$account_id, $amount, $new_balance, $description, $reference]);
-            
-            header("Location: view_account.php?id=$account_id&success=withdraw");
-            exit;
+            // Atomic: only succeeds if the balance (as it is right now in the DB) covers the withdrawal.
+            $con->beginTransaction();
+            $stmt = $con->prepare("UPDATE savings_accounts SET balance = balance - ? WHERE id = ? AND balance >= ? RETURNING balance");
+            $stmt->execute([$amount, $account_id, $amount]);
+            $new_balance = $stmt->fetchColumn();
+
+            if ($new_balance === false) {
+                $con->rollBack();
+                $stmt = $con->prepare("SELECT balance FROM savings_accounts WHERE id = ?");
+                $stmt->execute([$account_id]);
+                $message = '<div class="alert alert-danger">Insufficient balance. Available: TZS ' . number_format((float)$stmt->fetchColumn(), 2) . '</div>';
+            } else {
+                $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, reference, created_by) VALUES (?, 'withdrawal', ?, ?, ?, ?, ?)");
+                $stmt->execute([$account_id, $amount, $new_balance, $description, $reference, $_SESSION['user_id'] ?? null]);
+                $con->commit();
+
+                header("Location: view_account.php?id=$account_id&success=withdraw");
+                exit;
+            }
         } catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
             $message = '<div class="alert alert-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
         }
-    } else if ($amount > $account['balance']) {
-        $message = '<div class="alert alert-danger">Insufficient balance. Available: $' . number_format($account['balance'], 2) . '</div>';
     } else {
         $message = '<div class="alert alert-warning">Please enter a valid amount.</div>';
     }

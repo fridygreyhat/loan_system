@@ -4,16 +4,54 @@ $page_title = 'Agreement Templates';
 $current_page = 'settings';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
+
+$message = isset($_GET['success']) ? 'Template uploaded.' : '';
+$error = $_GET['error'] ?? '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete') {
+    $id = (int)($_POST['id'] ?? 0);
+    try {
+        $stmt = $con->prepare("SELECT file_path FROM agreement_templates WHERE id = ?");
+        $stmt->execute([$id]);
+        $path = $stmt->fetchColumn();
+        if ($path === false) {
+            $error = 'Template not found.';
+        } else {
+            $con->prepare("DELETE FROM agreement_templates WHERE id = ?")->execute([$id]);
+            // Remove the file too, but only if it really lives under uploads/.
+            $uploads = realpath(__DIR__ . '/../uploads');
+            foreach ([__DIR__ . '/' . $path, __DIR__ . '/../' . ltrim($path, '/')] as $candidate) {
+                $real = realpath($candidate);
+                if ($real && $uploads && str_starts_with($real, $uploads . DIRECTORY_SEPARATOR) && is_file($real)) {
+                    unlink($real);
+                    break;
+                }
+            }
+            $message = 'Template deleted.';
+        }
+    } catch (PDOException $e) {
+        $error = 'Could not delete template: ' . $e->getMessage();
+    }
+}
 
 $templates = [];
 try {
     $stmt = $con->query("SELECT * FROM agreement_templates ORDER BY name");
     $templates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
+    $error = $error ?: 'Could not load templates: ' . $e->getMessage();
 }
 
 include $base_path . 'includes/header.php';
 ?>
+
+<?php if ($message): ?>
+<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($message); ?></div>
+<?php endif; ?>
+<?php if ($error): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
@@ -78,13 +116,12 @@ include $base_path . 'includes/header.php';
                                         <a href="download_template.php?id=<?php echo $template['id']; ?>" class="btn btn-outline-primary" title="Download">
                                             <i class="fas fa-download"></i>
                                         </a>
-                                        <button class="btn btn-outline-secondary" title="Preview">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
                                     </div>
+                                    <form method="POST" class="d-inline" onsubmit="return confirm('Delete this template?');">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="<?php echo (int)$template['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

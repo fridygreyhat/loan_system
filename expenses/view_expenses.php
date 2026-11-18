@@ -20,16 +20,16 @@ try {
     $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_expenses = array_sum(array_column($expenses, 'amount'));
 } catch (PDOException $e) {
-    $expenses = [
-        ['id' => 1, 'expense_date' => date('Y-m-d'), 'vendor_name' => 'Office Supplies Co.', 'expense_type' => 'Office Supplies', 'description' => 'Stationery', 'amount' => 150000],
-        ['id' => 2, 'expense_date' => date('Y-m-d', strtotime('-1 day')), 'vendor_name' => 'Tech Solutions', 'expense_type' => 'IT Equipment', 'description' => 'Computer repair', 'amount' => 350000],
-        ['id' => 3, 'expense_date' => date('Y-m-d', strtotime('-2 days')), 'vendor_name' => 'Utility Company', 'expense_type' => 'Utilities', 'description' => 'Electricity bill', 'amount' => 200000],
-    ];
+    $expenses = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $total_expenses = array_sum(array_column($expenses, 'amount'));
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

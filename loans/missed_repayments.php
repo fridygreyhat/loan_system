@@ -29,7 +29,7 @@ try {
     ");
     $missed = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($missed as $m) {
-        $total_missed_amount += ($m['principal_amt'] ?? 0) - ($m['paid_amount'] ?? 0);
+        $total_missed_amount += ($m['principal_amount'] ?? 0) - ($m['paid_amount'] ?? 0);
     }
 } catch (PDOException $e) {
 }
@@ -126,7 +126,7 @@ include $base_path . 'includes/header.php';
                     </tr>
                     <?php else: ?>
                     <?php $i = 1; foreach ($missed as $loan):
-                        $outstanding = ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
+                        $outstanding = ($loan['principal_amount'] ?? 0) - ($loan['paid_amount'] ?? 0);
                         $lastPayment = $loan['last_payment_date'];
                         $daysOverdue = '-';
                         $overdueBadge = 'bg-secondary';
@@ -151,7 +151,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo htmlspecialchars($loan['fname'] . ' ' . $loan['lname']); ?></td>
                         <td><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></td>
-                        <td class="fw-semibold">TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></td>
+                        <td class="fw-semibold">TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
                         <td class="text-danger fw-semibold">TZS <?php echo number_format($outstanding, 2); ?></td>
                         <td><?php echo $lastPayment ? date('d M Y', strtotime($lastPayment)) : '<span class="text-danger">Never</span>'; ?></td>
                         <td><span class="badge <?php echo $overdueBadge; ?>"><?php echo $daysOverdue !== '-' ? $daysOverdue . ' days' : '-'; ?></span></td>
@@ -184,7 +184,7 @@ function sendSmsAlert(loanId, phone) {
     if (confirm('Send SMS reminder to ' + phone + '?')) {
         fetch('../commons/send_reminder_sms.php', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content},
             body: JSON.stringify({loan_id: loanId, phone: phone})
         }).then(r => r.json()).then(d => {
             alert(d.success ? 'SMS sent successfully!' : 'Failed: ' + (d.error || 'Unknown error'));

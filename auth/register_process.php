@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        $stmt = $con->prepare("SELECT id FROM staff WHERE email = ?");
+        $stmt = $con->prepare("SELECT id FROM staff WHERE LOWER(email) = LOWER(?)");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             header("Location: ../register.php?error=Email already registered");
@@ -33,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        $stmt = $con->prepare("INSERT INTO staff (fname, lname, email, password, role_id, status) VALUES (?, ?, ?, ?, 7, 'active')");
+        // New sign-ups stay 'pending' until an administrator activates them.
+        $stmt = $con->prepare("INSERT INTO staff (fname, lname, email, password, role_id, status) VALUES (?, ?, ?, ?, 7, 'pending')");
         $stmt->execute([$first_name, $last_name, $email, $hashed_password]);
         
         header("Location: ../login.php?registered=1");

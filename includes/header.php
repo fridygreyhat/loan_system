@@ -44,7 +44,7 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/view_borrowers.php"><?php echo __('view_borrowers'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/add_borrower.php"><?php echo __('add_borrower'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/view_groups.php"><?php echo __('view_borrower_groups'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/add_group.php"><?php echo __('add_borrowers_group'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>borrowers/groups/add_borrowers_group.php"><?php echo __('add_borrowers_group'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/send_sms_all.php"><?php echo __('send_sms_to_all_borrowers'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/send_email_all.php"><?php echo __('send_email_to_all_borrowers'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>borrowers/invite_borrowers.php"><?php echo __('invite_borrowers'); ?></a></li>
@@ -75,7 +75,7 @@ require_once ($base_path ?? '') . 'helpers/lang.php';
                         <a href="#"><i class="fas fa-money-bill-wave"></i> <?php echo __('repayments'); ?></a>
                         <ul class="submenu">
                             <li><a href="<?php echo $base_path ?? ''; ?>repayments/view_repayments.php"><?php echo __('view_repayments'); ?></a></li>
-                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/add_bulk_repayments.php"><?php echo __('add_bulk_repayments'); ?></a></li>
+                            <li><a href="<?php echo $base_path ?? ''; ?>repayments/import_csv.php"><?php echo __('add_bulk_repayments'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>repayments/import_csv.php"><?php echo __('add_repayments_csv'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>repayments/charts.php"><?php echo __('repayments_charts'); ?></a></li>
                             <li><a href="<?php echo $base_path ?? ''; ?>repayments/approve_repayments.php"><?php echo __('approve_repayments'); ?></a></li>

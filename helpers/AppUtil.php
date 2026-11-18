@@ -34,14 +34,14 @@ class AppUtil {
     }
 
     public static function saveFile($tempLocation, $fileName) {
-        $relativePath = "/uploads/allfiles/" . time() . "_" . basename($fileName);
-        $target_file = dirname(__DIR__) . $relativePath;
-
-        if (move_uploaded_file($tempLocation, $target_file)) {
-            //echo "The file " . $fileName . " has been uploaded.";
-            return $relativePath;
+        // Never keep the client's filename/extension: see helpers/upload.php.
+        require_once __DIR__ . '/upload.php';
+        try {
+            $file = ['name' => $fileName, 'tmp_name' => $tempLocation, 'error' => UPLOAD_ERR_OK, 'size' => @filesize($tempLocation) ?: 0];
+            return '/' . safe_upload($file, 'uploads/allfiles', UPLOAD_DOCUMENT_TYPES, 10485760);
+        } catch (RuntimeException $e) {
+            return FALSE;
         }
-        return FALSE;
     }
 
 }

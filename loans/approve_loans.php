@@ -5,6 +5,7 @@ $current_page = 'loans';
 
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
+require_once $base_path . 'helpers/loan_utils.php';
 
 $message = '';
 $error = '';
@@ -15,11 +16,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     try {
         if ($action === 'approve') {
-            $stmt = $con->prepare("UPDATE loans SET status = 'approved', release_date = CURRENT_DATE WHERE id = ?");
+            // Approval releases the loan today, so the maturity date moves with it.
+            $stmt = $con->prepare("SELECT loan_duration, loan_duration_pd FROM loans WHERE id = ?");
             $stmt->execute([$loan_id]);
+            $terms = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            $maturity = compute_maturity_date(date('Y-m-d'), (int)($terms['loan_duration'] ?? 0), $terms['loan_duration_pd'] ?? 'Months');
+            $stmt = $con->prepare("UPDATE loans SET status = 'approved', release_date = CURRENT_DATE, maturity_date = ? WHERE id = ? AND status = 'pending'");
+            $stmt->execute([$maturity, $loan_id]);
+            if ($stmt->rowCount()) {
+                regenerate_loan_schedule($con, $loan_id);
+            }
             $message = 'Loan approved successfully';
         } elseif ($action === 'deny') {
-            $stmt = $con->prepare("UPDATE loans SET status = 'denied' WHERE id = ?");
+            $stmt = $con->prepare("UPDATE loans SET status = 'denied' WHERE id = ? AND status = 'pending'");
             $stmt->execute([$loan_id]);
             $message = 'Loan denied';
         }
@@ -31,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $loans = [];
 try {
     $stmt = $con->query("
-        SELECT l.*, b.fname, b.lname, b.mobile, lp.name as product_name
+        SELECT l.*, b.fname, b.lname, b.mobile_no, lp.name as product_name
         FROM loans l
         LEFT JOIN borrower b ON l.borrower_id = b.id
         LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
@@ -118,7 +127,7 @@ include $base_path . 'includes/header.php';
                     <tr>
                         <td><strong>#<?php echo $loan['id']; ?></strong></td>
                         <td><?php echo htmlspecialchars(($loan['fname'] ?? '') . ' ' . ($loan['lname'] ?? '')); ?></td>
-                        <td><?php echo htmlspecialchars($loan['mobile'] ?? '-'); ?></td>
+                        <td><?php echo htmlspecialchars($loan['mobile_no'] ?? '-'); ?></td>
                         <td><?php echo htmlspecialchars($loan['product_name'] ?? '-'); ?></td>
                         <td>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></td>
                         <td><?php echo $loan['loan_interest'] ?? 0; ?>%</td>

@@ -64,7 +64,7 @@ if (!empty($_POST) && isset($_POST['loan_product_name'])) {
         //Save Interest           
         $set3 = [
             "method" => $loan_interest_method,
-            "mini_interest " => $min_loan_interest,
+            "mini_interest" => $min_loan_interest,
             "mini_interest_rate" => $min_loan_interest_period,
             "default_interest" => $default_loan_interest,
             "default_interest_date" => $default_loan_interest_period,
@@ -77,9 +77,9 @@ if (!empty($_POST) && isset($_POST['loan_product_name'])) {
         //save Duration       
         $setDur = [
             "min_duration" => $min_loan_duration,
-            "min_duration_rate " => $min_loan_duration_period,
+            "min_duration_rate" => $min_loan_duration_period,
             "default_duration" => $default_loan_duration,
-            "default_duration_rate" => $max_loan_duration_period,
+            "default_duration_rate" => ($_POST["default_loan_duration_period"] ?? $max_loan_duration_period),
             "max_duration" => $max_loan_duration,
             "max_duration_rate" => $max_loan_duration_period,
             "last_modified_by" => $userId
@@ -209,9 +209,9 @@ if (isset($_GET['id'])) {
                                             <div class="col-sm-3">
                                                 <?php
                                                 $mtds = $db->select("disbursement_methods");
-                                                $loanDisMtds = json_decode($loanPdct['disbursement_mtds']);
+                                                $loanDisMtds = json_decode($loanPdct["disbursement_mtds"] ?? "", true) ?: [];
                                                 foreach ($mtds as $mtd) {
-                                                    $checked = in_array($mtd['name'], $loanDisMtds) ? "checked='checked'" : "";
+                                                    $checked = (in_array($mtd["name"], $loanDisMtds) || in_array((string)$mtd["id"], array_map("strval", $loanDisMtds))) ? "checked='checked'" : "";
                                                     ?>
                                                     <input class="inputDisbursedById" type="checkbox" name="loan_disbursed_by_id[]" value="<?= $mtd['name'] ?>" <?= $checked ?>> <?= $mtd['name'] ?><br>
                                                     <?php
@@ -441,7 +441,7 @@ if (isset($_GET['id'])) {
                                             <div class="col-sm-3">
                                                 <?php
                                                 $cycles = ["Daily", "Weekly", "Biweekly", "Monthly", "Bimonthly", "Quarterly", "Semi-Annual", "Yearly", "Lump-Sum"];
-                                                $dbCycles = json_decode($loanPdct['repayment_cycle']);
+                                                $dbCycles = (array)(json_decode($loanPdct["repayment_cycle"] ?? "", true) ?? []);
                                                 //print_r($dbCycles);
                                                 foreach ($cycles as $valu) {
                                                     $checkedH = in_array($valu, $dbCycles) ? "checked='checked'" : "";
@@ -559,7 +559,7 @@ if (isset($_GET['id'])) {
                                             <div class="col-xs-6">
                                                 <select multiple id="to" size="7" name="repayment_order[]">
                                                     <?php
-                                                    foreach (json_decode($loanPdct['repayment_order']) as $value) {
+                                                    foreach ((array)(json_decode($loanPdct["repayment_order"] ?? "", true) ?? []) as $value) {
                                                         ?>
                                                         <option value="<?= $value ?>" ><?= $value ?></option>
                                                     <?php }

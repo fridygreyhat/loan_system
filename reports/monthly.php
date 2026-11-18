@@ -25,7 +25,7 @@ try {
     $stmt->execute([$selected_month]);
     $new_loans = $stmt->fetchColumn() ?: 0;
     
-    $stmt = $con->prepare("SELECT COUNT(*) FROM borrower WHERE TO_CHAR(created_at, 'YYYY-MM') = ?");
+    $stmt = $con->prepare("SELECT COUNT(*) FROM borrower WHERE TO_CHAR(creation_date, 'YYYY-MM') = ?");
     $stmt->execute([$selected_month]);
     $new_borrowers = $stmt->fetchColumn() ?: 0;
 } catch (PDOException $e) {

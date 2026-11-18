@@ -2,8 +2,9 @@
 $base_path = '../';
 $page_title = 'Email Settings';
 $current_page = 'settings';
-include '../includes/header.php';
 require_once '../helpers/connect.php';
+require_once '../helpers/lang.php';
+include '../includes/header.php';
 
 $db = $con;
 
@@ -15,6 +16,12 @@ try {
     $settings = [];
 }
 ?>
+
+<?php if (isset($_GET['success'])): ?>
+<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Email settings saved.</div>
+<?php elseif (!empty($_GET['error'])): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_GET['error']); ?></div>
+<?php endif; ?>
 
 <div class="content-header">
     <h1><i class="fas fa-envelope-open-text"></i> <?php echo __('email_settings'); ?></h1>
@@ -49,11 +56,11 @@ try {
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><?php echo __('smtp_username'); ?> *</label>
-                            <input type="email" name="smtp_username" class="form-control" value="<?php echo htmlspecialchars($settings['smtp_username'] ?? ''); ?>" placeholder="your-email@gmail.com" required>
+                            <input type="email" name="smtp_username" class="form-control" value="<?php echo htmlspecialchars($settings['smtp_user'] ?? ''); ?>" placeholder="your-email@gmail.com" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><?php echo __('smtp_password'); ?> *</label>
-                            <input type="password" name="smtp_password" class="form-control" value="<?php echo htmlspecialchars($settings['smtp_password'] ?? ''); ?>" required>
+                            <label class="form-label"><?php echo __('smtp_password'); ?></label>
+                            <input type="password" name="smtp_password" class="form-control" value="" autocomplete="new-password" placeholder="<?php echo !empty($settings['smtp_password']) ? 'Saved - leave blank to keep' : ''; ?>">
                         </div>
                     </div>
                     

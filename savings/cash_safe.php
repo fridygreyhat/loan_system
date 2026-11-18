@@ -34,16 +34,16 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_balance = $result['balance'];
 } catch (PDOException $e) {
-    $cash_entries = [
-        ['type' => 'in', 'amount' => 500000, 'description' => 'Opening Balance', 'created_at' => date('Y-m-d H:i:s', strtotime('-2 days'))],
-        ['type' => 'in', 'amount' => 150000, 'description' => 'Deposit Collection', 'created_at' => date('Y-m-d H:i:s', strtotime('-1 day'))],
-        ['type' => 'out', 'amount' => 75000, 'description' => 'Withdrawal Payout', 'created_at' => date('Y-m-d H:i:s')],
-    ];
+    $cash_entries = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $current_balance = 575000;
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header">
     <div>

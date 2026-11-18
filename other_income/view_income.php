@@ -20,16 +20,16 @@ try {
     $income_entries = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_income = array_sum(array_column($income_entries, 'amount'));
 } catch (PDOException $e) {
-    $income_entries = [
-        ['id' => 1, 'income_date' => date('Y-m-d'), 'customer_name' => 'ABC Corporation', 'income_type' => 'Consulting Fee', 'description' => 'Monthly consulting', 'amount' => 500000],
-        ['id' => 2, 'income_date' => date('Y-m-d', strtotime('-1 day')), 'customer_name' => 'XYZ Limited', 'income_type' => 'Commission', 'description' => 'Sales commission', 'amount' => 250000],
-        ['id' => 3, 'income_date' => date('Y-m-d', strtotime('-2 days')), 'customer_name' => 'Global Services', 'income_type' => 'Rental Income', 'description' => 'Office space rental', 'amount' => 800000],
-    ];
+    $income_entries = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $total_income = array_sum(array_column($income_entries, 'amount'));
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

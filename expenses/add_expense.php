@@ -18,17 +18,8 @@ try {
     $stmt = $con->query("SELECT id, name FROM expense_types ORDER BY name");
     $expense_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $vendors = [
-        ['id' => 1, 'name' => 'Office Supplies Co.'],
-        ['id' => 2, 'name' => 'Tech Solutions'],
-        ['id' => 3, 'name' => 'Utility Company'],
-    ];
-    $expense_types = [
-        ['id' => 1, 'name' => 'Office Supplies'],
-        ['id' => 2, 'name' => 'Utilities'],
-        ['id' => 3, 'name' => 'IT Equipment'],
-        ['id' => 4, 'name' => 'Travel'],
-    ];
+    $vendors = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,13 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$vendor_id ?: null, $expense_type_id ?: null, $amount, $expense_date, $description]);
             $message = __('expense_added_successfully');
         } catch (PDOException $e) {
-            $message = __('expense_added_successfully');
+            $error = 'Could not save: ' . $e->getMessage();
         }
     }
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header">
     <div>

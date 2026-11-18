@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($borrower_id) {
         try {
-            $account_number = 'SAV' . date('Ymd') . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+            $con->beginTransaction();
+            $account_number = 'SAV' . date('Ymd') . str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             
             $stmt = $con->prepare("INSERT INTO savings_accounts (borrower_id, product_id, account_number, balance, status) VALUES (?, ?, ?, ?, 'active') RETURNING id");
             $stmt->execute([$borrower_id, $product_id ?: null, $account_number, $initial_deposit]);
@@ -33,13 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $account_id = $result['id'];
             
             if ($initial_deposit > 0) {
-                $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, created_by) VALUES (?, 'deposit', ?, ?, 'Initial deposit', 1)");
-                $stmt->execute([$account_id, $initial_deposit, $initial_deposit]);
+                $stmt = $con->prepare("INSERT INTO savings_transactions (account_id, type, amount, balance_after, description, created_by) VALUES (?, 'deposit', ?, ?, 'Initial deposit', ?)");
+                $stmt->execute([$account_id, $initial_deposit, $initial_deposit, $_SESSION['user_id'] ?? null]);
             }
-            
+            $con->commit();
+
             header("Location: view_accounts.php?success=1");
             exit;
         } catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
             $message = '<div class="alert alert-danger">Error creating account: ' . htmlspecialchars($e->getMessage()) . '</div>';
         }
     } else {

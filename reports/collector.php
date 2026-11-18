@@ -15,9 +15,9 @@ try {
                COUNT(DISTINCT l.id) as loans_assigned,
                COALESCE(SUM(lr.amount), 0) as total_collected
         FROM staff s
+        JOIN staff_role_types srt ON s.role_id = srt.id AND srt.code = 'collector'
         LEFT JOIN loans l ON l.collector_id = s.id
         LEFT JOIN loan_repayment lr ON lr.loan_id = l.id
-        WHERE s.role = 'Collector' OR s.role = 'collector'
         GROUP BY s.id
         ORDER BY total_collected DESC
     ");

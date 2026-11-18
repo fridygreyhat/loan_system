@@ -13,12 +13,12 @@ $total_withdrawals = 0;
 try {
     $stmt = $con->query("
         SELECT 
-            DATE_FORMAT(transaction_date, '%Y-%m') as month,
+            TO_CHAR(created_at, 'YYYY-MM') as month,
             SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END) as deposits,
             SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END) as withdrawals
         FROM savings_transactions
-        WHERE transaction_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-        GROUP BY DATE_FORMAT(transaction_date, '%Y-%m')
+        WHERE created_at >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY TO_CHAR(created_at, 'YYYY-MM')
         ORDER BY month
     ");
     $monthly_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -28,19 +28,14 @@ try {
     $total_deposits = $totals['deposits'];
     $total_withdrawals = $totals['withdrawals'];
 } catch (PDOException $e) {
-    for ($i = 11; $i >= 0; $i--) {
-        $monthly_data[] = [
-            'month' => date('Y-m', strtotime("-$i months")),
-            'deposits' => rand(50000, 200000),
-            'withdrawals' => rand(30000, 150000)
-        ];
-    }
-    $total_deposits = array_sum(array_column($monthly_data, 'deposits'));
-    $total_withdrawals = array_sum(array_column($monthly_data, 'withdrawals'));
+    $chart_error = 'Could not load savings data: ' . $e->getMessage();
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($chart_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($chart_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header">
     <div>

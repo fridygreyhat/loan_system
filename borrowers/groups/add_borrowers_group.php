@@ -4,6 +4,7 @@ $page_title = 'Add Borrower Group';
 $current_page = 'borrowers';
 
 require_once $base_path . 'helpers/connect.php';
+require_once $base_path . 'helpers/lang.php';
 
 $group = null;
 $edit_id = $_GET['edit'] ?? null;
@@ -31,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $con->prepare("INSERT INTO borrower_groups (group_name, leader_name, description) VALUES (?, ?, ?)");
             $stmt->execute([$group_name, $leader_name, $description]);
         }
-        header('Location: view_borrowers_groups_branch.php');
+        header('Location: view_groups.php');
         exit;
     } catch (PDOException $e) {
-        $error = "Error saving group.";
+        $error = 'Error saving group: ' . $e->getMessage();
     }
 }
 

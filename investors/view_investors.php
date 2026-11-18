@@ -121,7 +121,7 @@ include $base_path . 'includes/header.php';
                         <td><strong>TZS <?php echo number_format($investor['total_invested'], 2); ?></strong></td>
                         <td class="text-success">TZS <?php echo number_format($investor['total_interest'], 2); ?></td>
                         <td>
-                            <span class="badge badge-<?php echo $investor['status'] === 'active' ? 'success' : 'secondary'; ?>">
+                            <span class="badge bg-<?php echo $investor['status'] === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo __($investor['status']); ?>
                             </span>
                         </td>

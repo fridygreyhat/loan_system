@@ -66,7 +66,6 @@ class SMSService {
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
-        curl_close($ch);
         
         if ($error) {
             return ['success' => false, 'error' => $error];
@@ -124,8 +123,7 @@ class SMSService {
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             
             $response = curl_exec($ch);
-            curl_close($ch);
-            
+                
             return json_decode($response, true);
         }
         
@@ -133,8 +131,34 @@ class SMSService {
     }
 }
 
-function sendSMS($to, $message, $senderId = 'LoanStore') {
-    $sms = new SMSService('messaging_service_tz', null, null, $senderId);
+/**
+ * Send one SMS using the provider configured in Admin > SMS Settings.
+ * Nothing is sent unless SMS is switched on there and an API key is set
+ * (the key may also come from the MESSAGING_SERVICE_API_KEY env variable).
+ */
+function sendSMS($to, $message, $senderId = null) {
+    global $con;
+    $settings = [];
+    if (isset($con) && $con instanceof PDO) {
+        try {
+            $settings = $con->query("SELECT * FROM sms_settings ORDER BY is_active DESC, id LIMIT 1")->fetch(PDO::FETCH_ASSOC) ?: [];
+        } catch (PDOException $e) {
+            $settings = [];
+        }
+    }
+    if (empty($settings['is_active'])) {
+        return ['success' => false, 'error' => 'SMS sending is turned off in SMS Settings'];
+    }
+    $apiKey = ($settings['api_key'] ?? '') !== '' ? $settings['api_key'] : getenv('MESSAGING_SERVICE_API_KEY');
+    if (!$apiKey) {
+        return ['success' => false, 'error' => 'No SMS API key configured'];
+    }
+    $sms = new SMSService(
+        $settings['provider'] ?: 'messaging_service_tz',
+        $apiKey,
+        $settings['api_secret'] ?? null,
+        $senderId ?? (($settings['sender_id'] ?? '') !== '' ? $settings['sender_id'] : 'LoanStore')
+    );
     return $sms->send($to, $message);
 }
 

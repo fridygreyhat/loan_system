@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        $stmt = $con->prepare("SELECT id FROM staff WHERE email = ?");
+        $stmt = $con->prepare("SELECT id FROM staff WHERE LOWER(email) = LOWER(?)");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         

@@ -18,7 +18,7 @@ if (!$loan_id || !$phone) {
 }
 
 try {
-    $stmt = $con->prepare("SELECT l.loan_no, l.principal_amt, b.fname, b.lname FROM loans l LEFT JOIN borrower b ON l.borrower_id = b.id WHERE l.id = ?");
+    $stmt = $con->prepare("SELECT l.loan_no, l.principal_amount, b.fname, b.lname FROM loans l LEFT JOIN borrower b ON l.borrower_id = b.id WHERE l.id = ?");
     $stmt->execute([$loan_id]);
     $loan = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -36,7 +36,9 @@ try {
         try {
             $logStmt = $con->prepare("INSERT INTO communication_logs (loan_id, type, recipient, message, status, created_at) VALUES (?, 'sms', ?, ?, 'sent', NOW())");
             $logStmt->execute([$loan_id, $phone, $message]);
-        } catch (PDOException $e) {}
+        } catch (PDOException $e) {
+            error_log("communication_logs insert failed: " . $e->getMessage());
+        }
     }
 
     echo json_encode($result);

@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$name, $email, $phone, $address, $contact_person, $notes]);
             $message = __('vendor_added_successfully');
         } catch (PDOException $e) {
-            $message = __('vendor_added_successfully');
+            $error = 'Could not save: ' . $e->getMessage();
         }
     }
 }

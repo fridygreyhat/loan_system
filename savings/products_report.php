@@ -23,16 +23,16 @@ try {
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_balance = array_sum(array_column($products, 'total_balance'));
 } catch (PDOException $e) {
-    $products = [
-        ['name' => 'Regular Savings', 'interest_rate' => 5, 'account_count' => 45, 'total_balance' => 5000000, 'total_interest' => 250000],
-        ['name' => 'Fixed Deposit', 'interest_rate' => 8, 'account_count' => 20, 'total_balance' => 8000000, 'total_interest' => 640000],
-        ['name' => 'Youth Savings', 'interest_rate' => 6, 'account_count' => 15, 'total_balance' => 1500000, 'total_interest' => 90000],
-    ];
+    $products = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $total_balance = array_sum(array_column($products, 'total_balance'));
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

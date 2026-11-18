@@ -5,6 +5,7 @@ $current_page = 'loans';
 
 require_once $base_path . 'helpers/connect.php';
 require_once $base_path . 'helpers/lang.php';
+require_once $base_path . 'helpers/loan_utils.php';
 
 $borrower_id = (int)($_GET['borrower'] ?? $_GET['borrower_id'] ?? 0);
 $borrower = [];
@@ -18,7 +19,7 @@ try {
     $loan_products = $con->query("SELECT * FROM loan_product WHERE active_flg = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) { $loan_products = []; }
 try {
-    $loan_charges = $con->query("SELECT * FROM loan_charges ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+    $loan_charges = $con->query("SELECT id, name, description, COALESCE(charge_mtd, 'fixed') AS calculation_type, COALESCE(charge_amount, 0) AS amount FROM loan_charges ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) { $loan_charges = []; }
 try {
     $disbursement_methods = $con->query("SELECT * FROM disbursement_methods ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
@@ -47,47 +48,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loan_product_id'])) {
     $repayment_cycle = $_POST['loan_payment_scheme_id'] ?? 'Monthly';
     $no_repayment_cycle = (int)($_POST['loan_num_of_repayments'] ?? 1);
     $description = trim($_POST['loan_description'] ?? '');
-    $status = $_POST['loan_status_id'] ?? 'pending_approval';
+    $status = $_POST['loan_status_id'] ?? 'pending';
+    if (!in_array($status, LOAN_STATUSES, true)) {
+        $status = 'pending';
+    }
+    $maturity_date = compute_maturity_date($release_date, $loan_duration, $loan_duration_pd);
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
 
-    if (!$loan_product_id || !$principal_amt || !$release_date) {
+    if (!$borrower_id_post || !$loan_product_id || $principal_amt <= 0 || !$release_date || !$maturity_date) {
         $error = __('please_fill_required_fields');
     } else {
         try {
+            $con->beginTransaction();
             $stmt = $con->prepare("
-                INSERT INTO loans (loan_product_id, borrower_id, loan_no, disbursement_mtd, principal_amt, release_date,
-                    interest_mtd, loan_interest, loan_interest_pd, loan_duration, loan_duration_pd, repayment_cycle,
-                    no_repayment_cycle, description, status, creation_user, creation_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())
+                INSERT INTO loans (loan_product_id, borrower_id, loan_no, disbursement_mtd, principal_amount, release_date,
+                    maturity_date, interest_mtd, loan_interest, loan_interest_pd, loan_duration, loan_duration_pd,
+                    repayment_cycle, no_repayment_cycle, description, status, loan_officer_id, creation_user, creation_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                RETURNING id
             ");
             $stmt->execute([
                 $loan_product_id, $borrower_id_post, $loan_no, $disbursement_mtd, $principal_amt,
-                $release_date, $interest_mtd, $loan_interest, $loan_interest_pd, $loan_duration,
-                $loan_duration_pd, $repayment_cycle, $no_repayment_cycle, $description, $status
+                $release_date, $maturity_date, $interest_mtd, $loan_interest, $loan_interest_pd, $loan_duration,
+                $loan_duration_pd, $repayment_cycle, $no_repayment_cycle, $description, $status,
+                $user_id ?: null, $user_id
             ]);
-            $new_loan_id = $con->lastInsertId();
+            $new_loan_id = (int)$stmt->fetchColumn();
 
             // Save applied charges
             if (!empty($_POST['loan_fee']) && is_array($_POST['loan_fee'])) {
+                $feeStmt = $con->prepare("SELECT COALESCE(charge_mtd, 'fixed') AS calculation_type, COALESCE(charge_amount, 0) AS amount FROM loan_charges WHERE id = ?");
+                $chargeStmt = $con->prepare("INSERT INTO loan_applied_charges (loan_id, loan_charge_id, amount, creation_user, status) VALUES (?, ?, ?, ?, 'applied')");
                 foreach ($_POST['loan_fee'] as $fee_id) {
-                    try {
-                        $feeStmt = $con->prepare("SELECT * FROM loan_charges WHERE id = ?");
-                        $feeStmt->execute([$fee_id]);
-                        $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
-                        if ($fee) {
-                            $feeAmount = $fee['amount'] ?? 0;
-                            if ($fee['calculation_type'] === 'percentage') {
-                                $feeAmount = $principal_amt * ($fee['amount'] / 100);
-                            }
-                            $chargeStmt = $con->prepare("INSERT INTO loan_applied_charges (loan_id, loan_charge_id, amount, creation_user) VALUES (?, ?, ?, 0)");
-                            $chargeStmt->execute([$new_loan_id, $fee_id, $feeAmount]);
-                        }
-                    } catch (PDOException $e) {}
+                    $feeStmt->execute([(int)$fee_id]);
+                    $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+                    if ($fee) {
+                        $feeAmount = $fee['calculation_type'] === 'percentage'
+                            ? $principal_amt * ($fee['amount'] / 100)
+                            : (float)$fee['amount'];
+                        $chargeStmt->execute([$new_loan_id, (int)$fee_id, $feeAmount, $user_id]);
+                    }
                 }
             }
 
+            if ($status === 'approved') {
+                regenerate_loan_schedule($con, $new_loan_id);
+            }
+
+            $con->commit();
             header("Location: view_loan_details.php?id=" . $new_loan_id . "&success=1");
             exit;
         } catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
             $error = 'Error saving loan: ' . $e->getMessage();
         }
     }
@@ -177,9 +191,8 @@ include $base_path . 'includes/header.php';
                         <div class="col-md-6">
                             <label class="form-label"><?php echo __('status'); ?></label>
                             <select name="loan_status_id" class="form-select">
-                                <option value="pending_approval"><?php echo __('pending_approval'); ?></option>
-                                <option value="active" <?php echo ($_POST['loan_status_id'] ?? '') === 'active' ? 'selected' : ''; ?>><?php echo __('active'); ?></option>
-                                <option value="processing" <?php echo ($_POST['loan_status_id'] ?? '') === 'processing' ? 'selected' : ''; ?>>Processing</option>
+                                <option value="pending"><?php echo __('pending_approval'); ?></option>
+                                <option value="approved" <?php echo ($_POST['loan_status_id'] ?? '') === 'approved' ? 'selected' : ''; ?>><?php echo __('approved'); ?></option>
                             </select>
                         </div>
                         <div class="col-md-6">

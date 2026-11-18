@@ -1,7 +1,7 @@
 <?php
 
 $id = (isset($_GET['id']) && is_numeric($_GET['id'])) ? intval($_GET['id']) : 0;
-$item = $_GET['item'];
+$item = $_GET["item"] ?? "";
 if ($item == 'borrower') {
     include './helpers/DbAcess.php';
     $db = new DbAcess();

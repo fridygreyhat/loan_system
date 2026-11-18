@@ -12,19 +12,19 @@ $par_90 = 0;
 $current_loans = 0;
 
 try {
-    $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE status = 'active'");
+    $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE status = 'approved'");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $total_portfolio = $result['total'] ?? 0;
     
-    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'active'");
+    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'approved'");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $current_loans = $result['count'] ?? 0;
     
     $stmt = $con->query("
         SELECT COALESCE(SUM(principal_amount), 0) as total 
         FROM loans 
-        WHERE status = 'active' 
-        AND due_date < CURRENT_DATE - INTERVAL '30 days'
+        WHERE status = 'approved' 
+        AND maturity_date < CURRENT_DATE - INTERVAL '30 days'
     ");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $par_30 = $result['total'] ?? 0;
@@ -32,8 +32,8 @@ try {
     $stmt = $con->query("
         SELECT COALESCE(SUM(principal_amount), 0) as total 
         FROM loans 
-        WHERE status = 'active' 
-        AND due_date < CURRENT_DATE - INTERVAL '60 days'
+        WHERE status = 'approved' 
+        AND maturity_date < CURRENT_DATE - INTERVAL '60 days'
     ");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $par_60 = $result['total'] ?? 0;
@@ -41,8 +41,8 @@ try {
     $stmt = $con->query("
         SELECT COALESCE(SUM(principal_amount), 0) as total 
         FROM loans 
-        WHERE status = 'active' 
-        AND due_date < CURRENT_DATE - INTERVAL '90 days'
+        WHERE status = 'approved' 
+        AND maturity_date < CURRENT_DATE - INTERVAL '90 days'
     ");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $par_90 = $result['total'] ?? 0;

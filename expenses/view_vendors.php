@@ -22,16 +22,16 @@ try {
     $vendors = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $total_vendors = count($vendors);
 } catch (PDOException $e) {
-    $vendors = [
-        ['id' => 1, 'name' => 'Office Supplies Co.', 'email' => 'supplies@example.com', 'phone' => '+255712345678', 'status' => 'active', 'total_expenses' => 500000, 'expense_count' => 15],
-        ['id' => 2, 'name' => 'Tech Solutions Ltd', 'email' => 'tech@example.com', 'phone' => '+255723456789', 'status' => 'active', 'total_expenses' => 1200000, 'expense_count' => 8],
-        ['id' => 3, 'name' => 'Cleaning Services', 'email' => 'clean@example.com', 'phone' => '+255734567890', 'status' => 'active', 'total_expenses' => 350000, 'expense_count' => 12],
-    ];
+    $vendors = [];
+    $load_error = 'Could not load data: ' . $e->getMessage();
     $total_vendors = count($vendors);
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
@@ -124,7 +124,7 @@ include $base_path . 'includes/header.php';
                         <td><strong>TZS <?php echo number_format($vendor['total_expenses'], 2); ?></strong></td>
                         <td><?php echo $vendor['expense_count']; ?></td>
                         <td>
-                            <span class="badge badge-<?php echo $vendor['status'] === 'active' ? 'success' : 'secondary'; ?>">
+                            <span class="badge bg-<?php echo $vendor['status'] === 'active' ? 'success' : 'secondary'; ?>">
                                 <?php echo __($vendor['status']); ?>
                             </span>
                         </td>

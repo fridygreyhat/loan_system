@@ -40,9 +40,9 @@ try {
         $due_amounts[date('j', strtotime($row['date']))] = $row['total'];
     }
     
-    $stmt = $con->prepare("SELECT DATE(created_at) as date, SUM(principal_amount) as total FROM loans 
-                           WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?
-                           GROUP BY DATE(created_at)");
+    $stmt = $con->prepare("SELECT DATE(creation_date) as date, SUM(principal_amount) as total FROM loans 
+                           WHERE EXTRACT(MONTH FROM creation_date) = ? AND EXTRACT(YEAR FROM creation_date) = ?
+                           GROUP BY DATE(creation_date)");
     $stmt->execute([$current_month, $current_year]);
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $disbursed_amounts[date('j', strtotime($row['date']))] = $row['total'];

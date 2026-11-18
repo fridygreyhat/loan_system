@@ -39,7 +39,7 @@ try {
         $repayments = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
         $stmt3 = $con->prepare("
-            SELECT lac.*, lc.name as charge_name, lc.calculation_type
+            SELECT lac.*, lc.name as charge_name, COALESCE(lc.charge_mtd, 'fixed') AS calculation_type
             FROM loan_applied_charges lac
             LEFT JOIN loan_charges lc ON lac.loan_charge_id = lc.id
             WHERE lac.loan_id = ?
@@ -52,8 +52,8 @@ try {
 }
 
 $total_paid = array_sum(array_column($repayments, 'amount'));
-$outstanding = ($loan['principal_amt'] ?? 0) - $total_paid;
-$pct_paid = ($loan['principal_amt'] ?? 0) > 0 ? round(($total_paid / $loan['principal_amt']) * 100, 1) : 0;
+$outstanding = ($loan['principal_amount'] ?? 0) - $total_paid;
+$pct_paid = ($loan['principal_amount'] ?? 0) > 0 ? round(($total_paid / $loan['principal_amount']) * 100, 1) : 0;
 
 include $base_path . 'includes/header.php';
 ?>
@@ -94,7 +94,7 @@ include $base_path . 'includes/header.php';
         <div class="card stat-card">
             <div class="stat-icon primary"><i class="fas fa-money-bill-wave"></i></div>
             <div class="stat-info">
-                <h3>TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></h3>
+                <h3>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></h3>
                 <p><?php echo __('principal_amount'); ?></p>
             </div>
         </div>
@@ -158,7 +158,7 @@ include $base_path . 'includes/header.php';
                 </li>
             </ul>
             <div class="card-body pt-2">
-                <a href="../borrowers/view_borrowers.php" class="btn btn-sm btn-outline-primary w-100"><?php echo __('view_profile'); ?></a>
+                <a href="../borrowers/view_borrower.php?id=<?php echo (int)($loan["borrower_id"] ?? 0); ?>" class="btn btn-sm btn-outline-primary w-100"><?php echo __('view_profile'); ?></a>
             </div>
         </div>
     </div>
@@ -208,7 +208,7 @@ include $base_path . 'includes/header.php';
                             <div class="col-6">
                                 <div class="p-3 bg-light rounded">
                                     <small class="text-muted d-block"><?php echo __('principal_amount'); ?></small>
-                                    <strong>TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></strong>
+                                    <strong>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></strong>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -259,7 +259,7 @@ include $base_path . 'includes/header.php';
                                     <div class="progress" style="height:10px;">
                                         <div class="progress-bar bg-success" style="width:<?php echo $pct_paid; ?>%"></div>
                                     </div>
-                                    <small class="text-muted"><?php echo $pct_paid; ?>% <?php echo __('repaid'); ?> (TZS <?php echo number_format($total_paid, 2); ?> / TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?>)</small>
+                                    <small class="text-muted"><?php echo $pct_paid; ?>% <?php echo __('repaid'); ?> (TZS <?php echo number_format($total_paid, 2); ?> / TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?>)</small>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +316,7 @@ include $base_path . 'includes/header.php';
 
                     <div class="tab-pane fade" id="tab-schedule">
                         <?php
-                        $principal = $loan['principal_amt'] ?? 0;
+                        $principal = $loan['principal_amount'] ?? 0;
                         $numRepayments = $loan['no_repayment_cycle'] ?? 1;
                         $interestRate = $loan['loan_interest'] ?? 0;
                         $releaseDate = $loan['release_date'] ?? date('Y-m-d');

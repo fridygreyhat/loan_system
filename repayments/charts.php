@@ -10,13 +10,13 @@ $monthly_data = [];
 try {
     $stmt = $con->query("
         SELECT 
-            TO_CHAR(collection_date, 'Mon YYYY') as month,
-            EXTRACT(MONTH FROM collection_date) as month_num,
-            EXTRACT(YEAR FROM collection_date) as year,
+            TO_CHAR(paid_date, 'Mon YYYY') as month,
+            EXTRACT(MONTH FROM paid_date) as month_num,
+            EXTRACT(YEAR FROM paid_date) as year,
             SUM(amount) as total
-        FROM repayments
-        WHERE collection_date >= CURRENT_DATE - INTERVAL '12 months'
-        GROUP BY TO_CHAR(collection_date, 'Mon YYYY'), EXTRACT(MONTH FROM collection_date), EXTRACT(YEAR FROM collection_date)
+        FROM loan_repayment
+        WHERE paid_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY TO_CHAR(paid_date, 'Mon YYYY'), EXTRACT(MONTH FROM paid_date), EXTRACT(YEAR FROM paid_date)
         ORDER BY year, month_num
     ");
     $monthly_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -29,7 +29,7 @@ try {
         SELECT 
             COALESCE(payment_method, 'Cash') as method,
             SUM(amount) as total
-        FROM repayments
+        FROM loan_repayment
         GROUP BY payment_method
     ");
     $payment_methods = $stmt->fetchAll(PDO::FETCH_ASSOC);

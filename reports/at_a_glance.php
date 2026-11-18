@@ -30,7 +30,7 @@ try {
     $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) FROM loans WHERE status = 'approved'");
     $stats['total_portfolio'] = $stmt->fetchColumn() ?: 0;
     
-    $stmt = $con->query("SELECT COALESCE(SUM(amount), 0) FROM repayments");
+    $stmt = $con->query("SELECT COALESCE(SUM(amount), 0) FROM loan_repayment");
     $stats['total_collected'] = $stmt->fetchColumn() ?: 0;
     
     $stmt = $con->query("SELECT COUNT(*) FROM loans WHERE status = 'approved' AND maturity_date < CURRENT_DATE");
@@ -39,7 +39,7 @@ try {
     $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) FROM loans WHERE status = 'approved' AND release_date >= DATE_TRUNC('month', CURRENT_DATE)");
     $stats['disbursed_this_month'] = $stmt->fetchColumn() ?: 0;
     
-    $stmt = $con->query("SELECT COALESCE(SUM(amount), 0) FROM repayments WHERE collection_date >= DATE_TRUNC('month', CURRENT_DATE)");
+    $stmt = $con->query("SELECT COALESCE(SUM(amount), 0) FROM loan_repayment WHERE paid_date >= DATE_TRUNC('month', CURRENT_DATE)");
     $stats['collected_this_month'] = $stmt->fetchColumn() ?: 0;
 } catch (PDOException $e) {
 }

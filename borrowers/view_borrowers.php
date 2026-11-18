@@ -87,7 +87,7 @@ include $base_path . 'includes/header.php';
                                 <a href="view_borrower.php?id=<?php echo $borrower['id']; ?>" class="btn btn-outline-primary" title="<?php echo __('view'); ?>">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="add_borrower_edit.php?id=<?php echo $borrower['id']; ?>" class="btn btn-outline-secondary" title="<?php echo __('edit'); ?>">
+                                <a href="add_borrower.php?id=<?php echo $borrower['id']; ?>" class="btn btn-outline-secondary" title="<?php echo __('edit'); ?>">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>

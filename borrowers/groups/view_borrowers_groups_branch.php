@@ -70,7 +70,7 @@ include $base_path . 'includes/header.php';
                         <td><?php echo htmlspecialchars($group['leader_name'] ?? '-'); ?></td>
                         <td><span class="badge bg-success">Active</span></td>
                         <td>
-                            <a href="view_group_details.php?id=<?php echo $group['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                            <a href="view_group.php?id=<?php echo $group['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                             <a href="add_borrowers_group.php?edit=<?php echo $group['id']; ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
                         </td>
                     </tr>

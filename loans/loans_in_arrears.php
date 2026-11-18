@@ -14,7 +14,7 @@ try {
         FROM loans l
         LEFT JOIN borrower b ON l.borrower_id = b.id
         LEFT JOIN loan_product lp ON l.loan_product_id = lp.id
-        LEFT JOIN repayments r ON l.id = r.loan_id
+        LEFT JOIN loan_repayment r ON l.id = r.loan_id
         WHERE l.status = 'approved' 
         AND l.maturity_date < CURRENT_DATE
         GROUP BY l.id, b.fname, b.lname, lp.name

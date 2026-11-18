@@ -15,6 +15,20 @@ if (isset($_GET['months']) && in_array($_GET['months'], [3, 6, 12])) {
 $projections = [];
 $current_date = new DateTime();
 
+$avg_monthly_disbursement = 0;
+try {
+    $stmt = $db->query("
+        SELECT COALESCE(SUM(principal_amount), 0) / 6
+        FROM loans
+        WHERE status IN ('approved', 'paid', 'defaulted')
+          AND release_date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '6 months'
+          AND release_date < DATE_TRUNC('month', CURRENT_DATE)
+    ");
+    $avg_monthly_disbursement = (float)$stmt->fetchColumn();
+} catch (PDOException $e) {
+    $projection_error = 'Could not load disbursement history: ' . $e->getMessage();
+}
+
 for ($i = 0; $i < $months; $i++) {
     $month_date = clone $current_date;
     $month_date->modify("+$i month");
@@ -26,19 +40,20 @@ for ($i = 0; $i < $months; $i++) {
     
     try {
         $stmt = $db->prepare("
-            SELECT COALESCE(SUM(ls.amount), 0) as total
+            SELECT COALESCE(SUM(ls.amount_due), 0) as total
             FROM loan_schedule ls
             JOIN loans l ON ls.loan_id = l.id
             WHERE TO_CHAR(ls.due_date, 'YYYY-MM') = ?
-            AND l.status = 'open'
+            AND l.status = 'approved'
         ");
         $stmt->execute([$month_key]);
         $expected_collections = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
     } catch (PDOException $e) {
-        $expected_collections = rand(5000000, 20000000);
+        $projection_error = 'Could not load scheduled collections: ' . $e->getMessage();
     }
-    
-    $expected_disbursements = rand(3000000, 15000000);
+
+    // Disbursements are not scheduled in advance, so project the average of the last 6 months.
+    $expected_disbursements = $avg_monthly_disbursement;
     
     $projections[] = [
         'month' => $month_name,
@@ -64,6 +79,10 @@ $net_flow = $total_collections - $total_disbursements;
         </ol>
     </nav>
 </div>
+
+<?php if (!empty($projection_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($projection_error); ?></div>
+<?php endif; ?>
 
 <div class="row mb-4">
     <div class="col-md-4">

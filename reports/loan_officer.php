@@ -16,8 +16,8 @@ try {
                COALESCE(SUM(l.principal_amount), 0) as total_disbursed,
                COUNT(DISTINCT CASE WHEN l.status = 'approved' THEN l.id END) as approved_count
         FROM staff s
+        JOIN staff_role_types srt ON s.role_id = srt.id AND srt.code = 'loan_officer'
         LEFT JOIN loans l ON l.loan_officer_id = s.id
-        WHERE s.role = 'LoanOfficer' OR s.role = 'loan_officer'
         GROUP BY s.id
         ORDER BY total_disbursed DESC
     ");

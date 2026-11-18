@@ -8,10 +8,10 @@ require_once $base_path . 'helpers/connect.php';
 $collectors = [];
 try {
     $stmt = $con->query("
-        SELECT s.*, COUNT(l.id) as assigned_loans
+        SELECT s.*, s.phone_no AS phone, COUNT(l.id) as assigned_loans
         FROM staff s
+        JOIN staff_role_types srt ON s.role_id = srt.id AND srt.code = 'collector'
         LEFT JOIN loans l ON l.collector_id = s.id
-        WHERE s.role = 'Collector' OR s.role_name = 'Collector'
         GROUP BY s.id
         ORDER BY s.fname ASC
     ");

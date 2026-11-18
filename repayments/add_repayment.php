@@ -40,14 +40,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loan_id'])) {
     } else {
         try {
             $stmt = $con->prepare("
-                INSERT INTO loan_repayment (loan_id, amount, principal, interest, paid_date, notes, collection_method, receipt_no, created_by, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())
+                INSERT INTO loan_repayment (loan_id, amount, principal, interest, paid_date, notes, payment_method, receipt_no, created_by, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->execute([$lid, $amount, $principal, $interest, $paid_date, $notes, $collection_method, $receipt_no]);
+            $stmt->execute([$lid, $amount, $principal, $interest, $paid_date, $notes, $collection_method, $receipt_no, $_SESSION["user_id"] ?? null]);
+
+            // Close the loan once payments cover everything owed (scheduled total, or principal if unscheduled).
+            $stmt = $con->prepare("
+                UPDATE loans l SET status = 'paid'
+                WHERE l.id = ? AND l.status = 'approved'
+                  AND (SELECT COALESCE(SUM(amount), 0) FROM loan_repayment WHERE loan_id = l.id AND COALESCE(status, '') <> 'rejected')
+                      >= COALESCE((SELECT SUM(amount_due) FROM loan_schedule WHERE loan_id = l.id), l.principal_amount)
+            ");
+            $stmt->execute([$lid]);
 
             // Send SMS confirmation if mobile available
             $totalPaid = ($loan['paid_amount'] ?? 0) + $amount;
-            $outstanding = ($loan['principal_amt'] ?? 0) - $totalPaid;
+            $outstanding = ($loan['principal_amount'] ?? 0) - $totalPaid;
             if (!empty($loan['mobile_no'])) {
                 try {
                     require_once $base_path . 'helpers/sms.php';
@@ -64,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['loan_id'])) {
     }
 }
 
-$outstanding = ($loan['principal_amt'] ?? 0) - ($loan['paid_amount'] ?? 0);
+$outstanding = ($loan['principal_amount'] ?? 0) - ($loan['paid_amount'] ?? 0);
 
 include $base_path . 'includes/header.php';
 ?>
@@ -198,7 +207,7 @@ include $base_path . 'includes/header.php';
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span class="text-muted"><?php echo __('principal_amount'); ?></span>
-                    <strong>TZS <?php echo number_format($loan['principal_amt'] ?? 0, 2); ?></strong>
+                    <strong>TZS <?php echo number_format($loan['principal_amount'] ?? 0, 2); ?></strong>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span class="text-muted"><?php echo __('total_paid'); ?></span>
@@ -211,7 +220,7 @@ include $base_path . 'includes/header.php';
                 <li class="list-group-item">
                     <div class="d-flex justify-content-between mb-1">
                         <small class="text-muted"><?php echo __('repayment_progress'); ?></small>
-                        <?php $pct = ($loan['principal_amt'] ?? 0) > 0 ? round(($loan['paid_amount'] / $loan['principal_amt']) * 100, 1) : 0; ?>
+                        <?php $pct = ($loan['principal_amount'] ?? 0) > 0 ? round(($loan['paid_amount'] / $loan['principal_amount']) * 100, 1) : 0; ?>
                         <small><?php echo $pct; ?>%</small>
                     </div>
                     <div class="progress" style="height:8px;">

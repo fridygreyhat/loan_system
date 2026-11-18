@@ -2,8 +2,9 @@
 $base_path = '../';
 $page_title = 'Investor Products';
 $current_page = 'investors';
-include '../includes/header.php';
 require_once '../helpers/connect.php';
+require_once '../helpers/lang.php';
+include '../includes/header.php';
 
 $db = $con;
 
@@ -13,8 +14,15 @@ try {
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $products = [];
+    $load_error = 'Could not load products: ' . $e->getMessage();
 }
 ?>
+
+<?php if (!empty($_GET['error']) || !empty($load_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_GET['error'] ?? $load_error); ?></div>
+<?php elseif (isset($_GET['success'])): ?>
+<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Product saved.</div>
+<?php endif; ?>
 
 <div class="content-header">
     <h1><i class="fas fa-box"></i> <?php echo __('investor_products'); ?></h1>
@@ -71,12 +79,16 @@ try {
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary" title="<?php echo __('edit'); ?>">
+                                <button type="button" class="btn btn-outline-primary" title="<?php echo __('edit'); ?>"
+                                        data-bs-toggle="modal" data-bs-target="#addProductModal"
+                                        data-product="<?php echo htmlspecialchars(json_encode($product), ENT_QUOTES); ?>">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-outline-danger" title="<?php echo __('delete'); ?>">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <form method="POST" action="save_product.php" class="d-inline" onsubmit="return confirm('Delete this product?');">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?php echo (int)$product['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="<?php echo __('delete'); ?>"><i class="fas fa-trash"></i></button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -95,7 +107,8 @@ try {
                 <h5 class="modal-title"><?php echo __('add_investor_product'); ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="save_product.php" method="POST">
+            <form action="save_product.php" method="POST" id="productForm">
+                <input type="hidden" name="id" value="">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><?php echo __('product_name'); ?> *</label>
@@ -127,6 +140,13 @@ try {
                         <label class="form-label"><?php echo __('description'); ?></label>
                         <textarea name="description" class="form-control" rows="2"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label"><?php echo __('status'); ?></label>
+                        <select name="status" class="form-select">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('cancel'); ?></button>
@@ -136,5 +156,19 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+// The same modal adds a product or, when opened from an Edit button, edits one.
+document.getElementById('addProductModal').addEventListener('show.bs.modal', function (e) {
+    const form = document.getElementById('productForm');
+    const product = JSON.parse((e.relatedTarget && e.relatedTarget.getAttribute('data-product')) || '{}');
+    form.reset();
+    form.elements['id'].value = product.id || '';
+    this.querySelector('.modal-title').textContent = product.id ? 'Edit Product' : <?php echo json_encode(__('add_investor_product')); ?>;
+    ['name', 'interest_rate', 'interest_frequency', 'min_balance', 'description', 'status'].forEach(function (f) {
+        if (form.elements[f] && product[f] !== undefined && product[f] !== null) form.elements[f].value = product[f];
+    });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>

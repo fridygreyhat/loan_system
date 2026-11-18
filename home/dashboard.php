@@ -12,6 +12,11 @@ $total_borrowers = 0;
 $total_loans = 0;
 $total_disbursed = 0;
 $total_collected = 0;
+$total_savings = 0;
+$total_investments = 0;
+$monthly_releases = array_fill(0, 12, 0);
+$monthly_collections = array_fill(0, 12, 0);
+$status_counts = [0, 0, 0, 0];   // active, completed, pending, overdue
 $pending_loans = 0;
 $overdue_loans = 0;
 
@@ -24,23 +29,60 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $total_loans = $result['count'] ?? 0;
     
-    $stmt = $con->query("SELECT COALESCE(SUM(principal_amt), 0) as total FROM loans WHERE status = 'approved'");
+    $stmt = $con->query("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE status = 'approved'");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $total_disbursed = $result['total'] ?? 0;
     
-    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'processing'");
+    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'pending'");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $pending_loans = $result['count'] ?? 0;
     
-    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'overdue' OR status = 'defaulted'");
+    $stmt = $con->query("SELECT COUNT(*) as count FROM loans WHERE status = 'defaulted' OR (status = 'approved' AND maturity_date < CURRENT_DATE)");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $overdue_loans = $result['count'] ?? 0;
+
+    $total_collected = (float)$con->query("SELECT COALESCE(SUM(amount), 0) FROM loan_repayment WHERE COALESCE(status, '') <> 'rejected'")->fetchColumn();
+    $total_savings = (float)$con->query("SELECT COALESCE(SUM(balance), 0) FROM savings_accounts WHERE status = 'active'")->fetchColumn();
+    $total_investments = (float)$con->query("SELECT COALESCE(SUM(investment_amount), 0) FROM investor_accounts WHERE status = 'active'")->fetchColumn();
+
+    // Charts: this year's releases and collections by month, and loans by status bucket.
+    $year = (int)date('Y');
+    $stmt = $con->prepare("SELECT EXTRACT(MONTH FROM release_date)::int AS m, SUM(principal_amount) FROM loans
+                           WHERE status IN ('approved', 'paid', 'defaulted') AND EXTRACT(YEAR FROM release_date) = ? GROUP BY 1");
+    $stmt->execute([$year]);
+    foreach ($stmt->fetchAll(PDO::FETCH_NUM) as [$m, $total]) {
+        $monthly_releases[$m - 1] = (float)$total;
+    }
+    $stmt = $con->prepare("SELECT EXTRACT(MONTH FROM paid_date)::int AS m, SUM(amount) FROM loan_repayment
+                           WHERE COALESCE(status, '') <> 'rejected' AND EXTRACT(YEAR FROM paid_date) = ? GROUP BY 1");
+    $stmt->execute([$year]);
+    foreach ($stmt->fetchAll(PDO::FETCH_NUM) as [$m, $total]) {
+        $monthly_collections[$m - 1] = (float)$total;
+    }
+    $stmt = $con->query("
+        SELECT CASE
+                 WHEN status = 'paid' THEN 1
+                 WHEN status = 'pending' THEN 2
+                 WHEN status = 'defaulted' OR (status = 'approved' AND maturity_date < CURRENT_DATE) THEN 3
+                 WHEN status = 'approved' THEN 0
+               END AS bucket, COUNT(*)
+        FROM loans GROUP BY 1
+    ");
+    foreach ($stmt->fetchAll(PDO::FETCH_NUM) as [$bucket, $count]) {
+        if ($bucket !== null) {
+            $status_counts[$bucket] = (int)$count;
+        }
+    }
 } catch (PDOException $e) {
+    $load_error = 'Could not load dashboard data: ' . $e->getMessage();
 }
 
 include $base_path . 'includes/header.php';
 ?>
 
+<?php if (!empty($load_error)): ?>
+<div class="alert alert-danger"><?php echo htmlspecialchars($load_error); ?></div>
+<?php endif; ?>
 <div class="page-header">
     <h1><?php echo __('dashboard'); ?></h1>
     <nav aria-label="breadcrumb">
@@ -106,7 +148,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-piggy-bank"></i>
             </div>
             <div class="stat-info">
-                <h3>TZS 0</h3>
+                <h3>TZS <?php echo number_format($total_savings); ?></h3>
                 <p><?php echo __('total_savings'); ?></p>
             </div>
         </div>
@@ -117,7 +159,7 @@ include $base_path . 'includes/header.php';
                 <i class="fas fa-chart-bar"></i>
             </div>
             <div class="stat-info">
-                <h3>TZS 0</h3>
+                <h3>TZS <?php echo number_format($total_investments); ?></h3>
                 <p><?php echo __('total_investments'); ?></p>
             </div>
         </div>
@@ -234,14 +276,14 @@ new Chart(loanPerformanceCtx, {
         labels: ['<?php echo __('jan'); ?>', '<?php echo __('feb'); ?>', '<?php echo __('mar'); ?>', '<?php echo __('apr'); ?>', '<?php echo __('may'); ?>', '<?php echo __('jun'); ?>', '<?php echo __('jul'); ?>', '<?php echo __('aug'); ?>', '<?php echo __('sep'); ?>', '<?php echo __('oct'); ?>', '<?php echo __('nov'); ?>', '<?php echo __('dec'); ?>'],
         datasets: [{
             label: '<?php echo __('disbursements'); ?>',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: <?php echo json_encode($monthly_releases); ?>,
             borderColor: '#2c7be5',
             backgroundColor: 'rgba(44, 123, 229, 0.1)',
             fill: true,
             tension: 0.4
         }, {
             label: '<?php echo __('collections'); ?>',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            data: <?php echo json_encode($monthly_collections); ?>,
             borderColor: '#00d97e',
             backgroundColor: 'rgba(0, 217, 126, 0.1)',
             fill: true,
@@ -275,7 +317,7 @@ new Chart(loanStatusCtx, {
     data: {
         labels: ['<?php echo __('active'); ?>', '<?php echo __('completed'); ?>', '<?php echo __('pending'); ?>', '<?php echo __('overdue'); ?>'],
         datasets: [{
-            data: [0, 0, 0, 0],
+            data: <?php echo json_encode(array_values($status_counts)); ?>,
             backgroundColor: ['#2c7be5', '#00d97e', '#f6c343', '#e63757'],
             borderWidth: 0
         }]

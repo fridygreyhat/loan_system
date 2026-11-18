@@ -9,7 +9,7 @@ $db = $con;
 
 $payrolls = [];
 try {
-    $stmt = $db->query("SELECT * FROM payroll ORDER BY pay_date DESC LIMIT 50");
+    $stmt = $db->query("SELECT p.*, CONCAT(s.fname, ' ', COALESCE(s.lname, '')) AS staff_name FROM payroll p LEFT JOIN staff s ON p.staff_id = s.id ORDER BY p.pay_date DESC, p.id DESC LIMIT 50");
     $payrolls = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $payrolls = [];
@@ -27,7 +27,7 @@ try {
     $stmt = $db->query("SELECT COALESCE(SUM(net_pay), 0) as total FROM payroll");
     $total_payroll = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
     
-    $stmt = $db->prepare("SELECT COALESCE(SUM(net_pay), 0) as total FROM payroll WHERE TO_CHAR(pay_date, 'YYYY-MM') = ?");
+    $stmt = $db->prepare("SELECT COALESCE(SUM(net_pay), 0) as total FROM payroll WHERE pay_period = ?");
     $stmt->execute([$current_month]);
     $this_month_payroll = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 } catch (PDOException $e) {
@@ -119,7 +119,7 @@ try {
                     <tr>
                         <td><?php echo $index + 1; ?></td>
                         <td><?php echo htmlspecialchars($payroll['staff_name'] ?? ''); ?></td>
-                        <td><?php echo date('M Y', strtotime($payroll['pay_date'] ?? 'now')); ?></td>
+                        <td><?php echo htmlspecialchars(date('M Y', strtotime(($payroll['pay_period'] ?? date('Y-m')) . '-01'))); ?></td>
                         <td>TZS <?php echo number_format($payroll['basic_salary'] ?? 0, 0); ?></td>
                         <td>TZS <?php echo number_format($payroll['allowances'] ?? 0, 0); ?></td>
                         <td>TZS <?php echo number_format($payroll['deductions'] ?? 0, 0); ?></td>

@@ -136,10 +136,47 @@ PostgreSQL database with comprehensive schema including:
 - Support tables: sms_templates, email_templates, agreement_templates
 - Role system: staff_role_types, permissions, role_permissions
 
+## Setting Up the Database
+Load the schema files in this order (all are safe to re-run):
+```bash
+psql "$DATABASE_URL" -f SQLDB/loandisk_postgresql.sql
+psql "$DATABASE_URL" -f SQLDB/schema_updates.sql
+psql "$DATABASE_URL" -f SQLDB/schema_reconcile.sql   # brings the schema in line with the code
+```
+`schema_reconcile.sql` is idempotent, so also run it on an existing database after pulling changes.
+
+Create (or reset) the super administrator. The password is read from the
+environment or prompted for, so it is never stored in the repo:
+```bash
+SUPER_ADMIN_PASSWORD='...' php SQLDB/create_super_admin.php admin@example.com
+```
+Without `DATABASE_URL` the app connects to `postgres@localhost:5432/loandisk`.
+
 ## Running the Application
 ```bash
-php -S 0.0.0.0:5000
+php -S 0.0.0.0:5000 router.php
 ```
+`router.php` stops the built-in server from serving internal folders (`SQLDB/`,
+`helpers/`, `.git/`, …) or executing anything under `uploads/`. On macOS port
+5000 is usually taken by AirPlay Receiver; use another port locally.
+
+## Security Notes
+- Every page requires login (`helpers/auth.php`, loaded via `connect.php`,
+  `lang.php` and `DbAcess.php`). New self-registrations stay `pending` until an
+  administrator activates them in Staff.
+- All POST requests need a CSRF token. It is injected automatically into every
+  `<form method="post">`; JavaScript should send the `csrf-token` meta value as
+  the `X-CSRF-Token` header.
+- File uploads must go through `safe_upload()` in `helpers/upload.php`.
+- SMS is only sent when it is switched on in Admin > SMS Settings.
+
+## Loan Lifecycle
+`pending` → (approve) `approved` → `paid` / `defaulted`; or `denied`.
+Approving (or creating an already-approved loan, or editing one) generates the
+instalment schedule in `loan_schedule` (`helpers/loan_utils.php`, same maths as
+the Loan Calculator). Collection sheets, the calendar, reminders and cash-flow
+projections are driven by that schedule. A loan is marked `paid` once
+repayments cover the scheduled total.
 
 ## Entry Points
 - `/login.php` - Modern login page

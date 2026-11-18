@@ -35,9 +35,17 @@ require_once 'helpers/lang.php';
             </div>
         </div>
         
-        <?php if (isset($_GET['error'])): ?>
+        <?php if (($_GET['error'] ?? '') === 'inactive'): ?>
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-user-clock me-2"></i>Your account is not active yet. Please ask an administrator to activate it.
+        </div>
+        <?php elseif (isset($_GET['error'])): ?>
         <div class="alert alert-danger" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i><?php echo __('invalid_credentials'); ?>
+        </div>
+        <?php elseif (isset($_GET['registered'])): ?>
+        <div class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle me-2"></i>Registration received. An administrator must activate your account before you can sign in.
         </div>
         <?php endif; ?>
         

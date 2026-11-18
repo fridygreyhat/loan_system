@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/auth.php';
+
 $db_url = getenv('DATABASE_URL');
 
 if ($db_url) {

@@ -13,7 +13,7 @@ $loan_status = ['active' => 0, 'completed' => 0, 'pending' => 0, 'overdue' => 0]
 try {
     for ($i = 11; $i >= 0; $i--) {
         $month = date('Y-m', strtotime("-$i months"));
-        $stmt = $con->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE TO_CHAR(created_at, 'YYYY-MM') = ?");
+        $stmt = $con->prepare("SELECT COALESCE(SUM(principal_amount), 0) as total FROM loans WHERE status IN ('approved', 'paid', 'defaulted') AND TO_CHAR(release_date, 'YYYY-MM') = ?");
         $stmt->execute([$month]);
         $monthly_releases[] = ['month' => date('M Y', strtotime($month)), 'value' => $stmt->fetch(PDO::FETCH_ASSOC)['total']];
         
@@ -22,23 +22,32 @@ try {
         $monthly_collections[] = ['month' => date('M Y', strtotime($month)), 'value' => $stmt->fetch(PDO::FETCH_ASSOC)['total']];
     }
     
-    $stmt = $con->query("SELECT status, COUNT(*) as count FROM loans GROUP BY status");
+    // Map stored statuses onto the chart's buckets.
+    $stmt = $con->query("
+        SELECT CASE
+                 WHEN status = 'paid' THEN 'completed'
+                 WHEN status = 'pending' THEN 'pending'
+                 WHEN status = 'defaulted' OR (status = 'approved' AND maturity_date < CURRENT_DATE) THEN 'overdue'
+                 WHEN status = 'approved' THEN 'active'
+               END AS bucket,
+               COUNT(*) AS count
+        FROM loans
+        GROUP BY 1
+    ");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        if (isset($loan_status[$row['status']])) {
-            $loan_status[$row['status']] = $row['count'];
+        if (isset($loan_status[$row['bucket']])) {
+            $loan_status[$row['bucket']] = (int)$row['count'];
         }
     }
 } catch (PDOException $e) {
-    for ($i = 11; $i >= 0; $i--) {
-        $month = date('M Y', strtotime("-$i months"));
-        $monthly_releases[] = ['month' => $month, 'value' => rand(5000000, 50000000)];
-        $monthly_collections[] = ['month' => $month, 'value' => rand(3000000, 40000000)];
-    }
-    $loan_status = ['active' => 45, 'completed' => 120, 'pending' => 12, 'overdue' => 8];
+    $chart_error = 'Could not load chart data: ' . $e->getMessage();
 }
 
 include $base_path . 'includes/header.php';
 ?>
+<?php if (!empty($chart_error)): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($chart_error); ?></div>
+<?php endif; ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>

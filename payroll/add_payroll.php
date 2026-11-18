@@ -9,7 +9,7 @@ $db = $con;
 
 $staff_list = [];
 try {
-    $stmt = $db->query("SELECT id, CONCAT(first_name, ' ', last_name) as full_name FROM staff WHERE status = 'active' ORDER BY first_name");
+    $stmt = $db->query("SELECT id, CONCAT(fname, ' ', COALESCE(lname, '')) as full_name FROM staff WHERE status = 'active' ORDER BY fname, lname");
     $staff_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $staff_list = [];
@@ -26,6 +26,10 @@ try {
         </ol>
     </nav>
 </div>
+
+<?php if (!empty($_GET["error"])): ?>
+<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_GET["error"]); ?></div>
+<?php endif; ?>
 
 <div class="row">
     <div class="col-lg-8">
@@ -59,14 +63,14 @@ try {
                             <label class="form-label"><?php echo __('basic_salary'); ?> *</label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="basic_salary" class="form-control" value="0" required>
+                                <input type="number" name="basic_salary" class="form-control" step="0.01" min="0" value="0" required>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><?php echo __('housing_allowance'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="housing_allowance" class="form-control" value="0">
+                                <input type="number" name="housing_allowance" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                     </div>
@@ -76,14 +80,14 @@ try {
                             <label class="form-label"><?php echo __('transport_allowance'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="transport_allowance" class="form-control" value="0">
+                                <input type="number" name="transport_allowance" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><?php echo __('other_allowances'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="other_allowances" class="form-control" value="0">
+                                <input type="number" name="other_allowances" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                     </div>
@@ -96,21 +100,21 @@ try {
                             <label class="form-label"><?php echo __('tax'); ?> (PAYE)</label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="tax" class="form-control" value="0">
+                                <input type="number" name="tax" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label"><?php echo __('nssf'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="nssf" class="form-control" value="0">
+                                <input type="number" name="nssf" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label"><?php echo __('loan_deduction'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="loan_deduction" class="form-control" value="0">
+                                <input type="number" name="loan_deduction" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                     </div>
@@ -120,7 +124,7 @@ try {
                             <label class="form-label"><?php echo __('other_deductions'); ?></label>
                             <div class="input-group">
                                 <span class="input-group-text">TZS</span>
-                                <input type="number" name="other_deductions" class="form-control" value="0">
+                                <input type="number" name="other_deductions" class="form-control" step="0.01" min="0" value="0">
                             </div>
                         </div>
                     </div>
