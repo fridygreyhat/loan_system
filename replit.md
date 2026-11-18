@@ -154,11 +154,11 @@ Without `DATABASE_URL` the app connects to `postgres@localhost:5432/loandisk`.
 
 ## Running the Application
 ```bash
-php -S 0.0.0.0:5000 router.php
+php -S 0.0.0.0:8088 router.php
 ```
-`router.php` stops the built-in server from serving internal folders (`SQLDB/`,
-`helpers/`, `.git/`, …) or executing anything under `uploads/`. On macOS port
-5000 is usually taken by AirPlay Receiver; use another port locally.
+Then open http://localhost:8088/login.php. `router.php` stops the built-in
+server from serving internal folders (`SQLDB/`, `helpers/`, `.git/`, …) or
+executing anything under `uploads/`.
 
 ## Security Notes
 - Every page requires login (`helpers/auth.php`, loaded via `connect.php`,

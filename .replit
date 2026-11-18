@@ -23,16 +23,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "php -S 0.0.0.0:5000 router.php"
-waitForPort = 5000
+args = "php -S 0.0.0.0:8088 router.php"
+waitForPort = 8088
 
 [workflows.workflow.metadata]
 outputType = "webview"
 
 [[ports]]
-localPort = 5000
+localPort = 8088
 externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["php", "-S", "0.0.0.0:5000", "router.php"]
+run = ["php", "-S", "0.0.0.0:8088", "router.php"]
